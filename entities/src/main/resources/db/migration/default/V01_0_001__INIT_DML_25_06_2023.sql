@@ -286,11 +286,11 @@ CREATE TABLE public.audit_log
 (
     audit_log_id            character varying(64)            NOT NULL,
     table_name              character varying(60)            NOT NULL,
-    row_id                  character varying(100)           NOT NULL,
+    row_id                  character varying(64)            NOT NULL,
     field_name              character varying(60)            NOT NULL,
-    initial_value           character varying(100)           NOT NULL,
-    new_value               character varying(60)            NOT NULL,
-    action_type             character varying(100)           NOT NULL,
+    initial_value           text                             NOT NULL,
+    new_value               text                             NOT NULL,
+    action_type             action                           NOT NULL,
     date_modified           timestamp with time zone         NOT NULL DEFAULT now(),
     CONSTRAINT audit_log_pk PRIMARY KEY (audit_log_id)
 );
