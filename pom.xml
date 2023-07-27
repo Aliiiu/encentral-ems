@@ -157,6 +157,8 @@
         <module>commons</module>
         <module>binder</module>
         <module>integration-tests</module>
+        <module>system-configuration-api</module>
+        <module>system-configuration-impl</module>
     </modules>
 </project>
 
