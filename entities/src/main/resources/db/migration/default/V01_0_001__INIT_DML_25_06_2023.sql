@@ -6,9 +6,9 @@ CREATE TABLE public.option_type
     option_type          character varying(100)   NOT NULL,
     option_description   text                     NOT NULL,
     date_created         timestamp with time zone NOT NULL DEFAULT now(),
-    date_updated         timestamp with time zone NOT NULL DEFAULT now(),
-    created_by           jsonb                    NOT NULL,
-    last_updated_by      jsonb,
+    date_modified        timestamp with time zone NOT NULL DEFAULT now(),
+    created_by           json                     NOT NULL,
+    modified_by          json,
     CONSTRAINT option_type_pk PRIMARY KEY (option_type_id)
 );
 
@@ -18,11 +18,12 @@ CREATE TABLE public.option
     option_type_id       character varying(64)    NOT NULL,
     option_value         character varying(100)   UNIQUE NOT NULL,
     date_created         timestamp with time zone NOT NULL DEFAULT now(),
-    date_updated         timestamp with time zone NOT NULL DEFAULT now(),
-    created_by           jsonb                    NOT NULL,
-    last_updated_by      jsonb,
+    date_modified        timestamp with time zone NOT NULL DEFAULT now(),
+    created_by           json                     NOT NULL,
+    modified_by          json,
     CONSTRAINT option_pk PRIMARY KEY (option_id),
-    CONSTRAINT option_option_type_fk FOREIGN KEY (option_type_id) REFERENCES public.option_type (option_type_id) MATCH simple ON UPDATE cascade ON DELETE NO ACTION
+    CONSTRAINT option_option_type_fk FOREIGN KEY (option_type_id) REFERENCES public.option_type (option_type_id) MATCH simple ON UPDATE cascade ON DELETE NO ACTION,
+    CONSTRAINT option_option_value_uq UNIQUE (option_value)
 );
 
 CREATE TABLE public.role
@@ -30,10 +31,10 @@ CREATE TABLE public.role
     role_id            varchar(64)                 NOT NULL,
     role_name          varchar(64)                 NOT NULL,
     role_description   text,
-    created_by         jsonb                       NOT NULL,
-    last_updated_by    jsonb,
+    created_by         json                        NOT NULL,
+    modified_by        json,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_updated       timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT role_pk PRIMARY KEY (role_id)
 );
 
@@ -43,25 +44,23 @@ CREATE TABLE public.permission
     permission_name        varchar(64)                 NOT NULL,
     permission_action      action                      NOT NULL,
     permission_description text,
-    created_by             jsonb                       NOT NULL,
-    last_updated_by        jsonb,
+    created_by             json                        NOT NULL,
+    modified_by            json,
     date_created           timestamp with time zone    NOT NULL DEFAULT now(),
-    date_updated           timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified          timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT permission_pk PRIMARY KEY (permission_id)
 );
 
-CREATE TABLE public.role_permission
+CREATE TABLE public.role_has_permission
 (
-    role_permission_id varchar(64)                 NOT NULL,
-    role_id            varchar(64)                 NOT NULL,
-    permission_id      varchar(64)                 NOT NULL,
-    created_by         jsonb                       NOT NULL,
-    last_updated_by    jsonb,
-    date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_updated       timestamp with time zone    NOT NULL DEFAULT now(),
-    CONSTRAINT role_permission_pk PRIMARY KEY (role_permission_id),
-    CONSTRAINT role_permission_role_fk FOREIGN KEY (role_id) REFERENCES public.role (role_id) ON UPDATE CASCADE,
-    CONSTRAINT role_permission_permission_fk FOREIGN KEY (permission_id) REFERENCES public.permission (permission_id) ON UPDATE CASCADE
+    role_has_permission_id varchar(64)                 NOT NULL,
+    role_id                varchar(64)                 NOT NULL,
+    permission_id          varchar(64)                 NOT NULL,
+    created_by             json                        NOT NULL,
+    date_created           timestamp with time zone    NOT NULL DEFAULT now(),
+    CONSTRAINT role_has_permission_pk PRIMARY KEY (role_has_permission_id),
+    CONSTRAINT role_has_permission_role_fk FOREIGN KEY (role_id) REFERENCES public.role (role_id) ON UPDATE CASCADE,
+    CONSTRAINT role_has_permission_permission_fk FOREIGN KEY (permission_id) REFERENCES public.permission (permission_id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public.department
@@ -69,10 +68,10 @@ CREATE TABLE public.department
     department_id      varchar(64)                 NOT NULL,
     department_name    varchar(64)                 NOT NULL,
     description        text,
-    created_by         jsonb                       NOT NULL,
-    last_updated_by    jsonb,
+    created_by         json                       NOT NULL,
+    modified_by        json,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_updated       timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT department_pk PRIMARY KEY (department_id)
 );
 
@@ -84,11 +83,10 @@ CREATE TABLE employee
     middle_name         varchar(64)                 NOT NULL,
     role_id             varchar(64)                 NOT NULL,
     phone_number        varchar(20)                 NOT NULL,
-    date_hired          date                        NOT NULL DEFAULT CURRENT_DATE,
+    date_hired          date                        NOT NULL,
     current_status      varchar(64)                 NOT NULL,
     address             varchar(225)                NOT NULL,
     department_id       varchar(64),
-    leave_days          integer                     NOT NULL DEFAULT 30,
     profile_picture_url text,
     highest_certification varchar(64),
     state_of_origin     varchar(64)                 NOT NULL,
@@ -97,11 +95,11 @@ CREATE TABLE employee
     date_of_birth       date                        NOT NULL,
     login_attempts      integer                     NOT NULL DEFAULT 0,
     last_login          timestamp with time zone,
-    created_by          jsonb                       NOT NULL,
-    last_updated_by     jsonb,
+    created_by          json                        NOT NULL,
+    modified_by         json,
     employee_active     boolean                     NOT NULL DEFAULT TRUE,
     date_created        timestamp with time zone    NOT NULL DEFAULT now(),
-    date_updated        timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified       timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT employee_pk PRIMARY KEY (employee_id),
     CONSTRAINT employee_role_fk FOREIGN KEY (role_id) REFERENCES public.role (role_id) ON UPDATE CASCADE,
     CONSTRAINT employee_department_fk FOREIGN KEY (department_id) REFERENCES public.department (department_id) ON UPDATE CASCADE,
@@ -115,10 +113,10 @@ CREATE TABLE public.department_head
     department_head_id   varchar(64)                NOT NULL,
     department_id        varchar(64)                NOT NULL,
     employee_id          varchar(64)                NOT NULL,
-    created_by           jsonb                      NOT NULL,
-    last_updated_by      jsonb,
+    created_by           json                       NOT NULL,
+    modified_by          json,
     date_created         timestamp with time zone   NOT NULL DEFAULT now(),
-    date_updated         timestamp with time zone   NOT NULL DEFAULT now(),
+    date_modified        timestamp with time zone   NOT NULL DEFAULT now(),
     CONSTRAINT department_head_pk PRIMARY KEY (department_head_id),
     CONSTRAINT department_head_department_fk FOREIGN KEY (department_id) REFERENCES public.department (department_id) ON UPDATE CASCADE,
     CONSTRAINT department_head_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
@@ -134,10 +132,10 @@ CREATE TABLE public.emergency_contact
     relationship         varchar(64)                 NOT NULL,
     address              varchar(64)                 NOT NULL,
     email                varchar(64)                 NOT NULL,
-    created_by           jsonb                       NOT NULL,
-    last_updated_by      jsonb,
+    created_by           json                        NOT NULL,
+    modified_by          json,
     date_created         timestamp with time zone    NOT NULL DEFAULT now(),
-    date_updated         timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified        timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT emergency_contact_pk PRIMARY KEY (emergency_contact_id),
     CONSTRAINT emergency_contact_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
 );
@@ -164,7 +162,7 @@ CREATE TABLE public.leave_request
     reason             text,
     remarks            text,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_updated       timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT leave_request_pk PRIMARY KEY (leave_request_id),
     CONSTRAINT leave_request_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT leave_request_approver_fk FOREIGN KEY (approver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
@@ -181,10 +179,10 @@ CREATE TABLE public.notification
     priority           varchar(64)                 NOT NULL,
     delivery_status    varchar(64)                 NOT NULL,
     date_read          timestamp with time zone,
-    created_by         jsonb                       NOT NULL,
-    last_updated_by    jsonb,
+    created_by         json                        NOT NULL,
+    modified_by        json,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_updated       timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT notification_pk PRIMARY KEY (notification_id),
     CONSTRAINT notification_sender_fk FOREIGN KEY (sender_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT notification_receiver_fk FOREIGN KEY (receiver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
@@ -194,31 +192,42 @@ CREATE TABLE public.notification
 
 CREATE TABLE public.document
 (
-    employee_id         character varying(64)      NOT NULL,
-    document_id         character varying(64)      NOT NULL,
-    document_name       character varying(512)     NOT NULL,
-    document_description character varying(512),
-    document_upload_path text                      NOT NULL,
-    document_type       character varying(64)      NOT NULL,
-    date_created        timestamp with time zone   NOT NULL,
-    date_updated        timestamp with time zone   NOT NULL DEFAULT now(),
-    created_by          jsonb                      NOT NULL,
-    last_updated_by     jsonb,
-    CONSTRAINT documents_pk PRIMARY KEY (document_id),
-    CONSTRAINT document_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) MATCH simple ON UPDATE cascade ON DELETE NO ACTION,
+    document_id             character varying(64)      NOT NULL,
+    document_name           character varying(512)     NOT NULL,
+    document_description    character varying(512),
+    document_upload_path    text                       NOT NULL,
+    document_type           character varying(64)      NOT NULL,
+    date_created            timestamp with time zone   NOT NULL,
+    date_modified           timestamp with time zone   NOT NULL DEFAULT now(),
+    created_by              json                       NOT NULL,
+    modified_by             json,
+    CONSTRAINT document_pk PRIMARY KEY (document_id),
     CONSTRAINT document_document_type_fk FOREIGN KEY (document_type) REFERENCES public.option (option_id) ON UPDATE CASCADE
 );
 
-CREATE TABLE public.configuration_option
+CREATE TABLE public.employee_has_document
 (
-    configuration_option_id character varying(64)     NOT NULL,
-    configuration_key       character varying(60) UNIQUE NOT NULL,
-    configuration_value     character varying(100)    NOT NULL,
-    date_created            timestamp with time zone  NOT NULL DEFAULT now(),
-    date_updated            timestamp with time zone  NOT NULL DEFAULT now(),
-    created_by              jsonb                     NOT NULL,
-    last_updated_by         jsonb,
-    CONSTRAINT configuration_option_pk PRIMARY KEY (configuration_option_id)
+    employee_has_document_id   character varying(64)      NOT NULL,
+    employee_id                character varying(64)      NOT NULL,
+    document_id                character varying(64)      NOT NULL,
+    date_created               timestamp with time zone   NOT NULL,
+    created_by                 json                       NOT NULL,
+    CONSTRAINT employee_has_document_pk PRIMARY KEY (document_id),
+    CONSTRAINT employee_has_document_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) MATCH simple ON UPDATE cascade ON DELETE NO ACTION,
+    CONSTRAINT employee_has_document_document_fk FOREIGN KEY (document_id) REFERENCES public.document (document_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE public.app_config
+(
+    app_config_id           character varying(64)            NOT NULL,
+    configuration_key       character varying(60) UNIQUE     NOT NULL,
+    configuration_value     character varying(100)           NOT NULL,
+    date_created            timestamp with time zone         NOT NULL DEFAULT now(),
+    date_modified           timestamp with time zone         NOT NULL DEFAULT now(),
+    created_by              json                             NOT NULL,
+    modified_by             json,
+    CONSTRAINT app_config_pk PRIMARY KEY (app_config_id),
+    CONSTRAINT app_config_configuration_key_uq UNIQUE (configuration_key)
 );
 
 CREATE TABLE public.event
@@ -227,12 +236,14 @@ CREATE TABLE public.event
     event_title          character varying(64)    NOT NULL,
     event_description    character varying(100)   NOT NULL,
     event_type           character varying(100)   NOT NULL,
+    event_status         character varying(100)   NOT NULL,
     start_date           date                     NOT NULL,
     end_date             date                     NOT NULL,
     date_created         timestamp with time zone NOT NULL DEFAULT now(),
-    date_updated         timestamp with time zone NOT NULL DEFAULT now(),
-    created_by           jsonb                    NOT NULL,
-    last_updated_by      jsonb,
+    date_modified        timestamp with time zone NOT NULL DEFAULT now(),
+    created_by           json                     NOT NULL,
+    modified_by          json,
     CONSTRAINT event_pk PRIMARY KEY (event_id),
-    CONSTRAINT event_event_type_fk FOREIGN KEY (event_type) REFERENCES public.option (option_id) ON UPDATE CASCADE
+    CONSTRAINT event_event_type_fk FOREIGN KEY (event_type) REFERENCES public.option (option_id) ON UPDATE CASCADE,
+    CONSTRAINT event_event_status_fk FOREIGN KEY (event_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
 );
