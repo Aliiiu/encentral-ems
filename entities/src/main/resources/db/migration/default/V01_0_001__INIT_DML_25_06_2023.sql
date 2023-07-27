@@ -288,7 +288,7 @@ CREATE TABLE public.audit_log
     table_name              character varying(60)            NOT NULL,
     row_id                  character varying(64)            NOT NULL,
     field_name              character varying(60)            NOT NULL,
-    initial_value           text                             NOT NULL,
+    initial_value           text,
     new_value               text                             NOT NULL,
     action_type             action                           NOT NULL,
     date_modified           timestamp with time zone         NOT NULL DEFAULT now(),
