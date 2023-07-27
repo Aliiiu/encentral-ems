@@ -285,6 +285,7 @@ CREATE TABLE public.event
 CREATE TABLE public.audit_log
 (
     audit_log_id            character varying(64)            NOT NULL,
+    employee_id             character varying(64)            NOT NULL,
     table_name              character varying(60)            NOT NULL,
     row_id                  character varying(64)            NOT NULL,
     field_name              character varying(60)            NOT NULL,
@@ -292,5 +293,6 @@ CREATE TABLE public.audit_log
     new_value               text                             NOT NULL,
     action_type             action                           NOT NULL,
     date_modified           timestamp with time zone         NOT NULL DEFAULT now(),
-    CONSTRAINT audit_log_pk PRIMARY KEY (audit_log_id)
+    CONSTRAINT audit_log_pk PRIMARY KEY (audit_log_id),
+    CONSTRAINT audit_log_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
 );
