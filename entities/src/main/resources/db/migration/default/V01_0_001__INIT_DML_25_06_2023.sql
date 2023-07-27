@@ -23,7 +23,7 @@ CREATE TABLE public.option
     modified_by          json,
     CONSTRAINT option_pk PRIMARY KEY (option_id),
     CONSTRAINT option_option_type_fk FOREIGN KEY (option_type_id) REFERENCES public.option_type (option_type_id) MATCH simple ON UPDATE cascade ON DELETE NO ACTION,
-    CONSTRAINT option_option_value_uq UNIQUE (option_value)
+    CONSTRAINT option_option_value_uq UNIQUE (option_type_id, option_value)
 );
 
 CREATE TABLE public.role
@@ -93,6 +93,7 @@ CREATE TABLE employee
     password            varchar(256)                NOT NULL,
     employee_email      varchar(60)                 NOT NULL,
     date_of_birth       date                        NOT NULL,
+    leave_days          integer                     NOT NULL DEFAULT 30,
     login_attempts      integer                     NOT NULL DEFAULT 0,
     last_login          timestamp with time zone,
     created_by          json                        NOT NULL,
@@ -169,6 +170,37 @@ CREATE TABLE public.leave_request
     CONSTRAINT leave_request_approval_status_fk FOREIGN KEY (approval_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
 );
 
+CREATE TABLE public.employee_update_request
+(
+    employee_update_request_id   varchar(64)                 NOT NULL,
+    employee_id                  varchar(64)                 NOT NULL,
+    approver_id                  varchar(64),
+    update_field_name            varchar(64)                 NOT NULL,
+    update_new_value             varchar(64)                 NOT NULL,
+    approval_status              varchar(64)                 NOT NULL,
+    reason                       text,
+    remarks                      text,
+    date_created                timestamp with time zone     NOT NULL DEFAULT now(),
+    date_modified               timestamp with time zone     NOT NULL DEFAULT now(),
+    CONSTRAINT employee_update_request_pk PRIMARY KEY (employee_update_request_id),
+    CONSTRAINT employee_update_request_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
+    CONSTRAINT employee_update_request_approver_fk FOREIGN KEY (approver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
+    CONSTRAINT employee_update_request_approval_status_fk FOREIGN KEY (approval_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE public.notification_template
+(
+    notification_template_id       varchar(64)                 NOT NULL,
+    notification_template_name     varchar(64)                 NOT NULL,
+    notification_template_content  text                        NOT NULL,
+    notification_description       text,
+    created_by                     json                        NOT NULL,
+    modified_by                    json,
+    date_created                   timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified                  timestamp with time zone    NOT NULL DEFAULT now(),
+    CONSTRAINT notification_template_pk PRIMARY KEY (notification_template_id)
+);
+
 CREATE TABLE public.notification
 (
     notification_id    varchar(64)                 NOT NULL,
@@ -178,6 +210,7 @@ CREATE TABLE public.notification
     receiver_id        varchar(64)                 NOT NULL,
     priority           varchar(64)                 NOT NULL,
     delivery_status    varchar(64)                 NOT NULL,
+    notification_template varchar(64)              NOT NULL,
     date_read          timestamp with time zone,
     created_by         json                        NOT NULL,
     modified_by        json,
@@ -187,7 +220,8 @@ CREATE TABLE public.notification
     CONSTRAINT notification_sender_fk FOREIGN KEY (sender_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT notification_receiver_fk FOREIGN KEY (receiver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT notification_priority_fk FOREIGN KEY (priority) REFERENCES public.option (option_id) ON UPDATE CASCADE,
-    CONSTRAINT notification_delivery_status_fk FOREIGN KEY (delivery_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
+    CONSTRAINT notification_delivery_status_fk FOREIGN KEY (delivery_status) REFERENCES public.option (option_id) ON UPDATE CASCADE,
+    CONSTRAINT notification_notification_template_fk FOREIGN KEY (notification_template) REFERENCES public.notification_template (notification_template_id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public.document
@@ -196,13 +230,11 @@ CREATE TABLE public.document
     document_name           character varying(512)     NOT NULL,
     document_description    character varying(512),
     document_upload_path    text                       NOT NULL,
-    document_type           character varying(64)      NOT NULL,
     date_created            timestamp with time zone   NOT NULL,
     date_modified           timestamp with time zone   NOT NULL DEFAULT now(),
     created_by              json                       NOT NULL,
     modified_by             json,
-    CONSTRAINT document_pk PRIMARY KEY (document_id),
-    CONSTRAINT document_document_type_fk FOREIGN KEY (document_type) REFERENCES public.option (option_id) ON UPDATE CASCADE
+    CONSTRAINT document_pk PRIMARY KEY (document_id)
 );
 
 CREATE TABLE public.employee_has_document
@@ -210,11 +242,13 @@ CREATE TABLE public.employee_has_document
     employee_has_document_id   character varying(64)      NOT NULL,
     employee_id                character varying(64)      NOT NULL,
     document_id                character varying(64)      NOT NULL,
+    document_type              character varying(64)      NOT NULL,
     date_created               timestamp with time zone   NOT NULL,
     created_by                 json                       NOT NULL,
     CONSTRAINT employee_has_document_pk PRIMARY KEY (document_id),
     CONSTRAINT employee_has_document_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) MATCH simple ON UPDATE cascade ON DELETE NO ACTION,
-    CONSTRAINT employee_has_document_document_fk FOREIGN KEY (document_id) REFERENCES public.document (document_id) ON UPDATE CASCADE
+    CONSTRAINT employee_has_document_document_fk FOREIGN KEY (document_id) REFERENCES public.document (document_id) ON UPDATE CASCADE,
+    CONSTRAINT employee_has_document_document_type_fk FOREIGN KEY (document_type) REFERENCES public.option (option_id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public.app_config
@@ -246,4 +280,17 @@ CREATE TABLE public.event
     CONSTRAINT event_pk PRIMARY KEY (event_id),
     CONSTRAINT event_event_type_fk FOREIGN KEY (event_type) REFERENCES public.option (option_id) ON UPDATE CASCADE,
     CONSTRAINT event_event_status_fk FOREIGN KEY (event_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE public.audit_log
+(
+    audit_log_id            character varying(64)            NOT NULL,
+    table_name              character varying(60)            NOT NULL,
+    row_id                  character varying(100)           NOT NULL,
+    field_name              character varying(60)            NOT NULL,
+    initial_value           character varying(100)           NOT NULL,
+    new_value               character varying(60)            NOT NULL,
+    action_type             character varying(100)           NOT NULL,
+    date_modified           timestamp with time zone         NOT NULL DEFAULT now(),
+    CONSTRAINT audit_log_pk PRIMARY KEY (audit_log_id)
 );
