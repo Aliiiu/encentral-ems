@@ -97,7 +97,7 @@ CREATE TABLE employee
     department_id       varchar(64),
     profile_picture_url text,
     highest_certification varchar(64),
-    state_of_origin     varchar(64)                 NOT NULL,
+    state_of_origin     varchar(64),
     country_of_origin   varchar(64)                 NOT NULL,
     employee_marital_status varchar(64),
     password            varchar(256)                NOT NULL,
@@ -206,7 +206,7 @@ CREATE TABLE public.employee_update_request
 CREATE TABLE public.notification_template
 (
     notification_template_id       varchar(64)                 NOT NULL,
-    notification_template_name     varchar(64)                 NOT NULL,
+    notification_template_name     varchar(64) UNIQUE          NOT NULL,
     notification_template_content  text                        NOT NULL,
     notification_description       text,
     created_by                     json                        NOT NULL,
@@ -317,7 +317,6 @@ CREATE TABLE public.announcement
     sender_id          varchar(64)                 NOT NULL,
     priority           notification_priority       NOT NULL DEFAULT 'NORMAL',
     delivery_date      date,
-    date_read          timestamp with time zone,
     created_by         json                        NOT NULL,
     modified_by        json,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
@@ -328,14 +327,14 @@ CREATE TABLE public.announcement
 
 CREATE TABLE public.announcement_recipient
 (
-    announcement_recipient_id     varchar(64)                  NOT NULL,
+    announcement_recipient_id     varchar(64)                 NOT NULL,
     announcement_id               varchar(64)                 NOT NULL,
-    department_id                 varchar(64)                 NOT NULL,
+    employee_id                   varchar(64)                 NOT NULL,
     delivery_status               notification_status         NOT NULL DEFAULT 'UNREAD',
-    delivery_date                 date,
+    date_read                     timestamp with time zone,
     date_created                  timestamp with time zone    NOT NULL DEFAULT now(),
     date_modified                 timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT announcement_recipient_pk PRIMARY KEY (announcement_recipient_id),
     CONSTRAINT announcement_recipient_announcement_fk FOREIGN KEY (announcement_id) REFERENCES public.announcement (announcement_id) ON UPDATE CASCADE,
-    CONSTRAINT announcement_recipient_department_fk FOREIGN KEY (department_id) REFERENCES public.department (department_id) ON UPDATE CASCADE
+    CONSTRAINT announcement_recipient_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
 );
