@@ -1,4 +1,10 @@
 CREATE TYPE action AS ENUM ('CREATE', 'READ', 'UPDATE', 'DELETE');
+CREATE TYPE employee_request_status AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'CANCELED', 'COMPLETED');
+CREATE TYPE leave_request_status AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'CANCELED', 'IN_PROGRESS', 'COMPLETED');
+CREATE TYPE employee_status AS ENUM ('ACTIVE', 'ON_LEAVE', 'SUSPENDED', 'RESIGNED', 'TERMINATED', 'RETIRED');
+CREATE TYPE notification_priority AS ENUM ('LOW', 'NORMAL', 'HIGH', 'VERY_HIGH');
+CREATE TYPE notification_status AS ENUM ('UNREAD', 'READ', 'DELETED');
+CREATE TYPE event_status AS ENUM ('UPCOMING', 'ONGOING', 'ENDED');
 
 CREATE TABLE public.option_type
 (
@@ -67,6 +73,7 @@ CREATE TABLE public.department
 (
     department_id      varchar(64)                 NOT NULL,
     department_name    varchar(64)                 NOT NULL,
+    working_hours      integer                     NOT NULL DEFAULT 8,
     description        text,
     created_by         json                       NOT NULL,
     modified_by        json,
@@ -80,16 +87,19 @@ CREATE TABLE employee
     employee_id         varchar(64)                 NOT NULL,
     first_name          varchar(64)                 NOT NULL,
     last_name           varchar(64)                 NOT NULL,
-    middle_name         varchar(64)                 NOT NULL,
+    employee_gender     varchar(64)                 NOT NULL,
     role_id             varchar(64)                 NOT NULL,
     phone_number        varchar(20)                 NOT NULL,
     date_hired          date                        NOT NULL,
-    current_status      varchar(64)                 NOT NULL,
+    current_status      employee_status             NOT NULL,
     address             varchar(225)                NOT NULL,
+    job_title           varchar(60)                 NOT NULL,
     department_id       varchar(64),
     profile_picture_url text,
     highest_certification varchar(64),
     state_of_origin     varchar(64)                 NOT NULL,
+    country_of_origin   varchar(64)                 NOT NULL,
+    employee_marital_status varchar(64),
     password            varchar(256)                NOT NULL,
     employee_email      varchar(60)                 NOT NULL,
     date_of_birth       date                        NOT NULL,
@@ -104,9 +114,11 @@ CREATE TABLE employee
     CONSTRAINT employee_pk PRIMARY KEY (employee_id),
     CONSTRAINT employee_role_fk FOREIGN KEY (role_id) REFERENCES public.role (role_id) ON UPDATE CASCADE,
     CONSTRAINT employee_department_fk FOREIGN KEY (department_id) REFERENCES public.department (department_id) ON UPDATE CASCADE,
-    CONSTRAINT employee_current_status_fk FOREIGN KEY (current_status) REFERENCES public.option (option_id) ON UPDATE CASCADE,
     CONSTRAINT employee_highest_certification_fk FOREIGN KEY (highest_certification) REFERENCES public.option (option_id) ON UPDATE CASCADE,
-    CONSTRAINT employee_state_of_origin_fk FOREIGN KEY (state_of_origin) REFERENCES public.option (option_id) ON UPDATE CASCADE
+    CONSTRAINT employee_state_of_origin_fk FOREIGN KEY (state_of_origin) REFERENCES public.option (option_id) ON UPDATE CASCADE,
+    CONSTRAINT employee_country_of_origin_fk FOREIGN KEY (country_of_origin) REFERENCES public.option (option_id) ON UPDATE CASCADE,
+    CONSTRAINT employee_employee_gender_fk FOREIGN KEY (employee_gender) REFERENCES public.option (option_id) ON UPDATE CASCADE,
+    CONSTRAINT employee_employee_marital_status_fk FOREIGN KEY (employee_marital_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public.department_head
@@ -129,6 +141,7 @@ CREATE TABLE public.emergency_contact
     employee_id          varchar(64)                 NOT NULL,
     first_name           varchar(64)                 NOT NULL,
     last_name            varchar(64)                 NOT NULL,
+    contact_gender       varchar(64),
     phone_number         varchar(20)                 NOT NULL,
     relationship         varchar(64)                 NOT NULL,
     address              varchar(64)                 NOT NULL,
@@ -138,7 +151,8 @@ CREATE TABLE public.emergency_contact
     date_created         timestamp with time zone    NOT NULL DEFAULT now(),
     date_modified        timestamp with time zone    NOT NULL DEFAULT now(),
     CONSTRAINT emergency_contact_pk PRIMARY KEY (emergency_contact_id),
-    CONSTRAINT emergency_contact_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
+    CONSTRAINT emergency_contact_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
+    CONSTRAINT emergency_contact_gender_fk FOREIGN KEY (contact_gender) REFERENCES public.option (option_id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public.attendance
@@ -157,7 +171,8 @@ CREATE TABLE public.leave_request
     leave_request_id   varchar(64)                 NOT NULL,
     employee_id        varchar(64)                 NOT NULL,
     approver_id        varchar(64),
-    approval_status    varchar(64)                 NOT NULL,
+    approval_status    leave_request_status        NOT NULL DEFAULT 'PENDING',
+    leave_type         varchar(64)                 NOT NULL,
     start_date         date                        NOT NULL,
     duration           integer                     NOT NULL,
     reason             text,
@@ -167,7 +182,7 @@ CREATE TABLE public.leave_request
     CONSTRAINT leave_request_pk PRIMARY KEY (leave_request_id),
     CONSTRAINT leave_request_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT leave_request_approver_fk FOREIGN KEY (approver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
-    CONSTRAINT leave_request_approval_status_fk FOREIGN KEY (approval_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
+    CONSTRAINT leave_request_leave_type_fk FOREIGN KEY (leave_type) REFERENCES public.option (option_id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public.employee_update_request
@@ -178,15 +193,14 @@ CREATE TABLE public.employee_update_request
     update_field_name            varchar(64)                 NOT NULL,
     old_value                    text,
     update_new_value             text                        NOT NULL,
-    approval_status              varchar(64)                 NOT NULL,
+    approval_status              employee_request_status                 NOT NULL,
     reason                       text,
     remarks                      text,
     date_created                 timestamp with time zone     NOT NULL DEFAULT now(),
     date_modified                timestamp with time zone     NOT NULL DEFAULT now(),
     CONSTRAINT employee_update_request_pk PRIMARY KEY (employee_update_request_id),
     CONSTRAINT employee_update_request_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
-    CONSTRAINT employee_update_request_approver_fk FOREIGN KEY (approver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
-    CONSTRAINT employee_update_request_approval_status_fk FOREIGN KEY (approval_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
+    CONSTRAINT employee_update_request_approver_fk FOREIGN KEY (approver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public.notification_template
@@ -209,8 +223,8 @@ CREATE TABLE public.notification
     notification_message text,
     sender_id          varchar(64)                 NOT NULL,
     receiver_id        varchar(64)                 NOT NULL,
-    priority           varchar(64)                 NOT NULL,
-    delivery_status    varchar(64)                 NOT NULL,
+    priority           notification_priority       NOT NULL DEFAULT 'NORMAL',
+    delivery_status    notification_status         NOT NULL DEFAULT 'UNREAD',
     notification_template varchar(64)              NOT NULL,
     date_read          timestamp with time zone,
     created_by         json                        NOT NULL,
@@ -220,8 +234,6 @@ CREATE TABLE public.notification
     CONSTRAINT notification_pk PRIMARY KEY (notification_id),
     CONSTRAINT notification_sender_fk FOREIGN KEY (sender_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT notification_receiver_fk FOREIGN KEY (receiver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
-    CONSTRAINT notification_priority_fk FOREIGN KEY (priority) REFERENCES public.option (option_id) ON UPDATE CASCADE,
-    CONSTRAINT notification_delivery_status_fk FOREIGN KEY (delivery_status) REFERENCES public.option (option_id) ON UPDATE CASCADE,
     CONSTRAINT notification_notification_template_fk FOREIGN KEY (notification_template) REFERENCES public.notification_template (notification_template_id) ON UPDATE CASCADE
 );
 
@@ -271,7 +283,7 @@ CREATE TABLE public.event
     event_title          character varying(64)    NOT NULL,
     event_description    character varying(100)   NOT NULL,
     event_type           character varying(100)   NOT NULL,
-    event_status         character varying(100)   NOT NULL,
+    event_status         event_status             NOT NULL,
     start_date           date                     NOT NULL,
     end_date             date                     NOT NULL,
     date_created         timestamp with time zone NOT NULL DEFAULT now(),
@@ -279,8 +291,7 @@ CREATE TABLE public.event
     created_by           json                     NOT NULL,
     modified_by          json,
     CONSTRAINT event_pk PRIMARY KEY (event_id),
-    CONSTRAINT event_event_type_fk FOREIGN KEY (event_type) REFERENCES public.option (option_id) ON UPDATE CASCADE,
-    CONSTRAINT event_event_status_fk FOREIGN KEY (event_status) REFERENCES public.option (option_id) ON UPDATE CASCADE
+    CONSTRAINT event_event_type_fk FOREIGN KEY (event_type) REFERENCES public.option (option_id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public.audit_log
@@ -296,4 +307,35 @@ CREATE TABLE public.audit_log
     date_modified           timestamp with time zone         NOT NULL DEFAULT now(),
     CONSTRAINT audit_log_pk PRIMARY KEY (audit_log_id),
     CONSTRAINT audit_log_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE public.announcement
+(
+    announcement_id    varchar(64)                 NOT NULL,
+    announcement_title varchar(60)                 NOT NULL,
+    announcement_message text,
+    sender_id          varchar(64)                 NOT NULL,
+    priority           notification_priority       NOT NULL DEFAULT 'NORMAL',
+    delivery_date      date,
+    date_read          timestamp with time zone,
+    created_by         json                        NOT NULL,
+    modified_by        json,
+    date_created       timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
+    CONSTRAINT announcement_pk PRIMARY KEY (announcement_id),
+    CONSTRAINT announcement_sender_fk FOREIGN KEY (sender_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
+);
+
+CREATE TABLE public.announcement_recipient
+(
+    announcement_recipient_id     varchar(64)                  NOT NULL,
+    announcement_id               varchar(64)                 NOT NULL,
+    department_id                 varchar(64)                 NOT NULL,
+    delivery_status               notification_status         NOT NULL DEFAULT 'UNREAD',
+    delivery_date                 date,
+    date_created                  timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified                 timestamp with time zone    NOT NULL DEFAULT now(),
+    CONSTRAINT announcement_recipient_pk PRIMARY KEY (announcement_recipient_id),
+    CONSTRAINT announcement_recipient_announcement_fk FOREIGN KEY (announcement_id) REFERENCES public.announcement (announcement_id) ON UPDATE CASCADE,
+    CONSTRAINT announcement_recipient_department_fk FOREIGN KEY (department_id) REFERENCES public.department (department_id) ON UPDATE CASCADE
 );
