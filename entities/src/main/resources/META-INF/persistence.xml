@@ -2,6 +2,27 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="ENTITY_PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.encentral.staffsync.entity.JpaAnnouncement</class>
+    <class>com.encentral.staffsync.entity.JpaAnnouncementRecipient</class>
+    <class>com.encentral.staffsync.entity.JpaAppConfig</class>
+    <class>com.encentral.staffsync.entity.JpaAttendance</class>
+    <class>com.encentral.staffsync.entity.JpaAuditLog</class>
+    <class>com.encentral.staffsync.entity.JpaDepartment</class>
+    <class>com.encentral.staffsync.entity.JpaDepartmentHead</class>
+    <class>com.encentral.staffsync.entity.JpaDocument</class>
+    <class>com.encentral.staffsync.entity.JpaEmergencyContact</class>
+    <class>com.encentral.staffsync.entity.JpaEmployee</class>
+    <class>com.encentral.staffsync.entity.JpaEmployeeHasDocument</class>
+    <class>com.encentral.staffsync.entity.JpaEmployeeUpdateRequest</class>
+    <class>com.encentral.staffsync.entity.JpaEvent</class>
+    <class>com.encentral.staffsync.entity.JpaLeaveRequest</class>
+    <class>com.encentral.staffsync.entity.JpaNotification</class>
+    <class>com.encentral.staffsync.entity.JpaNotificationTemplate</class>
+    <class>com.encentral.staffsync.entity.JpaOption</class>
+    <class>com.encentral.staffsync.entity.JpaOptionType</class>
+    <class>com.encentral.staffsync.entity.JpaPermission</class>
+    <class>com.encentral.staffsync.entity.JpaRole</class>
+    <class>com.encentral.staffsync.entity.JpaRoleHasPermission</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/staffsync"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
