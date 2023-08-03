@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.encentral.scaffold.commons;
+package com.encentral.scaffold.commons.db;
 
 import com.google.inject.Singleton;
 import com.querydsl.sql.Configuration;

@@ -5,6 +5,7 @@
  */
 package com.encentral.scaffold.binder;
 
+import com.esl.internship.staffsync.system.configuration.impl.SystemConfigurationModule;
 import com.google.inject.AbstractModule;
 import play.libs.akka.AkkaGuiceSupport;
 
@@ -22,5 +23,6 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
 
         bind(BigBang.class).asEagerSingleton();
 
+        install(new SystemConfigurationModule());
     }
 }

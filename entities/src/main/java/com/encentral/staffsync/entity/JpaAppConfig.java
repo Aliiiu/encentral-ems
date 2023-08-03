@@ -28,6 +28,7 @@ public class JpaAppConfig implements Serializable {
 	@Column(name="configuration_value", nullable=false, length=100)
 	private String configurationValue;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -37,6 +38,7 @@ public class JpaAppConfig implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
