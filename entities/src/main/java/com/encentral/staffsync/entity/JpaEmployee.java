@@ -107,37 +107,37 @@ public class JpaEmployee implements Serializable {
 	private Set<JpaEmergencyContact> emergencyContacts;
 
 	//bidirectional many-to-one association to JpaDepartment
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="department_id")
 	private JpaDepartment department;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
-	@JoinColumn(name="option_value", nullable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="country_of_origin", referencedColumnName = "option_id", nullable=false)
 	private JpaOption countryOfOrigin;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
-	@JoinColumn(name="option_value", nullable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="employee_gender", referencedColumnName = "option_id", nullable=false)
 	private JpaOption employeeGender;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
-	@JoinColumn(name="option_value")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="employee_marital_status", referencedColumnName = "option_id")
 	private JpaOption employeeMaritalStatus;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
-	@JoinColumn(name="option_value")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="highest_certification", referencedColumnName = "option_id")
 	private JpaOption highestCertification;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
-	@JoinColumn(name="option_value")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="state_of_origin", referencedColumnName = "option_id")
 	private JpaOption stateOfOrigin;
 
 	//bidirectional many-to-one association to JpaRole
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="role_id", nullable=false)
 	private JpaRole role;
 

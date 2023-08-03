@@ -17,3 +17,9 @@ GET            /api-server/error/                                              c
 GET            /error                                                          controllers.HomeController.error()
 GET            /error/                                                         controllers.HomeController.error()
 GET            /api-docs                                                       controllers.HomeController.api()
+
+POST           /app-config/                                                    controllers.system_configuration.MyController.addAppConfig()
+PATCH          /app-config/:appConfigId/                                       controllers.system_configuration.MyController.updateAppConfig(appConfigId : String)
+GET            /app-config/:appConfigId/                                       controllers.system_configuration.MyController.getAppConfig(appConfigId : String)
+GET            /app-config/                                                    controllers.system_configuration.MyController.getAppConfigs()
+DELETE         /app-config/:appConfigId/                                       controllers.system_configuration.MyController.deleteAppConfig(appConfigId : String)

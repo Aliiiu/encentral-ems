@@ -12,7 +12,7 @@ CREATE TABLE public.option_type
     option_type          character varying(100)   NOT NULL,
     option_description   text                     NOT NULL,
     date_created         timestamp with time zone NOT NULL DEFAULT now(),
-    date_modified        timestamp with time zone NOT NULL DEFAULT now(),
+    date_modified        timestamp with time zone,
     created_by           json                     NOT NULL,
     modified_by          json,
     CONSTRAINT option_type_pk PRIMARY KEY (option_type_id)
@@ -24,7 +24,7 @@ CREATE TABLE public.option
     option_type_id       character varying(64)    NOT NULL,
     option_value         character varying(100)   UNIQUE NOT NULL,
     date_created         timestamp with time zone NOT NULL DEFAULT now(),
-    date_modified        timestamp with time zone NOT NULL DEFAULT now(),
+    date_modified        timestamp with time zone,
     created_by           json                     NOT NULL,
     modified_by          json,
     CONSTRAINT option_pk PRIMARY KEY (option_id),
@@ -40,7 +40,7 @@ CREATE TABLE public.role
     created_by         json                        NOT NULL,
     modified_by        json,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone,
     CONSTRAINT role_pk PRIMARY KEY (role_id)
 );
 
@@ -53,7 +53,7 @@ CREATE TABLE public.permission
     created_by             json                        NOT NULL,
     modified_by            json,
     date_created           timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified          timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified          timestamp with time zone,
     CONSTRAINT permission_pk PRIMARY KEY (permission_id)
 );
 
@@ -78,7 +78,7 @@ CREATE TABLE public.department
     created_by         json                       NOT NULL,
     modified_by        json,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone,
     CONSTRAINT department_pk PRIMARY KEY (department_id)
 );
 
@@ -110,7 +110,7 @@ CREATE TABLE employee
     modified_by         json,
     employee_active     boolean                     NOT NULL DEFAULT TRUE,
     date_created        timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified       timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified       timestamp with time zone,
     CONSTRAINT employee_pk PRIMARY KEY (employee_id),
     CONSTRAINT employee_role_fk FOREIGN KEY (role_id) REFERENCES public.role (role_id) ON UPDATE CASCADE,
     CONSTRAINT employee_department_fk FOREIGN KEY (department_id) REFERENCES public.department (department_id) ON UPDATE CASCADE,
@@ -129,7 +129,7 @@ CREATE TABLE public.department_head
     created_by           json                       NOT NULL,
     modified_by          json,
     date_created         timestamp with time zone   NOT NULL DEFAULT now(),
-    date_modified        timestamp with time zone   NOT NULL DEFAULT now(),
+    date_modified        timestamp with time zone,
     CONSTRAINT department_head_pk PRIMARY KEY (department_head_id),
     CONSTRAINT department_head_department_fk FOREIGN KEY (department_id) REFERENCES public.department (department_id) ON UPDATE CASCADE,
     CONSTRAINT department_head_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
@@ -149,7 +149,7 @@ CREATE TABLE public.emergency_contact
     created_by           json                        NOT NULL,
     modified_by          json,
     date_created         timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified        timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified        timestamp with time zone,
     CONSTRAINT emergency_contact_pk PRIMARY KEY (emergency_contact_id),
     CONSTRAINT emergency_contact_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT emergency_contact_gender_fk FOREIGN KEY (contact_gender) REFERENCES public.option (option_id) ON UPDATE CASCADE
@@ -178,7 +178,7 @@ CREATE TABLE public.leave_request
     reason             text,
     remarks            text,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone,
     CONSTRAINT leave_request_pk PRIMARY KEY (leave_request_id),
     CONSTRAINT leave_request_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT leave_request_approver_fk FOREIGN KEY (approver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
@@ -197,7 +197,7 @@ CREATE TABLE public.employee_update_request
     reason                       text,
     remarks                      text,
     date_created                 timestamp with time zone     NOT NULL DEFAULT now(),
-    date_modified                timestamp with time zone     NOT NULL DEFAULT now(),
+    date_modified                timestamp with time zone,
     CONSTRAINT employee_update_request_pk PRIMARY KEY (employee_update_request_id),
     CONSTRAINT employee_update_request_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT employee_update_request_approver_fk FOREIGN KEY (approver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
@@ -212,7 +212,7 @@ CREATE TABLE public.notification_template
     created_by                     json                        NOT NULL,
     modified_by                    json,
     date_created                   timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified                  timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified                  timestamp with time zone,
     CONSTRAINT notification_template_pk PRIMARY KEY (notification_template_id)
 );
 
@@ -230,7 +230,7 @@ CREATE TABLE public.notification
     created_by         json                        NOT NULL,
     modified_by        json,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone,
     CONSTRAINT notification_pk PRIMARY KEY (notification_id),
     CONSTRAINT notification_sender_fk FOREIGN KEY (sender_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
     CONSTRAINT notification_receiver_fk FOREIGN KEY (receiver_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE,
@@ -244,7 +244,7 @@ CREATE TABLE public.document
     document_description    character varying(512),
     document_upload_path    text                       NOT NULL,
     date_created            timestamp with time zone   NOT NULL,
-    date_modified           timestamp with time zone   NOT NULL DEFAULT now(),
+    date_modified           timestamp with time zone,
     created_by              json                       NOT NULL,
     modified_by             json,
     CONSTRAINT document_pk PRIMARY KEY (document_id)
@@ -270,7 +270,7 @@ CREATE TABLE public.app_config
     configuration_key       character varying(60) UNIQUE     NOT NULL,
     configuration_value     character varying(100)           NOT NULL,
     date_created            timestamp with time zone         NOT NULL DEFAULT now(),
-    date_modified           timestamp with time zone         NOT NULL DEFAULT now(),
+    date_modified           timestamp with time zone,
     created_by              json                             NOT NULL,
     modified_by             json,
     CONSTRAINT app_config_pk PRIMARY KEY (app_config_id),
@@ -287,7 +287,7 @@ CREATE TABLE public.event
     start_date           date                     NOT NULL,
     end_date             date                     NOT NULL,
     date_created         timestamp with time zone NOT NULL DEFAULT now(),
-    date_modified        timestamp with time zone NOT NULL DEFAULT now(),
+    date_modified        timestamp with time zone,
     created_by           json                     NOT NULL,
     modified_by          json,
     CONSTRAINT event_pk PRIMARY KEY (event_id),
@@ -304,7 +304,7 @@ CREATE TABLE public.audit_log
     initial_value           text,
     new_value               text                             NOT NULL,
     action_type             action                           NOT NULL,
-    date_modified           timestamp with time zone         NOT NULL DEFAULT now(),
+    date_created            timestamp with time zone         NOT NULL DEFAULT now(),
     CONSTRAINT audit_log_pk PRIMARY KEY (audit_log_id),
     CONSTRAINT audit_log_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
 );
@@ -320,7 +320,7 @@ CREATE TABLE public.announcement
     created_by         json                        NOT NULL,
     modified_by        json,
     date_created       timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified      timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified      timestamp with time zone,
     CONSTRAINT announcement_pk PRIMARY KEY (announcement_id),
     CONSTRAINT announcement_sender_fk FOREIGN KEY (sender_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
 );
@@ -333,7 +333,7 @@ CREATE TABLE public.announcement_recipient
     delivery_status               notification_status         NOT NULL DEFAULT 'UNREAD',
     date_read                     timestamp with time zone,
     date_created                  timestamp with time zone    NOT NULL DEFAULT now(),
-    date_modified                 timestamp with time zone    NOT NULL DEFAULT now(),
+    date_modified                 timestamp with time zone,
     CONSTRAINT announcement_recipient_pk PRIMARY KEY (announcement_recipient_id),
     CONSTRAINT announcement_recipient_announcement_fk FOREIGN KEY (announcement_id) REFERENCES public.announcement (announcement_id) ON UPDATE CASCADE,
     CONSTRAINT announcement_recipient_employee_fk FOREIGN KEY (employee_id) REFERENCES public.employee (employee_id) ON UPDATE CASCADE
