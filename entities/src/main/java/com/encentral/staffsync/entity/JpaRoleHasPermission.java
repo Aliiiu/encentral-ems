@@ -21,6 +21,7 @@ public class JpaRoleHasPermission implements Serializable {
 	@Column(name="role_has_permission_id", unique=true, nullable=false, length=64)
 	private String roleHasPermissionId;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
