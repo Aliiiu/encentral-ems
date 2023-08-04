@@ -40,3 +40,10 @@ POST           /role/                                                          c
 GET            /role/:roleId/                                                  controllers.system_configuration.RoleController.getRole(roleId: String)
 PATCH          /role/:roleId/                                                  controllers.system_configuration.RoleController.updateRole(roleId: String)
 DELETE         /role/:roleId/                                                  controllers.system_configuration.RoleController.deleteRole(roleId: String)
+
+###### Role-Permission ######
+GET            /role-permission/grant/:roleId/:permissionId/                   controllers.system_configuration.RolePermissionController.grantPermissionToRole(roleId: String, permissionId: String)
+GET            /role-permission/revoke/:roleId/:permissionId/                  controllers.system_configuration.RolePermissionController.revokePermissionFromRole(roleId: String, permissionId: String)
+GET            /role-permission/permissions/:roleId/                           controllers.system_configuration.RolePermissionController.getPermissionsForRole(roleId: String)
+GET            /role-permission/roles/:permissionId/                           controllers.system_configuration.RolePermissionController.getRolesForPermission(permissionId: String)
+GET            /role-permission/                                               controllers.system_configuration.RolePermissionController.getAllRolePermission()
