@@ -45,6 +45,8 @@ public class DefaultRoleApiImpl implements IRoleApi {
         jpaRole.setRoleId(UUID.randomUUID().toString());
         jpaRole.setCreatedBy(stringifyEmployee(employee));
         jpaRole.setDateCreated(Timestamp.from(Instant.now()));
+
+        jpaApi.em().persist(jpaRole);
         return INSTANCE.mapRole(jpaRole);
     }
 

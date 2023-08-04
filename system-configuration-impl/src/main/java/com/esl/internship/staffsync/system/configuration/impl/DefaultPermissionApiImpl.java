@@ -39,6 +39,9 @@ public class DefaultPermissionApiImpl implements IPermissionApi {
         jpaPermission.setPermissionId(UUID.randomUUID().toString());
         jpaPermission.setCreatedBy(stringifyEmployee(employee));
         jpaPermission.setDateCreated(Timestamp.from(Instant.now()));
+
+        jpaApi.em().persist(jpaPermission);
+
         return INSTANCE.mapPermission(jpaPermission);
     }
 

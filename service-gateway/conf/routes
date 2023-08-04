@@ -23,3 +23,20 @@ PATCH          /app-config/:appConfigId/                                       c
 GET            /app-config/:appConfigId/                                       controllers.system_configuration.MyController.getAppConfig(appConfigId : String)
 GET            /app-config/                                                    controllers.system_configuration.MyController.getAppConfigs()
 DELETE         /app-config/:appConfigId/                                       controllers.system_configuration.MyController.deleteAppConfig(appConfigId : String)
+
+
+
+###### Permission Endpoints ######
+GET            /permission/                                                    controllers.system_configuration.PermissionController.getAllPermissions()
+POST           /permission/                                                    controllers.system_configuration.PermissionController.addPermission()
+GET            /permission/:permissionId/                                      controllers.system_configuration.PermissionController.getPermission(permissionId: String)
+PATCH          /permission/:permissionId/                                      controllers.system_configuration.PermissionController.updatePermission(permissionId: String)
+DELETE         /permission/:permissionId/                                      controllers.system_configuration.PermissionController.deletePermission(permissionId: String)
+
+
+###### Role Endpoints ######
+GET            /role/                                                          controllers.system_configuration.RoleController.getAllRole()
+POST           /role/                                                          controllers.system_configuration.RoleController.addRole()
+GET            /role/:roleId/                                                  controllers.system_configuration.RoleController.getRole(roleId: String)
+PATCH          /role/:roleId/                                                  controllers.system_configuration.RoleController.updateRole(roleId: String)
+DELETE         /role/:roleId/                                                  controllers.system_configuration.RoleController.deleteRole(roleId: String)
