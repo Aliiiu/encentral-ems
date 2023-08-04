@@ -3,6 +3,7 @@ package controllers.system_configuration;
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.scaffold.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.IRoleApi;
+import com.esl.internship.staffsync.system.configuration.dto.RoleDTO;
 import com.esl.internship.staffsync.system.configuration.model.Role;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
@@ -26,25 +27,25 @@ public class RoleController extends Controller {
     @ApiOperation(value = "Create a role")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Role", response = Role.class)
+                    @ApiResponse(code = 200, message = "Role Created", response = Role.class)
             }
     )
     @ApiImplicitParams(
             {
                     @ApiImplicitParam(
                             name = "body",
-                            value = "Invoice",
+                            value = "Role data",
                             paramType = "body",
                             required = true,
-                            dataType = "com.esl.internship.staffsync.system.configuration.model.Role"
+                            dataType = "com.esl.internship.staffsync.system.configuration.dto.RoleDTO"
                     )
             })
     public Result addRole() {
-        final var roleForm = validate(request().body().asJson(), Role.class);
-        if (roleForm.hasError) {
-            return badRequest(roleForm.error);
+        final var roleDtoForm = validate(request().body().asJson(), RoleDTO.class);
+        if (roleDtoForm.hasError) {
+            return badRequest(roleDtoForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iRoleApi.addRole(roleForm.value, getEmployee())));
+        return ok(myObjectMapper.toJsonString(iRoleApi.addRole(roleDtoForm.value, getEmployee())));
     }
 
     @ApiOperation(value = "Get role by id")
@@ -60,24 +61,24 @@ public class RoleController extends Controller {
     @ApiOperation(value = "Update a role")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Updated", response = boolean.class)
+                    @ApiResponse(code = 200, message = "Role Updated", response = boolean.class)
             }
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "body",
-                    value = "Invoice",
+                    value = "Role Data to update",
                     paramType = "body",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.system.configuration.model.Role"
+                    dataType = "com.esl.internship.staffsync.system.configuration.dto.RoleDTO"
             )
     })
     public Result updateRole(String roleId) {
-        final var roleForm = validate(request().body().asJson(), Role.class);
-        if (roleForm.hasError) {
-            return badRequest(roleForm.error);
+        final var roleDtoForm = validate(request().body().asJson(), RoleDTO.class);
+        if (roleDtoForm.hasError) {
+            return badRequest(roleDtoForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iRoleApi.updateRole(roleId, roleForm.value, getEmployee())));
+        return ok(myObjectMapper.toJsonString(iRoleApi.updateRole(roleId, roleDtoForm.value, getEmployee())));
     }
 
     @ApiOperation(value = "Get all roles")

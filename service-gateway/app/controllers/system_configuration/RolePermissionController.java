@@ -27,7 +27,7 @@ public class RolePermissionController extends Controller {
     @ApiOperation(value = "Grant permission to role")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Deleted", response = boolean.class)
+                    @ApiResponse(code = 200, message = "Permission granted to Role", response = boolean.class)
             }
     )
     public Result grantPermissionToRole(String roleId, String permissionId) {
@@ -39,7 +39,7 @@ public class RolePermissionController extends Controller {
     @ApiOperation(value = "Revoke permission from role")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Revoked", response = boolean.class)
+                    @ApiResponse(code = 200, message = "Permission revoked from Role", response = boolean.class)
             }
     )
     public Result revokePermissionFromRole(String roleId, String permissionId) {

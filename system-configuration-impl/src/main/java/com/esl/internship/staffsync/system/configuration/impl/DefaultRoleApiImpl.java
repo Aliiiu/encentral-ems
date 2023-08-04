@@ -6,9 +6,8 @@ import com.encentral.staffsync.entity.JpaRole;
 import com.encentral.staffsync.entity.QJpaPermission;
 import com.encentral.staffsync.entity.QJpaRole;
 import com.esl.internship.staffsync.system.configuration.api.IRoleApi;
-import com.esl.internship.staffsync.system.configuration.model.PermissionMapper;
+import com.esl.internship.staffsync.system.configuration.dto.RoleDTO;
 import com.esl.internship.staffsync.system.configuration.model.Role;
-import com.esl.internship.staffsync.system.configuration.model.RoleMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 
@@ -21,7 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
-import static com.esl.internship.staffsync.system.configuration.model.RoleMapper.INSTANCE;
+import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 public class DefaultRoleApiImpl implements IRoleApi {
     @Inject
@@ -32,7 +31,7 @@ public class DefaultRoleApiImpl implements IRoleApi {
     /**
      * @author WARITH
      * @dateCreated 01/08/2023
-     * @description Creates new app config
+     * @description Creates new role
      *
      * @param role The role data to create new Role from
      * @param employee The employee creating this record
@@ -42,6 +41,27 @@ public class DefaultRoleApiImpl implements IRoleApi {
     @Override
     public Role addRole(Role role, Employee employee) {
         final JpaRole jpaRole = INSTANCE.mapRole(role);
+        jpaRole.setRoleId(UUID.randomUUID().toString());
+        jpaRole.setCreatedBy(stringifyEmployee(employee));
+        jpaRole.setDateCreated(Timestamp.from(Instant.now()));
+
+        jpaApi.em().persist(jpaRole);
+        return INSTANCE.mapRole(jpaRole);
+    }
+
+    /**
+     * @author WARITH
+     * @dateCreated 04/08/2023
+     * @description Creates new role (using a dto)
+     *
+     * @param roleDto The role data to create new Role from
+     * @param employee The employee creating this record
+     *
+     * @return Role
+     */
+    @Override
+    public Role addRole(RoleDTO roleDto, Employee employee) {
+        final JpaRole jpaRole = INSTANCE.mapRoleDto(roleDto);
         jpaRole.setRoleId(UUID.randomUUID().toString());
         jpaRole.setCreatedBy(stringifyEmployee(employee));
         jpaRole.setDateCreated(Timestamp.from(Instant.now()));
@@ -66,6 +86,17 @@ public class DefaultRoleApiImpl implements IRoleApi {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaRole)
                 .set(qJpaRole.roleName, role.getRoleName())
                 .set(qJpaRole.roleDescription, role.getRoleDescription())
+                .set(qJpaRole.modifiedBy, stringifyEmployee(employee, "Updated Role"))
+                .set(qJpaRole.dateModified, Timestamp.from(Instant.now()))
+                .where(qJpaRole.roleId.eq(roleId))
+                .execute() == 1;
+    }
+
+    @Override
+    public boolean updateRole(String roleId, RoleDTO roleDto, Employee employee) {
+        return new JPAQueryFactory(jpaApi.em()).update(qJpaRole)
+                .set(qJpaRole.roleName, roleDto.getRoleName())
+                .set(qJpaRole.roleDescription, roleDto.getRoleDescription())
                 .set(qJpaRole.modifiedBy, stringifyEmployee(employee, "Updated Role"))
                 .set(qJpaRole.dateModified, Timestamp.from(Instant.now()))
                 .where(qJpaRole.roleId.eq(roleId))

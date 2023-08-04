@@ -4,6 +4,7 @@ import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.staffsync.entity.JpaPermission;
 import com.encentral.staffsync.entity.QJpaPermission;
 import com.esl.internship.staffsync.system.configuration.api.IPermissionApi;
+import com.esl.internship.staffsync.system.configuration.dto.PermissionDTO;
 import com.esl.internship.staffsync.system.configuration.model.Permission;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
@@ -15,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
-import static com.esl.internship.staffsync.system.configuration.model.PermissionMapper.INSTANCE;
+import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 public class DefaultPermissionApiImpl implements IPermissionApi {
     @Inject
@@ -36,6 +37,18 @@ public class DefaultPermissionApiImpl implements IPermissionApi {
     @Override
     public Permission addPermission(Permission permission, Employee employee) {
         final JpaPermission jpaPermission = INSTANCE.mapPermission(permission);
+        jpaPermission.setPermissionId(UUID.randomUUID().toString());
+        jpaPermission.setCreatedBy(stringifyEmployee(employee));
+        jpaPermission.setDateCreated(Timestamp.from(Instant.now()));
+
+        jpaApi.em().persist(jpaPermission);
+
+        return INSTANCE.mapPermission(jpaPermission);
+    }
+
+    @Override
+    public Permission addPermission(PermissionDTO permissionDto, Employee employee) {
+        final JpaPermission jpaPermission = INSTANCE.mapPermissionDto(permissionDto);
         jpaPermission.setPermissionId(UUID.randomUUID().toString());
         jpaPermission.setCreatedBy(stringifyEmployee(employee));
         jpaPermission.setDateCreated(Timestamp.from(Instant.now()));
@@ -109,6 +122,18 @@ public class DefaultPermissionApiImpl implements IPermissionApi {
                 .set(qJpaPermission.permissionName, permission.getPermissionName())
                 .set(qJpaPermission.permissionAction, permission.getPermissionAction())
                 .set(qJpaPermission.permissionDescription, permission.getPermissionDescription())
+                .set(qJpaPermission.modifiedBy, stringifyEmployee(employee, "Updated Permission"))
+                .set(qJpaPermission.dateModified, Timestamp.from(Instant.now()))
+                .where(qJpaPermission.permissionId.eq(permissionId))
+                .execute() == 1;
+    }
+
+    @Override
+    public boolean updatePermission(String permissionId, PermissionDTO permissionDto, Employee employee) {
+        return new JPAQueryFactory(jpaApi.em()).update(qJpaPermission)
+                .set(qJpaPermission.permissionName, permissionDto.getPermissionName())
+                .set(qJpaPermission.permissionAction, permissionDto.getPermissionAction())
+                .set(qJpaPermission.permissionDescription, permissionDto.getPermissionDescription())
                 .set(qJpaPermission.modifiedBy, stringifyEmployee(employee, "Updated Permission"))
                 .set(qJpaPermission.dateModified, Timestamp.from(Instant.now()))
                 .where(qJpaPermission.permissionId.eq(permissionId))

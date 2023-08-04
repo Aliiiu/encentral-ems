@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
     @Inject
@@ -99,7 +100,7 @@ public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
                 .where(qJpaRoleHasPermission.permission.permissionId.eq(permissionId))
                 .fetch()
                 .stream()
-                .map(RoleMapper.INSTANCE::mapRole)
+                .map(INSTANCE::mapRole)
                 .collect(Collectors.toList());
     }
 
@@ -121,7 +122,7 @@ public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
                 .where(qJpaRoleHasPermission.role.roleId.eq(roleId))
                 .fetch()
                 .stream()
-                .map(PermissionMapper.INSTANCE::mapPermission)
+                .map(INSTANCE::mapPermission)
                 .collect(Collectors.toList());
     }
 
@@ -139,7 +140,7 @@ public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
         return queryFactory.selectFrom(qJpaRoleHasPermission)
                 .fetch()
                 .stream()
-                .map(RoleHasPermissionMapper.INSTANCE::mapRoleHasPermission)
+                .map(INSTANCE::mapRoleHasPermission)
                 .collect(Collectors.toList());
     }
 }

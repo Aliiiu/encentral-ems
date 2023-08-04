@@ -3,6 +3,7 @@ package controllers.system_configuration;
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.scaffold.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.IPermissionApi;
+import com.esl.internship.staffsync.system.configuration.dto.PermissionDTO;
 import com.esl.internship.staffsync.system.configuration.model.Permission;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
@@ -27,25 +28,25 @@ public class PermissionController extends Controller {
     @ApiOperation(value = "Create a permission")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "AppConfig", response = Permission.class)
+                    @ApiResponse(code = 200, message = "Permission Created", response = Permission.class)
             }
     )
     @ApiImplicitParams(
             {
             @ApiImplicitParam(
                     name = "body",
-                    value = "Invoice",
+                    value = "Permission data to create",
                     paramType = "body",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.system.configuration.model.Permission"
+                    dataType = "com.esl.internship.staffsync.system.configuration.dto.PermissionDTO"
             )
     })
     public Result addPermission() {
-        final var permissionForm = validate(request().body().asJson(), Permission.class);
-        if (permissionForm.hasError) {
-            return badRequest(permissionForm.error);
+        final var permissionDtoForm = validate(request().body().asJson(), PermissionDTO.class);
+        if (permissionDtoForm.hasError) {
+            return badRequest(permissionDtoForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iPermissionApi.addPermission(permissionForm.value, getEmployee())));
+        return ok(myObjectMapper.toJsonString(iPermissionApi.addPermission(permissionDtoForm.value, getEmployee())));
     }
 
     @ApiOperation(value = "Get permission by id")
@@ -61,24 +62,24 @@ public class PermissionController extends Controller {
     @ApiOperation(value = "Update a permission")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Updated", response = boolean.class)
+                    @ApiResponse(code = 200, message = "Permission Updated", response = boolean.class)
             }
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "body",
-                    value = "Invoice",
+                    value = "Permission data to update",
                     paramType = "body",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.system.configuration.model.Permission"
+                    dataType = "com.esl.internship.staffsync.system.configuration.dto.PermissionDTO"
             )
     })
     public Result updatePermission(String permissionId) {
-        final var permissionForm = validate(request().body().asJson(), Permission.class);
-        if (permissionForm.hasError) {
-            return badRequest(permissionForm.error);
+        final var permissionDtoForm = validate(request().body().asJson(), PermissionDTO.class);
+        if (permissionDtoForm.hasError) {
+            return badRequest(permissionDtoForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iPermissionApi.updatePermission(permissionId, permissionForm.value, getEmployee())));
+        return ok(myObjectMapper.toJsonString(iPermissionApi.updatePermission(permissionId, permissionDtoForm.value, getEmployee())));
     }
 
     @ApiOperation(value = "Get permission")
