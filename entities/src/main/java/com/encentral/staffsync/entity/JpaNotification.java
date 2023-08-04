@@ -1,6 +1,9 @@
 package com.encentral.staffsync.entity;
 
 import com.encentral.staffsync.entity.enums.NotificationPriority;
+import com.encentral.staffsync.entity.enums.NotificationStatus;
+import com.encentral.staffsync.entity.enums.attribute.converter.NotificationPriorityConverter;
+import com.encentral.staffsync.entity.enums.attribute.converter.NotificationStatusConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -22,6 +25,7 @@ public class JpaNotification implements Serializable {
 	@Column(name="notification_id", unique=true, nullable=false, length=64)
 	private String notificationId;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -35,8 +39,10 @@ public class JpaNotification implements Serializable {
 	private Timestamp dateRead;
 
 	@Column(name="delivery_status", nullable=false, length=2147483647)
-	private String deliveryStatus;
+	@Enumerated(EnumType.STRING)
+	private NotificationStatus deliveryStatus;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
@@ -108,11 +114,11 @@ public class JpaNotification implements Serializable {
 		this.dateRead = dateRead;
 	}
 
-	public String getDeliveryStatus() {
+	public NotificationStatus getDeliveryStatus() {
 		return this.deliveryStatus;
 	}
 
-	public void setDeliveryStatus(String deliveryStatus) {
+	public void setDeliveryStatus(NotificationStatus deliveryStatus) {
 		this.deliveryStatus = deliveryStatus;
 	}
 

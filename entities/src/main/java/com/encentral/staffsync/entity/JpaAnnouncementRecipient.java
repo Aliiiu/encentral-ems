@@ -1,6 +1,7 @@
 package com.encentral.staffsync.entity;
 
 import com.encentral.staffsync.entity.enums.NotificationStatus;
+import com.encentral.staffsync.entity.enums.attribute.converter.NotificationStatusConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -32,7 +33,8 @@ public class JpaAnnouncementRecipient implements Serializable {
 	private Timestamp dateRead;
 
 	@Column(name="delivery_status", nullable=false)
-	private String deliveryStatus;
+	@Enumerated(EnumType.STRING)
+	private NotificationStatus deliveryStatus;
 
 	//bidirectional many-to-one association to JpaAnnouncement
 	@ManyToOne
@@ -79,11 +81,11 @@ public class JpaAnnouncementRecipient implements Serializable {
 		this.dateRead = dateRead;
 	}
 
-	public String getDeliveryStatus() {
+	public NotificationStatus getDeliveryStatus() {
 		return this.deliveryStatus;
 	}
 
-	public void setDeliveryStatus(String deliveryStatus) {
+	public void setDeliveryStatus(NotificationStatus deliveryStatus) {
 		this.deliveryStatus = deliveryStatus;
 	}
 

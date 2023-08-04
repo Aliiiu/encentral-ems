@@ -106,19 +106,13 @@ public class NotificationTemplateImpl implements INotificationTemplate {
 
     @Override
     public boolean editNotificationTemplate(EditNotificationTemplateDTO notificationTemplateDTO, Employee employee) {
-       try {
            JpaNotificationTemplate jpaNotificationTemplate = getJpaNotificationTemplateById(notificationTemplateDTO.getNotificationTemplateId());
 
            INSTANCE.editDTOToJpaNotificationTemplate(jpaNotificationTemplate, notificationTemplateDTO);
            jpaNotificationTemplate.setDateModified(Timestamp.from(Instant.now()));
            jpaNotificationTemplate.setModifiedBy(stringifyEmployee(employee, "Updated Notification template"));
-
            jpaApi.em().merge(jpaNotificationTemplate);
            return true;
-       }
-       catch (Exception e){
-           return false;
-       }
     }
 
     /**
