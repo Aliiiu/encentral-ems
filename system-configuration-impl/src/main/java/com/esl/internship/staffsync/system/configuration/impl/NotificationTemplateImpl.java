@@ -18,6 +18,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
@@ -109,12 +110,17 @@ public class NotificationTemplateImpl implements INotificationTemplate {
      */
     @Override
     public boolean editNotificationTemplate(EditNotificationTemplateDTO notificationTemplateDTO, Employee employee) {
-        JpaNotificationTemplate jpaNotificationTemplate = getJpaNotificationTemplateById(notificationTemplateDTO.getNotificationTemplateId());
-        INSTANCE.editDTOToJpaNotificationTemplate(jpaNotificationTemplate, notificationTemplateDTO);
-        jpaNotificationTemplate.setDateModified(Timestamp.from(Instant.now()));
-        jpaNotificationTemplate.setModifiedBy(stringifyEmployee(employee, "Updated Notification template"));
-        jpaApi.em().merge(jpaNotificationTemplate);
-        return true;
+        AtomicBoolean isTransactionSuccessful = new AtomicBoolean(false);
+        jpaApi.withTransaction(em->{
+            JpaNotificationTemplate jpaNotificationTemplate = getJpaNotificationTemplateById(notificationTemplateDTO.getNotificationTemplateId());
+            INSTANCE.editDTOToJpaNotificationTemplate(jpaNotificationTemplate, notificationTemplateDTO);
+            jpaNotificationTemplate.setDateModified(Timestamp.from(Instant.now()));
+            jpaNotificationTemplate.setModifiedBy(stringifyEmployee(employee, "Updated Notification template"));
+            em.merge(jpaNotificationTemplate);
+            isTransactionSuccessful.set(true);
+            return true;
+        });
+        return isTransactionSuccessful.get();
     }
 
     /**

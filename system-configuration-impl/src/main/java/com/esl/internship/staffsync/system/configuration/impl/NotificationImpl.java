@@ -158,7 +158,7 @@ public class NotificationImpl implements INotification {
                 .set(qJpaNotification.deliveryStatus, NotificationStatus.READ)
                 .set(qJpaNotification.modifiedBy, stringifyEmployee(employee, "Marked as read"))
                 .set(qJpaNotification.dateModified, Timestamp.from(Instant.now()))
-                .execute() == 1;
+                .execute() >= 1;
     }
 
     /**
@@ -176,7 +176,7 @@ public class NotificationImpl implements INotification {
                 .set(qJpaNotification.deliveryStatus, NotificationStatus.DELETED)
                 .set(qJpaNotification.modifiedBy, stringifyEmployee(employee, "Marked as read"))
                 .set(qJpaNotification.dateModified, Timestamp.from(Instant.now()))
-                .execute() == 1;
+                .execute() >= 1;
     }
 
     /**
@@ -190,7 +190,7 @@ public class NotificationImpl implements INotification {
     public boolean deleteAllEmployeeNotification(String employeeId) {
         return new JPAQueryFactory(jpaApi.em()).delete(qJpaNotification)
                 .where(qJpaNotification.receiver.employeeId.eq(employeeId))
-                .execute() == 1;
+                .execute() >= 1;
     }
 
     /**
