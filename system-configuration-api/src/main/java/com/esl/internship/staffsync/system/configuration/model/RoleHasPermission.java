@@ -1,6 +1,8 @@
 package com.esl.internship.staffsync.system.configuration.model;
 
+
 import java.sql.Timestamp;
+
 
 public class RoleHasPermission {
 
@@ -49,4 +51,5 @@ public class RoleHasPermission {
     public void setRole(Role role) {
         this.role = role;
     }
+
 }

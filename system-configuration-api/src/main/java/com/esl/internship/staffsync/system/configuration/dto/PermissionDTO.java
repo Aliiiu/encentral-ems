@@ -1,8 +1,11 @@
 package com.esl.internship.staffsync.system.configuration.dto;
 
+
 import com.encentral.staffsync.entity.enums.Action;
 
+
 public class PermissionDTO {
+
     private Action permissionAction;
     private String permissionDescription;
     private String permissionName;
@@ -39,4 +42,5 @@ public class PermissionDTO {
                 ", permissionName='" + permissionName + '\'' +
                 '}';
     }
+
 }

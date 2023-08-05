@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
+
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.staffsync.entity.*;
 import com.esl.internship.staffsync.system.configuration.api.IRoleHasPermissionApi;
@@ -18,7 +19,9 @@ import java.util.stream.Collectors;
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
+
 public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
+
     @Inject
     JPAApi jpaApi;
 
@@ -178,4 +181,5 @@ public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
                 .map(INSTANCE::mapRoleHasPermission)
                 .collect(Collectors.toList());
     }
+
 }

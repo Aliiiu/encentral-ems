@@ -1,8 +1,11 @@
 package com.esl.internship.staffsync.system.configuration.model;
 
+
 import java.sql.Timestamp;
 
+
 public class Role {
+
     private String roleId;
     private String createdBy;
     private Timestamp dateCreated;
@@ -10,10 +13,6 @@ public class Role {
     private String modifiedBy;
     private String roleDescription;
     private String roleName;
-//    private List<Employee> employees;
-//    private List<RoleHasPermission> roleHasPermissions;
-//    private List<Permission> permissions;
-
 
     public String getRoleId() {
         return roleId;
@@ -70,4 +69,5 @@ public class Role {
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
+
 }

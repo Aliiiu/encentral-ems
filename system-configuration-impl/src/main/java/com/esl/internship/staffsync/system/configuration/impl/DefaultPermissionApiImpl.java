@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
+
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.staffsync.entity.JpaPermission;
 import com.encentral.staffsync.entity.QJpaPermission;
@@ -18,7 +19,9 @@ import java.util.stream.Collectors;
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
+
 public class DefaultPermissionApiImpl implements IPermissionApi {
+
     @Inject
     JPAApi jpaApi;
 
@@ -128,6 +131,17 @@ public class DefaultPermissionApiImpl implements IPermissionApi {
                 .execute() == 1;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 01/08/23
+     * @description Updates a permission record using a dto
+     *
+     * @param permissionId Id of the permission to update
+     * @param permissionDto A dto containing the data to update
+     * @param employee Employee making the update
+     *
+     * @return boolean
+     */
     @Override
     public boolean updatePermission(String permissionId, PermissionDTO permissionDto, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaPermission)

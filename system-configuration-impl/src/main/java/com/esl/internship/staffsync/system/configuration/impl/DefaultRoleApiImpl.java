@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
+
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.staffsync.entity.JpaPermission;
 import com.encentral.staffsync.entity.JpaRole;
@@ -22,7 +23,9 @@ import java.util.stream.Collectors;
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
+
 public class DefaultRoleApiImpl implements IRoleApi {
+
     @Inject
     JPAApi jpaApi;
 
@@ -73,7 +76,7 @@ public class DefaultRoleApiImpl implements IRoleApi {
     /**
      * @author WARITH
      * @dateCreated 01/08/2023
-     * @description Creates new app config
+     * @description Updates a Role
      *
      * @param roleId The id of the role to update
      * @param role The role data to update from
@@ -92,6 +95,17 @@ public class DefaultRoleApiImpl implements IRoleApi {
                 .execute() == 1;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 01/08/2023
+     * @description Updates a role with a dto
+     *
+     * @param roleId The id of the role to update
+     * @param roleDto The role data to update from
+     * @param employee The employee updating this record
+     *
+     * @return boolean
+     */
     @Override
     public boolean updateRole(String roleId, RoleDTO roleDto, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaRole)
@@ -166,4 +180,5 @@ public class DefaultRoleApiImpl implements IRoleApi {
                 .where(qJpaRole.roleId.eq(roleId))
                 .fetchOne();
     }
+
 }

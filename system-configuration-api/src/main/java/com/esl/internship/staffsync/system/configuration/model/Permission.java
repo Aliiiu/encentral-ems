@@ -1,10 +1,13 @@
 package com.esl.internship.staffsync.system.configuration.model;
 
+
 import com.encentral.staffsync.entity.enums.Action;
 
 import java.sql.Timestamp;
 
+
 public class Permission {
+
     private String permissionId;
     private String createdBy;
     private Timestamp dateCreated;
@@ -13,9 +16,6 @@ public class Permission {
     private Action permissionAction;
     private String permissionDescription;
     private String permissionName;
-//    private Set<RoleHasPermission> roleHasPermissions;
-//    private Set<Role> roles;
-
 
     public String getPermissionId() {
         return permissionId;
@@ -80,4 +80,5 @@ public class Permission {
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
     }
+
 }
