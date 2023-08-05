@@ -11,11 +11,7 @@ import java.util.Optional;
 
 public interface IRoleApi {
 
-    Role addRole(Role role, Employee employee);
-
     Role addRole(RoleDTO roleDto, Employee employee);
-
-    boolean updateRole(String roleId, Role role, Employee employee);
 
     boolean updateRole(String roleId, RoleDTO roleDto, Employee employee);
 

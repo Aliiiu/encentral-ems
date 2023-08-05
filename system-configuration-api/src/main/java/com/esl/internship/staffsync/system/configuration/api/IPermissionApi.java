@@ -13,8 +13,6 @@ import java.util.Optional;
 
 public interface IPermissionApi {
 
-    Permission addPermission(Permission permission, Employee employee);
-
     Permission addPermission(PermissionDTO permissionDto, Employee employee);
 
     Optional<Permission> getPermissionById(String permissionId);
@@ -22,8 +20,6 @@ public interface IPermissionApi {
     Optional<Permission> getPermissionByName(String permissionName);
 
     List<Permission> getAllPermissions();
-
-    boolean updatePermission(String permissionId, Permission permission, Employee employee);
 
     boolean updatePermission(String permissionId, PermissionDTO permissionDto, Employee employee);
 

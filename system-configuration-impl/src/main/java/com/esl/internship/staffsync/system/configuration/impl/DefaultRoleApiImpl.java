@@ -33,27 +33,6 @@ public class DefaultRoleApiImpl implements IRoleApi {
 
     /**
      * @author WARITH
-     * @dateCreated 01/08/2023
-     * @description Creates new role
-     *
-     * @param role The role data to create new Role from
-     * @param employee The employee creating this record
-     *
-     * @return Role
-     */
-    @Override
-    public Role addRole(Role role, Employee employee) {
-        final JpaRole jpaRole = INSTANCE.mapRole(role);
-        jpaRole.setRoleId(UUID.randomUUID().toString());
-        jpaRole.setCreatedBy(stringifyEmployee(employee));
-        jpaRole.setDateCreated(Timestamp.from(Instant.now()));
-
-        jpaApi.em().persist(jpaRole);
-        return INSTANCE.mapRole(jpaRole);
-    }
-
-    /**
-     * @author WARITH
      * @dateCreated 04/08/2023
      * @description Creates new role (using a dto)
      *
@@ -71,28 +50,6 @@ public class DefaultRoleApiImpl implements IRoleApi {
 
         jpaApi.em().persist(jpaRole);
         return INSTANCE.mapRole(jpaRole);
-    }
-
-    /**
-     * @author WARITH
-     * @dateCreated 01/08/2023
-     * @description Updates a Role
-     *
-     * @param roleId The id of the role to update
-     * @param role The role data to update from
-     * @param employee The employee updating this record
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean updateRole(String roleId, Role role, Employee employee) {
-        return new JPAQueryFactory(jpaApi.em()).update(qJpaRole)
-                .set(qJpaRole.roleName, role.getRoleName())
-                .set(qJpaRole.roleDescription, role.getRoleDescription())
-                .set(qJpaRole.modifiedBy, stringifyEmployee(employee, "Updated Role"))
-                .set(qJpaRole.dateModified, Timestamp.from(Instant.now()))
-                .where(qJpaRole.roleId.eq(roleId))
-                .execute() == 1;
     }
 
     /**

@@ -38,18 +38,6 @@ public class DefaultPermissionApiImpl implements IPermissionApi {
      * @return Permission
      */
     @Override
-    public Permission addPermission(Permission permission, Employee employee) {
-        final JpaPermission jpaPermission = INSTANCE.mapPermission(permission);
-        jpaPermission.setPermissionId(UUID.randomUUID().toString());
-        jpaPermission.setCreatedBy(stringifyEmployee(employee));
-        jpaPermission.setDateCreated(Timestamp.from(Instant.now()));
-
-        jpaApi.em().persist(jpaPermission);
-
-        return INSTANCE.mapPermission(jpaPermission);
-    }
-
-    @Override
     public Permission addPermission(PermissionDTO permissionDto, Employee employee) {
         final JpaPermission jpaPermission = INSTANCE.mapPermissionDto(permissionDto);
         jpaPermission.setPermissionId(UUID.randomUUID().toString());
@@ -105,30 +93,6 @@ public class DefaultPermissionApiImpl implements IPermissionApi {
                 .stream()
                 .map(INSTANCE::mapPermission)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * @author WARITH
-     * @dateCreated 01/08/2023
-     * @description Updates a permission
-     *
-     * @param permissionId Id of the permission to update
-     * @param permission Permission model containing the data update
-     * @param employee Employee making the update
-     *
-     * @return boolean
-     */
-    @Override
-    public boolean updatePermission(String permissionId, Permission permission, Employee employee) {
-
-        return new JPAQueryFactory(jpaApi.em()).update(qJpaPermission)
-                .set(qJpaPermission.permissionName, permission.getPermissionName())
-                .set(qJpaPermission.permissionAction, permission.getPermissionAction())
-                .set(qJpaPermission.permissionDescription, permission.getPermissionDescription())
-                .set(qJpaPermission.modifiedBy, stringifyEmployee(employee, "Updated Permission"))
-                .set(qJpaPermission.dateModified, Timestamp.from(Instant.now()))
-                .where(qJpaPermission.permissionId.eq(permissionId))
-                .execute() == 1;
     }
 
     /**
