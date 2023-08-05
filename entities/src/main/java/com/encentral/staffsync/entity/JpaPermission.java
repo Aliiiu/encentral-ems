@@ -1,5 +1,8 @@
 package com.encentral.staffsync.entity;
 
+import com.encentral.staffsync.entity.attribute.converter.ActionConverter;
+import com.encentral.staffsync.entity.attribute.converter.ActionObjectConverter;
+import com.encentral.staffsync.entity.attribute.converter.ActionStringConverter;
 import com.encentral.staffsync.entity.enums.Action;
 import com.google.common.base.MoreObjects;
 
@@ -37,8 +40,8 @@ public class JpaPermission implements Serializable {
 	@Column(name="modified_by")
 	private String modifiedBy;
 
+	@Convert(converter = ActionConverter.class)
 	@Column(name="permission_action", nullable=false, length=2147483647)
-	@Enumerated(EnumType.STRING)
 	private Action permissionAction;
 
 	@Column(name="permission_description", length=2147483647)

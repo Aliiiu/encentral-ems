@@ -27,7 +27,9 @@
         <class>com.encentral.staffsync.entity.JpaPermission</class>
         <class>com.encentral.staffsync.entity.JpaRole</class>
         <class>com.encentral.staffsync.entity.JpaRoleHasPermission</class>
+
         <class>com.encentral.staffsync.entity.JsonStringConverter</class>
+        <class>com.encentral.staffsync.entity.attribute.converter.ActionConverter</class>
 
         <properties>
             <property name="eclipselink.weaving" value="static"/>
