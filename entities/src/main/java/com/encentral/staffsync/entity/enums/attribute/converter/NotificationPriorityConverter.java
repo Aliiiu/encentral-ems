@@ -4,11 +4,12 @@ import com.encentral.staffsync.entity.enums.NotificationPriority;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class NotificationPriorityConverter implements AttributeConverter<NotificationPriority, String> {
     @Override
     public String convertToDatabaseColumn(NotificationPriority notificationPriority) {
-        return notificationPriority.toString();
+        if (notificationPriority == null ) return null;
+        return notificationPriority.getValue();
     }
 
     @Override

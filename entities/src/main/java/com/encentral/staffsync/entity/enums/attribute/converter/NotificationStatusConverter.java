@@ -4,11 +4,11 @@ import com.encentral.staffsync.entity.enums.NotificationStatus;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class NotificationStatusConverter implements AttributeConverter<NotificationStatus, String> {
     @Override
     public String convertToDatabaseColumn(NotificationStatus notificationStatus) {
-        return notificationStatus.toString();
+        return notificationStatus.getValue();
     }
 
     @Override

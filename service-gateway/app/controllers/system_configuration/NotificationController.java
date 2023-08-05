@@ -5,7 +5,7 @@ import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.scaffold.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.INotification;
 import com.esl.internship.staffsync.system.configuration.model.Notification;
-import com.esl.internship.staffsync.system.configuration.model.dto.CreateNotificationDTO;
+import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import io.swagger.annotations.*;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -227,7 +227,7 @@ public class NotificationController extends Controller {
                     value = "Notification Creation DTO",
                     paramType = "body",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.system.configuration.model.dto.CreateNotificationDTO",
+                    dataType = "com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO",
                     dataTypeClass = CreateNotificationDTO.class
             )
     })

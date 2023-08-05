@@ -5,8 +5,8 @@ import com.encentral.scaffold.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
 import com.esl.internship.staffsync.system.configuration.model.Notification;
 import com.esl.internship.staffsync.system.configuration.model.NotificationTemplate;
-import com.esl.internship.staffsync.system.configuration.model.dto.CreateNotificationTemplateDTO;
-import com.esl.internship.staffsync.system.configuration.model.dto.EditNotificationTemplateDTO;
+import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
+import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -88,7 +88,7 @@ public class NotificationTemplateController extends Controller {
                     value = "Notification template creation DTO",
                     paramType = "body",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.system.configuration.model.dto.CreateNotificationTemplateDTO",
+                    dataType = "com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO",
                     dataTypeClass = CreateNotificationTemplateDTO.class
             )
     })
@@ -131,7 +131,7 @@ public class NotificationTemplateController extends Controller {
                     value = "Notification template DTO",
                     paramType = "body",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.system.configuration.model.dto.EditNotificationTemplateDTO",
+                    dataType = "com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO",
                     dataTypeClass = EditNotificationTemplateDTO.class
             )
     })

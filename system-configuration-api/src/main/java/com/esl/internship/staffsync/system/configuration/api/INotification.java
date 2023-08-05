@@ -2,7 +2,7 @@ package com.esl.internship.staffsync.system.configuration.api;
 
 import com.encentral.scaffold.commons.model.Employee;
 import com.esl.internship.staffsync.system.configuration.model.Notification;
-import com.esl.internship.staffsync.system.configuration.model.dto.CreateNotificationDTO;
+import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import java.util.List;
 import java.util.Optional;
 

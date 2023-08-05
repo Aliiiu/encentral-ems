@@ -8,7 +8,7 @@ import com.encentral.staffsync.entity.QJpaNotificationTemplate;
 import com.encentral.staffsync.entity.enums.NotificationStatus;
 import com.esl.internship.staffsync.system.configuration.api.INotification;
 import com.esl.internship.staffsync.system.configuration.model.Notification;
-import com.esl.internship.staffsync.system.configuration.model.dto.CreateNotificationDTO;
+import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 import javax.inject.Inject;

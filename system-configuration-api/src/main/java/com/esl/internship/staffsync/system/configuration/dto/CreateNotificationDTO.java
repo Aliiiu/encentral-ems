@@ -1,4 +1,4 @@
-package com.esl.internship.staffsync.system.configuration.model.dto;
+package com.esl.internship.staffsync.system.configuration.dto;
 
 import com.encentral.staffsync.entity.enums.NotificationPriority;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
