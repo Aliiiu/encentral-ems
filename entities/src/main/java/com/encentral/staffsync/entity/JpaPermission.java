@@ -1,8 +1,6 @@
 package com.encentral.staffsync.entity;
 
 import com.encentral.staffsync.entity.attribute.converter.ActionConverter;
-import com.encentral.staffsync.entity.attribute.converter.ActionObjectConverter;
-import com.encentral.staffsync.entity.attribute.converter.ActionStringConverter;
 import com.encentral.staffsync.entity.enums.Action;
 import com.google.common.base.MoreObjects;
 

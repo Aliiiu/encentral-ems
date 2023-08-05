@@ -30,21 +30,4 @@ public class ActionConverter implements AttributeConverter<Action, Object> {
             return Action.valueOf(((PGobject)obj).getValue());
         return null;
     }
-//    @Override
-//    public PGobject convertToDatabaseColumn(Action action) {
-//        try {
-//            PGobject pgObject = new PGobject();
-//            pgObject.setType("action");
-//            pgObject.setValue(action.name());
-//            return pgObject;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
-//    @Override
-//    public Action convertToEntityAttribute(PGobject dbData) {
-//        return dbData == null ? null : Action.valueOf(dbData.getValue());
-//    }
 }
