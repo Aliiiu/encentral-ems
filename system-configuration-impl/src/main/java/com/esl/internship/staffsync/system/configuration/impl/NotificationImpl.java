@@ -7,10 +7,11 @@ import com.encentral.staffsync.entity.QJpaNotification;
 import com.encentral.staffsync.entity.QJpaNotificationTemplate;
 import com.encentral.staffsync.entity.enums.NotificationStatus;
 import com.esl.internship.staffsync.system.configuration.api.INotification;
-import com.esl.internship.staffsync.system.configuration.model.Notification;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
+import com.esl.internship.staffsync.system.configuration.model.Notification;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
+
 import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -58,6 +59,7 @@ public class NotificationImpl implements INotification {
 
         return queryFactory.selectFrom(qJpaNotification)
                 .where(qJpaNotification.receiver.employeeId.eq(employeeId))
+                .orderBy(qJpaNotification.dateCreated.desc())
                 .fetch()
                 .stream()
                 .map(INSTANCE::jpaNotificationToNotification)
@@ -77,6 +79,7 @@ public class NotificationImpl implements INotification {
 
         return queryFactory.selectFrom(qJpaNotification)
                 .where(qJpaNotification.sender.employeeId.eq(employeeId))
+                .orderBy(qJpaNotification.dateCreated.desc())
                 .fetch()
                 .stream()
                 .map(INSTANCE::jpaNotificationToNotification)
@@ -97,6 +100,7 @@ public class NotificationImpl implements INotification {
         return queryFactory.selectFrom(qJpaNotification)
                 .where(qJpaNotification.receiver.employeeId.eq(employeeId))
                 .where(qJpaNotification.deliveryStatus.eq(NotificationStatus.UNREAD))
+                .orderBy(qJpaNotification.dateCreated.desc())
                 .fetch()
                 .stream()
                 .map(INSTANCE::jpaNotificationToNotification)
@@ -114,6 +118,7 @@ public class NotificationImpl implements INotification {
         JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
 
         return queryFactory.selectFrom(qJpaNotification)
+                .orderBy(qJpaNotification.dateCreated.desc())
                 .fetch()
                 .stream()
                 .map(INSTANCE::jpaNotificationToNotification)
@@ -121,88 +126,83 @@ public class NotificationImpl implements INotification {
     }
 
     /**
-     * @author DEMILADE
-     * @dateCreated 04/08/2023
-     * @description Marks a notification as read
-     *
      * @param notificationId Notification id
      * @param employee       Employee marking notification as read
      * @return boolean indicating success
+     * @author DEMILADE
+     * @dateCreated 04/08/2023
+     * @description Marks a notification as read
      */
     @Override
     public boolean markNotificationAsRead(String notificationId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaNotification)
                 .set(qJpaNotification.deliveryStatus, NotificationStatus.READ)
-                .set(qJpaNotification.modifiedBy, stringifyEmployee(employee ,"Marked as read"))
+                .set(qJpaNotification.modifiedBy, stringifyEmployee(employee, "Marked as read"))
                 .set(qJpaNotification.dateModified, Timestamp.from(Instant.now()))
                 .where(qJpaNotification.notificationId.eq(notificationId))
                 .execute() == 1;
     }
+
     /**
+     * @param employeeId Employee id
+     * @param employee   Employee marking notifications as read
+     * @return boolean indicating success
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Marks all an employee notifications as read
-     *
-     * @param employeeId Employee id
-     * @param employee Employee marking notifications as read
-     * @return boolean indicating success
      */
     @Override
-    public boolean markAllEmployeeNotificationAsRead(String employeeId, Employee employee){
+    public boolean markAllEmployeeNotificationAsRead(String employeeId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaNotification)
-                .set(qJpaNotification.deliveryStatus, NotificationStatus.READ)
-                .set(qJpaNotification.modifiedBy, stringifyEmployee(employee ,"Marked as read"))
-                .set(qJpaNotification.dateModified, Timestamp.from(Instant.now()))
                 .where(qJpaNotification.receiver.employeeId.eq(employeeId))
+                .set(qJpaNotification.deliveryStatus, NotificationStatus.READ)
+                .set(qJpaNotification.modifiedBy, stringifyEmployee(employee, "Marked as read"))
+                .set(qJpaNotification.dateModified, Timestamp.from(Instant.now()))
                 .execute() == 1;
     }
 
     /**
+     * @param employeeId Employee id
+     * @param employee   Employee marking notification as deleted
+     * @return boolean indicating success
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Marks all an employee notifications as deleted
-     *
-     * @param employeeId Employee id
-     * @param employee  Employee marking notification as deleted
-     * @return boolean indicating success
      */
     @Override
-    public boolean markAllEmployeeNotificationAsDeleted(String employeeId, Employee employee){
+    public boolean markAllEmployeeNotificationAsDeleted(String employeeId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaNotification)
-                .set(qJpaNotification.deliveryStatus, NotificationStatus.DELETED)
-                .set(qJpaNotification.modifiedBy, stringifyEmployee(employee ,"Marked as read"))
-                .set(qJpaNotification.dateModified, Timestamp.from(Instant.now()))
                 .where(qJpaNotification.receiver.employeeId.eq(employeeId))
+                .set(qJpaNotification.deliveryStatus, NotificationStatus.DELETED)
+                .set(qJpaNotification.modifiedBy, stringifyEmployee(employee, "Marked as read"))
+                .set(qJpaNotification.dateModified, Timestamp.from(Instant.now()))
                 .execute() == 1;
     }
 
     /**
+     * @param employeeId Employee id
+     * @return boolean indicating success
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Deletes all notifications sent to an employee
-     *
-     * @param employeeId Employee id
-     * @return boolean indicating success
      */
     @Override
-    public boolean deleteAllEmployeeNotification(String employeeId){
+    public boolean deleteAllEmployeeNotification(String employeeId) {
         return new JPAQueryFactory(jpaApi.em()).delete(qJpaNotification)
                 .where(qJpaNotification.receiver.employeeId.eq(employeeId))
                 .execute() == 1;
     }
 
     /**
+     * @param createNotificationDTO DTO for creating notifications
+     * @param employee              Employee object
+     * @return notification object
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Method to create a new notification
-     *
-     *  @param createNotificationDTO DTO for creating notifications
-     *  @param employee Employee object
-     *  @return notification object
      */
     @Override
     public Notification createNotification(CreateNotificationDTO createNotificationDTO, Employee employee) {
-
         JpaNotificationTemplate jpaNotificationTemplate = new JPAQueryFactory(jpaApi.em())
                 .selectFrom(qJpaNotificationTemplate)
                 .where(qJpaNotificationTemplate.notificationTemplateId.eq(
@@ -218,20 +218,18 @@ public class NotificationImpl implements INotification {
         jpaNotification.setNotificationId(UUID.randomUUID().toString());
         jpaNotification.setCreatedBy(stringifyEmployee(employee));
         jpaNotification.setDateCreated(Timestamp.from(Instant.now()));
-
         jpaApi.em().persist(jpaNotification);
 
         return INSTANCE.jpaNotificationToNotification(jpaNotification);
     }
 
     /**
-     * @author DEMILADE
-     * @dateCreated 04/08/2023
-     * @description Marks a notification as deleted
-     *
      * @param notificationId Notification id
      * @param employee       Employee marking notification as deleted
      * @return boolean indicating success
+     * @author DEMILADE
+     * @dateCreated 04/08/2023
+     * @description Marks a notification as deleted
      */
     @Override
     public boolean markNotificationAsDeleted(String notificationId, Employee employee) {
@@ -242,12 +240,11 @@ public class NotificationImpl implements INotification {
     }
 
     /**
+     * @param notificationId Notification id
+     * @return boolean indicating success
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Permanently deletes a notification
-     *
-     * @param notificationId Notification id
-     * @return boolean indicating success
      */
     @Override
     public boolean deleteNotification(String notificationId) {
@@ -256,6 +253,14 @@ public class NotificationImpl implements INotification {
                 .execute() == 1;
     }
 
+    /**
+     * @param employeeId     Employee id
+     * @param notificationId Notification id
+     * @return boolean indicating ownership
+     * @author DEMILADE
+     * @dateCreated 04/08/2023
+     * @description Checks if a notification was sent to an employee
+     */
     @Override
     public boolean verifyEmployee(String employeeId, String notificationId) {
         return getJpaNotificationById(notificationId).getReceiver().getEmployeeId().equals(employeeId);

@@ -15,6 +15,9 @@ public class CreateNotificationDTO {
     private String senderId;
     private String notificationTemplateBeanId;
 
+    public CreateNotificationDTO() {
+    }
+
     public NotificationPriority getPriority() {
         return priority;
     }

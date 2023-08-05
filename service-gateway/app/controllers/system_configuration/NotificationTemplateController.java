@@ -3,10 +3,10 @@ package controllers.system_configuration;
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.scaffold.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
-import com.esl.internship.staffsync.system.configuration.model.Notification;
-import com.esl.internship.staffsync.system.configuration.model.NotificationTemplate;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
 import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;
+import com.esl.internship.staffsync.system.configuration.model.Notification;
+import com.esl.internship.staffsync.system.configuration.model.NotificationTemplate;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -64,7 +64,7 @@ public class NotificationTemplateController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid notification template id"),
             }
     )
-    public Result getTemplateNotifications(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId)  {
+    public Result getTemplateNotifications(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId) {
 
         if (notificationTemplateId.length() == 0) {
             return Results.badRequest("Invalid notification template id");
@@ -105,13 +105,12 @@ public class NotificationTemplateController extends Controller {
             return Results.status(409, "Notification template name already in use");
         }
 
-        try{
+        try {
             return ok(myObjectMapper.toJsonString(iNotificationTemplate.createNotificationTemplate(
                     notificationTemplateDTO,
                     getTestEmployee()
             )));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return Results.badRequest("Invalid data");
         }
 
@@ -144,16 +143,17 @@ public class NotificationTemplateController extends Controller {
         EditNotificationTemplateDTO notificationTemplateDTO = notificationTemplateEditForm.value;
 
         //TODO: Check if user is admin
-        return notificationTemplateDTO.getNotificationTemplateName()
-                .filter(name -> !iNotificationTemplate.checkIfNotificationNameInUse(name))
-                .map(name -> Results.ok(myObjectMapper.toJsonString(
-                                iNotificationTemplate.editNotificationTemplate(
-                                        notificationTemplateDTO,
-                                        getTestEmployee()
-                                ))
-                ))
-                .orElse(Results.status(409, "Notification template name already in use"));
+        String name = notificationTemplateDTO.getNotificationTemplateName();
+        if (iNotificationTemplate.checkIfNotificationNameInUse(name)) {
+            return Results.status(409, "Notification template name already in use");
+        }
 
+        return Results.ok(myObjectMapper.toJsonString(
+                iNotificationTemplate.editNotificationTemplate(
+                        notificationTemplateDTO,
+                        getTestEmployee()
+                ))
+        );
     }
 
     @ApiOperation("Delete Notification template by id")

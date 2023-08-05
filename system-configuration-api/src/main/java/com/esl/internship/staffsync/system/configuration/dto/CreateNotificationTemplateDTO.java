@@ -17,6 +17,9 @@ public class CreateNotificationTemplateDTO {
 
     private String notificationTemplateName;
 
+    public CreateNotificationTemplateDTO() {
+    }
+
     public String getNotificationDescription() {
         return notificationDescription;
     }

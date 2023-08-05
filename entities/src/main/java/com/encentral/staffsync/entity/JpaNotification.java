@@ -5,7 +5,6 @@ import com.encentral.staffsync.entity.enums.NotificationStatus;
 import com.encentral.staffsync.entity.enums.attribute.converter.NotificationPriorityConverter;
 import com.encentral.staffsync.entity.enums.attribute.converter.NotificationStatusConverter;
 import com.google.common.base.MoreObjects;
-
 import java.io.Serializable;
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -39,7 +38,7 @@ public class JpaNotification implements Serializable {
 	private Timestamp dateRead;
 
 	@Column(name="delivery_status", nullable=false, length=2147483647)
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = NotificationStatusConverter.class)
 	private NotificationStatus deliveryStatus;
 
 	@Convert(converter = JsonStringConverter.class)
@@ -53,7 +52,7 @@ public class JpaNotification implements Serializable {
 	private String notificationTitle;
 
 	@Column(nullable=false, length=2147483647)
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = NotificationPriorityConverter.class)
 	private NotificationPriority priority;
 
 	//bidirectional many-to-one association to JpaEmployee

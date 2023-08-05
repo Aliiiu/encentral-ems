@@ -3,7 +3,6 @@ package com.esl.internship.staffsync.system.configuration.model;
 import com.encentral.staffsync.entity.enums.NotificationPriority;
 
 import java.sql.Timestamp;
-import java.util.Set;
 
 public class Notification {
     private String notificationId;

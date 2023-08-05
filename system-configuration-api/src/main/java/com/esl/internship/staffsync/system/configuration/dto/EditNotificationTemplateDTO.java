@@ -13,11 +13,14 @@ import java.util.Optional;
 public class EditNotificationTemplateDTO {
 
     private String notificationTemplateId;
-    private Optional<String>  notificationDescription;
+    private String notificationDescription= "";
 
-    private Optional<String> notificationTemplateContent;
+    private String notificationTemplateContent = "";
 
-    private Optional<String>  notificationTemplateName;
+    private String notificationTemplateName = "";
+
+    public EditNotificationTemplateDTO() {
+    }
 
     public String getNotificationTemplateId() {
         return notificationTemplateId;
@@ -27,27 +30,27 @@ public class EditNotificationTemplateDTO {
         this.notificationTemplateId = notificationTemplateId;
     }
 
-    public Optional<String> getNotificationDescription() {
+    public String getNotificationDescription() {
         return notificationDescription;
     }
 
-    public void setNotificationDescription(Optional<String> notificationDescription) {
+    public void setNotificationDescription(String notificationDescription) {
         this.notificationDescription = notificationDescription;
     }
 
-    public Optional<String> getNotificationTemplateContent() {
+    public String getNotificationTemplateContent() {
         return notificationTemplateContent;
     }
 
-    public void setNotificationTemplateContent(Optional<String> notificationTemplateContent) {
+    public void setNotificationTemplateContent(String notificationTemplateContent) {
         this.notificationTemplateContent = notificationTemplateContent;
     }
 
-    public Optional<String> getNotificationTemplateName() {
+    public String getNotificationTemplateName() {
         return notificationTemplateName;
     }
 
-    public void setNotificationTemplateName(Optional<String> notificationTemplateName) {
+    public void setNotificationTemplateName(String notificationTemplateName) {
         this.notificationTemplateName = notificationTemplateName;
     }
 }

@@ -5,12 +5,13 @@ import com.encentral.staffsync.entity.JpaNotificationTemplate;
 import com.encentral.staffsync.entity.QJpaNotification;
 import com.encentral.staffsync.entity.QJpaNotificationTemplate;
 import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
-import com.esl.internship.staffsync.system.configuration.model.Notification;
-import com.esl.internship.staffsync.system.configuration.model.NotificationTemplate;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
 import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;
+import com.esl.internship.staffsync.system.configuration.model.Notification;
+import com.esl.internship.staffsync.system.configuration.model.NotificationTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
+
 import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -19,19 +20,20 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
-
+/**
+ * @author DEMILADE
+ * @dateCreated 03/07/2023
+ * @description General implementation of INotificationTemplate
+ */
 public class NotificationTemplateImpl implements INotificationTemplate {
 
+    private static final QJpaNotification qJpaNotification = QJpaNotification.jpaNotification;
+    private static final QJpaNotificationTemplate qJpaNotificationTemplate = QJpaNotificationTemplate.jpaNotificationTemplate;
     @Inject
     JPAApi jpaApi;
-
-    private static final QJpaNotification qJpaNotification = QJpaNotification.jpaNotification;
-
-    private static final QJpaNotificationTemplate qJpaNotificationTemplate = QJpaNotificationTemplate.jpaNotificationTemplate;
-
 
     @Override
     public Optional<NotificationTemplate> getNotificationTemplate(String notificationTemplateId) {
@@ -41,12 +43,10 @@ public class NotificationTemplateImpl implements INotificationTemplate {
     }
 
     /**
+     * @return List containing Notification templates
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Fetches a list of all notification templates
-     *
-     *
-     * @return List containing Notification templates
      */
     @Override
     public List<NotificationTemplate> getAllNotificationTemplates() {
@@ -60,21 +60,19 @@ public class NotificationTemplateImpl implements INotificationTemplate {
     }
 
     /**
+     * @param notificationTemplateId Notification template id
+     * @return List containing Notifications
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Fetches a list of all notifications created with a template
-     *
-     * @param notificationTemplateId Notification template id
-     *
-     * @return List containing Notifications
      */
     @Override
     public List<Notification> getNotifications(String notificationTemplateId) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
-
         return queryFactory.selectFrom(qJpaNotification)
                 .where(qJpaNotification.notificationTemplateBean
                         .notificationTemplateId.eq(notificationTemplateId))
+                .orderBy(qJpaNotification.dateCreated.desc())
                 .fetch()
                 .stream()
                 .map(INSTANCE::jpaNotificationToNotification)
@@ -82,18 +80,15 @@ public class NotificationTemplateImpl implements INotificationTemplate {
     }
 
     /**
+     * @param notificationTemplateDTO DTO for creating notification template
+     * @param employee                Employee creating the template
+     * @return Notification template object
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Creates a new notification template
-     *
-     * @param notificationTemplateDTO DTO for creating notification template
-     * @param employee Employee creating the template
-     *
-     * @return Notification template object
      */
     @Override
     public NotificationTemplate createNotificationTemplate(CreateNotificationTemplateDTO notificationTemplateDTO, Employee employee) {
-
         NotificationTemplate nt = INSTANCE.dtoToNotificationTemplate(notificationTemplateDTO);
         JpaNotificationTemplate jpaNotificationTemplate = INSTANCE.notificationTemplateToJpaNotificationTemplate(nt);
         jpaNotificationTemplate.setNotificationTemplateId(UUID.randomUUID().toString());
@@ -104,24 +99,30 @@ public class NotificationTemplateImpl implements INotificationTemplate {
         return INSTANCE.jpaNotificationTemplateToNotificationTemplate(jpaNotificationTemplate);
     }
 
+    /**
+     * @param notificationTemplateDTO DTO for editing notification template
+     * @param employee                Employee creating the template
+     * @return boolean indicating success
+     * @author DEMILADE
+     * @dateCreated 04/08/2023
+     * @description Adds changes to an existing notification template
+     */
     @Override
     public boolean editNotificationTemplate(EditNotificationTemplateDTO notificationTemplateDTO, Employee employee) {
-           JpaNotificationTemplate jpaNotificationTemplate = getJpaNotificationTemplateById(notificationTemplateDTO.getNotificationTemplateId());
-
-           INSTANCE.editDTOToJpaNotificationTemplate(jpaNotificationTemplate, notificationTemplateDTO);
-           jpaNotificationTemplate.setDateModified(Timestamp.from(Instant.now()));
-           jpaNotificationTemplate.setModifiedBy(stringifyEmployee(employee, "Updated Notification template"));
-           jpaApi.em().merge(jpaNotificationTemplate);
-           return true;
+        JpaNotificationTemplate jpaNotificationTemplate = getJpaNotificationTemplateById(notificationTemplateDTO.getNotificationTemplateId());
+        INSTANCE.editDTOToJpaNotificationTemplate(jpaNotificationTemplate, notificationTemplateDTO);
+        jpaNotificationTemplate.setDateModified(Timestamp.from(Instant.now()));
+        jpaNotificationTemplate.setModifiedBy(stringifyEmployee(employee, "Updated Notification template"));
+        jpaApi.em().merge(jpaNotificationTemplate);
+        return true;
     }
 
     /**
+     * @param notificationTemplateId JpaNotificationTemplate id
+     * @return boolean
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Deletes a notification template
-     *
-     * @param notificationTemplateId JpaNotificationTemplate id
-     * @return boolean
      */
     @Override
     public boolean deleteNotificationTemplate(String notificationTemplateId) {
@@ -131,29 +132,27 @@ public class NotificationTemplateImpl implements INotificationTemplate {
     }
 
     /**
+     * @param templateName
+     * @return
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Fetches a JpaNotificationTemplate via its id
-     *
-     * @param templateName
-     * @return
      */
     @Override
-    public boolean checkIfNotificationNameInUse(String templateName){
+    public boolean checkIfNotificationNameInUse(String templateName) {
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaNotificationTemplate)
                 .where(qJpaNotificationTemplate.notificationTemplateName.eq(templateName))
                 .fetchOne() != null;
     }
 
     /**
+     * @param notificationTemplateId JpaNotificationTemplate id
+     * @return JpaNotificationTemplate object
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Fetches a JpaNotificationTemplate via its id
-     *
-     * @param notificationTemplateId JpaNotificationTemplate id
-     * @return JpaNotificationTemplate object
      */
-    private JpaNotificationTemplate getJpaNotificationTemplateById(String notificationTemplateId){
+    private JpaNotificationTemplate getJpaNotificationTemplateById(String notificationTemplateId) {
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaNotificationTemplate)
                 .where(qJpaNotificationTemplate.notificationTemplateId.eq(notificationTemplateId))
                 .fetchOne();

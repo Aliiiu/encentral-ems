@@ -52,37 +52,34 @@ public interface SystemConfigurationMapper {
     NotificationTemplate dtoToNotificationTemplate(CreateNotificationTemplateDTO notificationTemplateDTO);
 
     /**
+     * @param j JpaNotificationTemplate object to be updated
+     * @param e NotificationTemplateDTO object containing the value of the fields to be updated
      * @author DEMILADE
      * @dateCreated 03/08/2023
      * @description A method to map new values of the JpaNotificationTemplate object to itself
-     *
-     * @param j JpaNotificationTemplate object to be updated
-     * @param e NotificationTemplateDTO object containing the value of the fields to be updated
      */
     default void editDTOToJpaNotificationTemplate(JpaNotificationTemplate j, EditNotificationTemplateDTO e) {
 
-        if (e.getNotificationTemplateName().isPresent()) {
-            j.setNotificationTemplateName(e.getNotificationTemplateName().get());
+        if (e.getNotificationTemplateName().length() != 0) {
+            j.setNotificationTemplateName(e.getNotificationTemplateName());
         }
 
-        if (e.getNotificationDescription().isPresent()) {
-            j.setNotificationDescription(e.getNotificationDescription().get());
+        if (e.getNotificationDescription().length() != 0) {
+            j.setNotificationDescription(e.getNotificationDescription());
         }
 
-        if (e.getNotificationTemplateContent().isPresent()) {
-            j.setNotificationTemplateContent(e.getNotificationTemplateContent().get());
+        if (e.getNotificationTemplateContent().length() != 0) {
+            j.setNotificationTemplateContent(e.getNotificationTemplateContent());
         }
 
     }
 
     /**
+     * @param notificationSet - a set of notification objects
+     * @return - a set of strings representing the notificationIds of the notification objects
      * @author DEMILADE
      * @dateCreated 03/08/2023
      * @description Default method to map JpaNotification Objects to their ids
-     *
-     * @param notificationSet - a set of notification objects
-     * @return - a set of strings representing the notificationIds of the notification objects
-     *
      **/
     default Set<String> toNotificationIds(Set<JpaNotification> notificationSet) {
         if (notificationSet == null) {
@@ -92,12 +89,11 @@ public interface SystemConfigurationMapper {
     }
 
     /**
+     * @param notificationIds - a set of notification Ids
+     * @return - a set of  JpaNotification objects
      * @author DEMILADE
      * @dateCreated 03/08/2023
      * @description Default method to map a collection of notificationIds to a collection of JpaNotification objects
-     *
-     * @param notificationIds - a set of notification Ids
-     * @return - a set of  JpaNotification objects
      */
     default Set<JpaNotification> toJpaNotifications(Set<String> notificationIds) {
         if (notificationIds == null) {
