@@ -145,7 +145,7 @@ public class NotificationTemplateImpl implements INotificationTemplate {
      * @description Fetches a JpaNotificationTemplate via its id
      */
     @Override
-    public boolean checkIfNotificationNameInUse(String templateName) {
+    public boolean checkIfNotificationTemplateNameInUse(String templateName) {
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaNotificationTemplate)
                 .where(qJpaNotificationTemplate.notificationTemplateName.eq(templateName))
                 .fetchOne() != null;

@@ -6,6 +6,11 @@ import com.encentral.staffsync.entity.JpaNotificationTemplate;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
 import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;
+import com.encentral.staffsync.entity.JpaPermission;
+import com.encentral.staffsync.entity.JpaRole;
+import com.encentral.staffsync.entity.JpaRoleHasPermission;
+import com.esl.internship.staffsync.system.configuration.dto.PermissionDTO;
+import com.esl.internship.staffsync.system.configuration.dto.RoleDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -23,7 +28,6 @@ public interface SystemConfigurationMapper {
     JpaAppConfig mapAppConfig(AppConfig model);
 
     AppConfig mapAppConfig(JpaAppConfig entity);
-
 
     @Mappings({
 
@@ -107,4 +111,18 @@ public interface SystemConfigurationMapper {
         }
         return jpaNotificationSet;
     }
+
+    JpaPermission mapPermission(Permission model);
+    Permission mapPermission(JpaPermission entity);
+    JpaPermission mapPermissionDto(PermissionDTO dto);
+    PermissionDTO mapPermissionDto(JpaPermission entity);
+
+    JpaRole mapRole(Role model);
+    Role mapRole(JpaRole entity);
+    JpaRole mapRoleDto(RoleDTO dto);
+    RoleDTO mapRoleDto(JpaRole entity);
+
+    JpaRoleHasPermission mapRoleHasPermission(RoleHasPermission model);
+    RoleHasPermission mapRoleHasPermission(JpaRoleHasPermission entity);
+
 }

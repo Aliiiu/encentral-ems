@@ -14,6 +14,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
 
@@ -101,7 +102,7 @@ public class NotificationTemplateController extends Controller {
         //TODO: Check if user is admin
         CreateNotificationTemplateDTO notificationTemplateDTO = notificationTemplateCreationForm.value;
 
-        if (iNotificationTemplate.checkIfNotificationNameInUse(notificationTemplateDTO.getNotificationTemplateName())) {
+        if (iNotificationTemplate.checkIfNotificationTemplateNameInUse(notificationTemplateDTO.getNotificationTemplateName())) {
             return Results.status(409, "Notification template name already in use");
         }
 
@@ -121,7 +122,8 @@ public class NotificationTemplateController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Boolean.class, message = "Changes saved"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid data"),
-                    @ApiResponse(code = 404, response = String.class, message = "An error has occurred"),
+                    @ApiResponse(code = 404, response = String.class, message = "Notification template not found"),
+                    @ApiResponse(code = 409, response = String.class, message = "Notification template name already in use")
             }
     )
     @ApiImplicitParams({
@@ -143,17 +145,28 @@ public class NotificationTemplateController extends Controller {
         EditNotificationTemplateDTO notificationTemplateDTO = notificationTemplateEditForm.value;
 
         //TODO: Check if user is admin
-        String name = notificationTemplateDTO.getNotificationTemplateName();
-        if (iNotificationTemplate.checkIfNotificationNameInUse(name)) {
-            return Results.status(409, "Notification template name already in use");
-        }
 
-        return Results.ok(myObjectMapper.toJsonString(
-                iNotificationTemplate.editNotificationTemplate(
-                        notificationTemplateDTO,
-                        getTestEmployee()
-                ))
+        Optional<NotificationTemplate> nt = iNotificationTemplate.getNotificationTemplate(
+                notificationTemplateDTO.getNotificationTemplateId()
         );
+
+        if (nt.isPresent()) {
+            String templateName = nt.get().getNotificationTemplateName();
+            String templateId = nt.get(). getNotificationTemplateId();
+            String dtoId = notificationTemplateDTO.getNotificationTemplateId();
+
+            if (!dtoId.equals(templateId) && iNotificationTemplate.checkIfNotificationTemplateNameInUse(templateName)) {
+                return Results.status(409, "Notification template name already in use");
+            }
+            return Results.ok(myObjectMapper.toJsonString(
+                    iNotificationTemplate.editNotificationTemplate(
+                            notificationTemplateDTO,
+                            getTestEmployee()
+                    ))
+            );
+        }
+        return Results.notFound("Notification template not found");
+
     }
 
     @ApiOperation("Delete Notification template by id")
