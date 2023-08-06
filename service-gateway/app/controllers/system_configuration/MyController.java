@@ -9,7 +9,6 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
-
 import javax.inject.Inject;
 
 import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
