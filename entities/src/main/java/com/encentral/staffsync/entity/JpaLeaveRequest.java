@@ -1,5 +1,6 @@
 package com.encentral.staffsync.entity;
 
+import com.encentral.staffsync.entity.attribute.converter.LeaveRequestStatusConverter;
 import com.encentral.staffsync.entity.enums.LeaveRequestStatus;
 import com.google.common.base.MoreObjects;
 
@@ -24,7 +25,7 @@ public class JpaLeaveRequest implements Serializable {
 	private String leaveRequestId;
 
 	@Column(name="approval_status", nullable=false, length=2147483647)
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = LeaveRequestStatusConverter.class)
 	private LeaveRequestStatus approvalStatus;
 
 	@Column(name="date_created", nullable=false)

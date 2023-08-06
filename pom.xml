@@ -165,6 +165,8 @@
         <module>integration-tests</module>
         <module>system-configuration-api</module>
         <module>system-configuration-impl</module>
+        <module>leave-management-api</module>
+        <module>leave-management-impl</module>
     </modules>
 </project>
 

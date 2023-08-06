@@ -27,6 +27,7 @@
 
     <class>com.encentral.staffsync.entity.JsonStringConverter</class>
     <class>com.encentral.staffsync.entity.attribute.converter.ActionConverter</class>
+    <class>com.encentral.staffsync.entity.attribute.converter.LeaveRequestStatusConverter</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/staffsync"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>

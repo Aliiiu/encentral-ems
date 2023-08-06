@@ -30,6 +30,7 @@
 
         <class>com.encentral.staffsync.entity.JsonStringConverter</class>
         <class>com.encentral.staffsync.entity.attribute.converter.ActionConverter</class>
+        <class>com.encentral.staffsync.entity.attribute.converter.LeaveRequestStatusConverter</class>
 
         <properties>
             <property name="eclipselink.weaving" value="static"/>
