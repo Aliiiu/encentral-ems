@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
+
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.staffsync.entity.JpaPermission;
 import com.encentral.staffsync.entity.QJpaPermission;
@@ -18,7 +19,9 @@ import java.util.stream.Collectors;
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
+
 public class DefaultPermissionApiImpl implements IPermissionApi {
+
     @Inject
     JPAApi jpaApi;
 
@@ -34,18 +37,6 @@ public class DefaultPermissionApiImpl implements IPermissionApi {
      *
      * @return Permission
      */
-    @Override
-    public Permission addPermission(Permission permission, Employee employee) {
-        final JpaPermission jpaPermission = INSTANCE.mapPermission(permission);
-        jpaPermission.setPermissionId(UUID.randomUUID().toString());
-        jpaPermission.setCreatedBy(stringifyEmployee(employee));
-        jpaPermission.setDateCreated(Timestamp.from(Instant.now()));
-
-        jpaApi.em().persist(jpaPermission);
-
-        return INSTANCE.mapPermission(jpaPermission);
-    }
-
     @Override
     public Permission addPermission(PermissionDTO permissionDto, Employee employee) {
         final JpaPermission jpaPermission = INSTANCE.mapPermissionDto(permissionDto);
@@ -106,28 +97,15 @@ public class DefaultPermissionApiImpl implements IPermissionApi {
 
     /**
      * @author WARITH
-     * @dateCreated 01/08/2023
-     * @description Updates a permission
+     * @dateCreated 01/08/23
+     * @description Updates a permission record using a dto
      *
      * @param permissionId Id of the permission to update
-     * @param permission Permission model containing the data update
+     * @param permissionDto A dto containing the data to update
      * @param employee Employee making the update
      *
      * @return boolean
      */
-    @Override
-    public boolean updatePermission(String permissionId, Permission permission, Employee employee) {
-
-        return new JPAQueryFactory(jpaApi.em()).update(qJpaPermission)
-                .set(qJpaPermission.permissionName, permission.getPermissionName())
-                .set(qJpaPermission.permissionAction, permission.getPermissionAction())
-                .set(qJpaPermission.permissionDescription, permission.getPermissionDescription())
-                .set(qJpaPermission.modifiedBy, stringifyEmployee(employee, "Updated Permission"))
-                .set(qJpaPermission.dateModified, Timestamp.from(Instant.now()))
-                .where(qJpaPermission.permissionId.eq(permissionId))
-                .execute() == 1;
-    }
-
     @Override
     public boolean updatePermission(String permissionId, PermissionDTO permissionDto, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaPermission)

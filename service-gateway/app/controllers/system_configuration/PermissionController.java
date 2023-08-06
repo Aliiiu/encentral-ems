@@ -1,5 +1,6 @@
 package controllers.system_configuration;
 
+
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.scaffold.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.IPermissionApi;
@@ -19,6 +20,7 @@ import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
 @Api("Permission Management")
 @Transactional
 public class PermissionController extends Controller {
+
     @Inject
     IPermissionApi iPermissionApi;
 
@@ -112,4 +114,5 @@ public class PermissionController extends Controller {
     Employee getEmployee() {
         return new Employee("Test-001-EMP", "Test Employee");
     }
+
 }

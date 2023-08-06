@@ -1,5 +1,6 @@
 package controllers.system_configuration;
 
+
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.scaffold.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.IRoleApi;
@@ -15,9 +16,11 @@ import javax.inject.Inject;
 
 import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
 
+
 @Api("Role Management")
 @Transactional
 public class RoleController extends Controller {
+
     @Inject
     IRoleApi iRoleApi;
 

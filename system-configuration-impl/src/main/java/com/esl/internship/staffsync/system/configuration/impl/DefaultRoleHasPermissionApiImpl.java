@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
+
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.staffsync.entity.*;
 import com.esl.internship.staffsync.system.configuration.api.IRoleHasPermissionApi;
@@ -11,13 +12,16 @@ import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
+
 public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
+
     @Inject
     JPAApi jpaApi;
 
@@ -40,12 +44,12 @@ public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
     public boolean givePermissionToRole(String roleId, String permissionId, Employee employee) {
 
         JpaRole jpaRole = new JPAQueryFactory(jpaApi.em())
-                .select(qJpaRole)
+                .selectFrom(qJpaRole)
                 .where(qJpaRole.roleId.eq(roleId))
                 .fetchOne();
 
         JpaPermission jpaPermission = new JPAQueryFactory(this.jpaApi.em())
-                .select(qJpaPermission)
+                .selectFrom(qJpaPermission)
                 .where(qJpaPermission.permissionId.eq(permissionId))
                 .fetchOne();
 
@@ -76,9 +80,43 @@ public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
      */
     @Override
     public boolean removePermissionFromRole(String roleId, String permissionId) {
-        return new JPAQueryFactory(jpaApi.em()).delete(qJpaPermission)
-                .where(qJpaPermission.permissionId.eq(permissionId))
-                .where(qJpaRole.roleId.eq(roleId))
+        return new JPAQueryFactory(jpaApi.em()).delete(qJpaRoleHasPermission)
+                .where(qJpaRoleHasPermission.role.roleId.eq(roleId))
+                .where(qJpaRoleHasPermission.permission.permissionId.eq(permissionId))
+                .execute() == 1;
+    }
+
+    /**
+     * @author WARITH
+     * @dateCreated 05/08/2023
+     * @description Gets a RoleHasPermission
+     *
+     * @param roleHasPermissionId Id of the roleHasPermission
+     *
+     * @return Optional<RoleHasPermission>
+     */
+    @Override
+    public Optional<RoleHasPermission> getRoleHasPermission(String roleHasPermissionId) {
+        JpaRoleHasPermission jpaRoleHasPermission = new JPAQueryFactory(jpaApi.em())
+                .selectFrom(qJpaRoleHasPermission)
+                .where(qJpaRoleHasPermission.roleHasPermissionId.eq(roleHasPermissionId))
+                .fetchOne();
+        return Optional.ofNullable(INSTANCE.mapRoleHasPermission(jpaRoleHasPermission));
+    }
+
+    /**
+     * @author WARITH
+     * @dateCreated 03/08/2023
+     * @description Removes a RoleHasPermission record directly
+     *
+     * @param roleHasPermissionId Id of the RoleHasPermission to remove
+     *
+     * @return boolean
+     */
+    @Override
+    public boolean removeRoleHasPermission(String roleHasPermissionId) {
+        return new JPAQueryFactory(jpaApi.em()).delete(qJpaRoleHasPermission)
+                .where(qJpaRoleHasPermission.roleHasPermissionId.eq(roleHasPermissionId))
                 .execute() == 1;
     }
 
@@ -143,4 +181,5 @@ public class DefaultRoleHasPermissionApiImpl implements IRoleHasPermissionApi {
                 .map(INSTANCE::mapRoleHasPermission)
                 .collect(Collectors.toList());
     }
+
 }

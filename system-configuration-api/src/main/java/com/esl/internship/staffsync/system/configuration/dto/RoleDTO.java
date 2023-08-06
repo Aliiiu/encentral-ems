@@ -1,6 +1,8 @@
 package com.esl.internship.staffsync.system.configuration.dto;
 
+
 public class RoleDTO {
+
     private String roleDescription;
     private String roleName;
 
@@ -27,4 +29,5 @@ public class RoleDTO {
                 ", roleName='" + roleName + '\'' +
                 '}';
     }
+
 }
