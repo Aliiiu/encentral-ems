@@ -71,3 +71,17 @@ GET            /role-permission/permissions/:roleId/                           c
 GET            /role-permission/roles/:permissionId/                           controllers.system_configuration.RolePermissionController.getRolesForPermission(permissionId: String)
 GET            /role-permission/                                               controllers.system_configuration.RolePermissionController.getAllRolePermission()
 
+###### Leave Management ######
+GET            /leave/:leaveRequestId/                                         controllers.leave_management.LeaveManagementController.getLeaveRequest(leaveRequestId: String)
+POST           /leave/                                                         controllers.leave_management.LeaveManagementController.createLeaveRequest()
+GET            /leave/employee/:employeeId/                                    controllers.leave_management.LeaveManagementController.getEmployeeLeaveRequests(employeeId: String)
+GET            /leave/pending/                                                 controllers.leave_management.LeaveManagementController.getAllPendingRequests()
+GET            /leave/history/:employeeId/                                     controllers.leave_management.LeaveManagementController.getEmployeeLeaveHistory(employeeId: String)
+GET            /leave/completed/                                               controllers.leave_management.LeaveManagementController.getAllCompletedLeave()
+GET            /leave/ongoing/                                                 controllers.leave_management.LeaveManagementController.getAllOngoingLeave()
+PATCH          /leave/                                                         controllers.leave_management.LeaveManagementController.approveLeaveRequest()
+PATCH          /leave/cancel/:employeeId/                                      controllers.leave_management.LeaveManagementController.cancelLeaveRequest(employeeId: String)
+PATCH          /leave/reject/                                                  controllers.leave_management.LeaveManagementController.rejectLeaveRequest()
+PATCH          /leave/accept/:employeeId/                                      controllers.leave_management.LeaveManagementController.acceptLeaveRequest(employeeId: String)
+PATCH          /leave/complete/:employeeId/                                    controllers.leave_management.LeaveManagementController.markLeaveRequestAsComplete(employeeId: String)
+DELETE         /leave/:leaveRequestId/                                         controllers.leave_management.LeaveManagementController.deleteLeaveRequest(leaveRequestId: String)

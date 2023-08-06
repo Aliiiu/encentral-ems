@@ -75,7 +75,6 @@ public interface SystemConfigurationMapper {
         if (e.getNotificationTemplateContent().length() != 0) {
             j.setNotificationTemplateContent(e.getNotificationTemplateContent());
         }
-
     }
 
     /**

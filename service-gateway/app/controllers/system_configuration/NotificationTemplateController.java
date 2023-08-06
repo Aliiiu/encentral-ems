@@ -152,10 +152,9 @@ public class NotificationTemplateController extends Controller {
 
         if (nt.isPresent()) {
             String templateName = nt.get().getNotificationTemplateName();
-            String templateId = nt.get(). getNotificationTemplateId();
-            String dtoId = notificationTemplateDTO.getNotificationTemplateId();
+            String dtoName = notificationTemplateDTO.getNotificationTemplateName();
 
-            if (!dtoId.equals(templateId) && iNotificationTemplate.checkIfNotificationTemplateNameInUse(templateName)) {
+            if (!dtoName.equals(templateName) && iNotificationTemplate.checkIfNotificationTemplateNameInUse(templateName)) {
                 return Results.status(409, "Notification template name already in use");
             }
             return Results.ok(myObjectMapper.toJsonString(

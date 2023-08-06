@@ -3,6 +3,7 @@ package com.esl.internship.staffsync.leave.management.dto;
 import java.util.Date;
 
 public class CreateLeaveRequestDTO {
+
     private String employeeId;
     private String leaveTypeId;
     private Date startDate;

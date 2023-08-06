@@ -1,7 +1,9 @@
 package com.esl.internship.staffsync.leave.management.model;
 
 import com.encentral.staffsync.entity.JpaLeaveRequest;
+import com.encentral.staffsync.entity.JpaNotificationTemplate;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
+import com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -28,5 +30,6 @@ public interface LeaveManagementMapper {
     })
     LeaveRequest jpaLeaveRequestToLeaveRequest(JpaLeaveRequest jpaLeaveRequest);
 
-    LeaveRequest dtoToLeaveRequest(CreateLeaveRequestDTO createLeaveRequestDTO);
+    LeaveRequest creationDtoToLeaveRequest(CreateLeaveRequestDTO createLeaveRequestDTO);
+
 }
