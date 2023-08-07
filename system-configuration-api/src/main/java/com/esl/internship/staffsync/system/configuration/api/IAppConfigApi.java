@@ -6,7 +6,7 @@ import com.esl.internship.staffsync.system.configuration.model.AppConfig;
 import java.util.List;
 import java.util.Optional;
 
-public interface IMyApi {
+public interface IAppConfigApi {
 
     AppConfig addAppConfig(AppConfig appConfig, Employee employee);
 

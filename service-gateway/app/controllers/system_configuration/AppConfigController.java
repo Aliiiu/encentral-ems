@@ -2,7 +2,7 @@ package controllers.system_configuration;
 
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.scaffold.commons.util.MyObjectMapper;
-import com.esl.internship.staffsync.system.configuration.api.IMyApi;
+import com.esl.internship.staffsync.system.configuration.api.IAppConfigApi;
 import com.esl.internship.staffsync.system.configuration.model.AppConfig;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
@@ -13,12 +13,12 @@ import javax.inject.Inject;
 
 import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
 
-@Api("My Controller")
+@Api("Application Controller")
 @Transactional
-public class MyController extends Controller {
+public class AppConfigController extends Controller {
 
     @Inject
-    IMyApi iMyApi;
+    IAppConfigApi iAppConfigApi;
 
     @Inject
     MyObjectMapper myObjectMapper;
@@ -42,7 +42,7 @@ public class MyController extends Controller {
         if (appConfigForm.hasError) {
             return badRequest(appConfigForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iMyApi.addAppConfig(appConfigForm.value, getTestEmployee())));
+        return ok(myObjectMapper.toJsonString(iAppConfigApi.addAppConfig(appConfigForm.value, getTestEmployee())));
     }
 
     @ApiOperation(value = "Update app config")
@@ -64,7 +64,7 @@ public class MyController extends Controller {
         if (appConfigForm.hasError) {
             return badRequest(appConfigForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iMyApi.updateAppConfig(appConfigId, appConfigForm.value, getTestEmployee())));
+        return ok(myObjectMapper.toJsonString(iAppConfigApi.updateAppConfig(appConfigId, appConfigForm.value, getTestEmployee())));
     }
 
     @ApiOperation(value = "Get app config by id")
@@ -73,7 +73,7 @@ public class MyController extends Controller {
                     @ApiResponse(code = 200, message = "AppConfig", response = AppConfig.class)}
     )
     public Result getAppConfig(String appConfigId) {
-        return iMyApi.getAppConfig(appConfigId)
+        return iAppConfigApi.getAppConfig(appConfigId)
                 .map(e -> ok(myObjectMapper.toJsonString(e))).orElseGet(Results::notFound);
     }
 
@@ -83,7 +83,7 @@ public class MyController extends Controller {
                     @ApiResponse(code = 200, message = "Options", response = AppConfig.class, responseContainer = "List")}
     )
     public Result getAppConfigs() {
-        return ok(myObjectMapper.toJsonString(iMyApi.getAppConfigs()));
+        return ok(myObjectMapper.toJsonString(iAppConfigApi.getAppConfigs()));
     }
 
     @ApiOperation(value = "Delete app config")
@@ -92,7 +92,7 @@ public class MyController extends Controller {
                     @ApiResponse(code = 200, message = "Deleted", response = boolean.class)}
     )
     public Result deleteAppConfig(String appConfigId) {
-        return ok(myObjectMapper.toJsonString(iMyApi.deleteAppConfig(appConfigId)));
+        return ok(myObjectMapper.toJsonString(iAppConfigApi.deleteAppConfig(appConfigId)));
     }
 
     private Employee getTestEmployee() {
