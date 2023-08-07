@@ -2,7 +2,7 @@ package com.esl.internship.staffsync.system.configuration.impl;
 
 import com.encentral.scaffold.commons.model.Employee;
 import com.encentral.staffsync.entity.QJpaAppConfig;
-import com.esl.internship.staffsync.system.configuration.api.IMyApi;
+import com.esl.internship.staffsync.system.configuration.api.IAppConfigApi;
 import com.esl.internship.staffsync.system.configuration.model.AppConfig;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
@@ -24,7 +24,7 @@ import static com.esl.internship.staffsync.system.configuration.model.SystemConf
  * @dateCreated 03/07/2023
  * @description General implementation of IMyApi
  */
-public class MyApiImpl implements IMyApi {
+public class DefaultAppConfigApiImpl implements IAppConfigApi {
 
     @Inject
     JPAApi jpaApi;
