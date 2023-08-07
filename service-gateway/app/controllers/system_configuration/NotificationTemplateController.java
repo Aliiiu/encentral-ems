@@ -152,9 +152,10 @@ public class NotificationTemplateController extends Controller {
 
         if (nt.isPresent()) {
             String templateName = nt.get().getNotificationTemplateName();
-            String dtoName = notificationTemplateDTO.getNotificationTemplateName();
+            String templateId = nt.get(). getNotificationTemplateId();
+            String dtoId = notificationTemplateDTO.getNotificationTemplateId();
 
-            if (!dtoName.equals(templateName) && iNotificationTemplate.checkIfNotificationTemplateNameInUse(templateName)) {
+            if (!dtoId.equals(templateId) && iNotificationTemplate.checkIfNotificationTemplateNameInUse(templateName)) {
                 return Results.status(409, "Notification template name already in use");
             }
             return Results.ok(myObjectMapper.toJsonString(
@@ -186,7 +187,8 @@ public class NotificationTemplateController extends Controller {
     }
 
     private Employee getTestEmployee() {
-        return new Employee("12345", "employee");
+        return new Employee("92f6fac6-f49b-448f-9c33-f0d50608bc83", "employee");
     }
 
+    private Employee getDummyEmployee() {return  new Employee("f04b5314-9f26-43a0-b129-3e149165253e", "Name");}
 }

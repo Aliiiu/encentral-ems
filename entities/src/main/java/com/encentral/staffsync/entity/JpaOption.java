@@ -122,5 +122,4 @@ public class JpaOption implements Serializable {
 				.add("Value", this.getOptionValue())
 				.toString();
 	}
-
 }

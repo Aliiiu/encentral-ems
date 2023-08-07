@@ -125,7 +125,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
                 .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
                 .where(qJpaLeaveRequest.approvalStatus.in(requestStatusesToCheck))
                 .orderBy(qJpaLeaveRequest.dateCreated.desc())
-                .fetch() != null;
+                .fetch().size() !=0;
     }
 
     /**
@@ -191,7 +191,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
     /**
      * @author DEMILADE
      * @dateCreated 06/08/2023
-     * @description Get all on-going and completed leave requests
+     * @description Get all ongoing and completed leave requests
      *
      * @param employeeId Employee id
      *
@@ -242,7 +242,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
      *
      * @param editLeaveRequestDTO -DTO for editing a leave request
      *
-     * @return Boolen indicating success
+     * @return Boolean indicating success
      */
     @Override
     public boolean approveLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO) {
@@ -385,7 +385,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
     /**
      * @author DEMILADE
      * @dateCreated 06/08/2023
-     * @description Method to get the number of days left for an emplouee
+     * @description Method to get the number of days left for an employee
      *
      * @param employeeId Employee id
      *
