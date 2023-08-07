@@ -23,3 +23,51 @@ PATCH          /app-config/:appConfigId/                                       c
 GET            /app-config/:appConfigId/                                       controllers.system_configuration.MyController.getAppConfig(appConfigId : String)
 GET            /app-config/                                                    controllers.system_configuration.MyController.getAppConfigs()
 DELETE         /app-config/:appConfigId/                                       controllers.system_configuration.MyController.deleteAppConfig(appConfigId : String)
+
+
+###### Notification Endpoints ######
+GET            /notification/                                                  controllers.system_configuration.NotificationController.getSystemNotifications()
+GET            /notification/:notificationId/                                  controllers.system_configuration.NotificationController.getNotification(notificationId: String)
+GET            /notification/employee/received/:employeeId/                    controllers.system_configuration.NotificationController.getEmployeeNotifications(employeeId: String)
+GET            /notification/employee/sent/:employeeId/                        controllers.system_configuration.NotificationController.getEmployeeSentNotifications(employeeId: String)
+GET            /notification/employee/unread/:employeeId/                      controllers.system_configuration.NotificationController.getEmployeeUnReadNotifications(employeeId: String)
+PATCH          /notification/read/:notificationId/                             controllers.system_configuration.NotificationController.markNotificationAsRead(notificationId: String)
+PATCH          /notification/delete/:notificationId/                           controllers.system_configuration.NotificationController.markNotificationAsDeleted(notificationId: String)
+DELETE         /notification/:notificationId/                                  controllers.system_configuration.NotificationController.deleteNotification(notificationId: String)
+DELETE         /notification/employee/:employeeId/                             controllers.system_configuration.NotificationController.deleteAllEmployeeNotifications(employeeId: String)
+PATCH          /notification/employee/delete/:employeeId/                      controllers.system_configuration.NotificationController.markAllEmployeeNotificationsAsDeleted(employeeId: String)
+PATCH          /notification/employee/read/:employeeId/                        controllers.system_configuration.NotificationController.markAllEmployeeNotificationsAsRead(employeeId: String)
+POST           /notification/                                                  controllers.system_configuration.NotificationController.createNotification()
+
+
+###### Notification Template Endpoints ######
+GET            /notification-template/                                         controllers.system_configuration.NotificationTemplateController.getAllNotificationTemplates()
+GET            /notification-template/:notificationTemplateId/                 controllers.system_configuration.NotificationTemplateController.getNotificationTemplate(notificationTemplateId: String)
+GET            /notification-template/notification/:notificationTemplateId/    controllers.system_configuration.NotificationTemplateController.getTemplateNotifications(notificationTemplateId: String)
+POST           /notification-template/                                         controllers.system_configuration.NotificationTemplateController.createNotificationTemplate()
+PATCH          /notification-template/                                         controllers.system_configuration.NotificationTemplateController.editNotificationTemplate()
+DELETE         /notification-template/:notificationTemplateId/                 controllers.system_configuration.NotificationTemplateController.deleteNotificationTemplate(notificationTemplateId: String)
+
+
+###### Permission Endpoints ######
+GET            /permission/                                                    controllers.system_configuration.PermissionController.getAllPermissions()
+POST           /permission/                                                    controllers.system_configuration.PermissionController.addPermission()
+GET            /permission/:permissionId/                                      controllers.system_configuration.PermissionController.getPermission(permissionId: String)
+PATCH          /permission/:permissionId/                                      controllers.system_configuration.PermissionController.updatePermission(permissionId: String)
+DELETE         /permission/:permissionId/                                      controllers.system_configuration.PermissionController.deletePermission(permissionId: String)
+
+
+###### Role Endpoints ######
+GET            /role/                                                          controllers.system_configuration.RoleController.getAllRole()
+POST           /role/                                                          controllers.system_configuration.RoleController.addRole()
+GET            /role/:roleId/                                                  controllers.system_configuration.RoleController.getRole(roleId: String)
+PATCH          /role/:roleId/                                                  controllers.system_configuration.RoleController.updateRole(roleId: String)
+DELETE         /role/:roleId/                                                  controllers.system_configuration.RoleController.deleteRole(roleId: String)
+
+###### Role-Permission ######
+GET            /role-permission/grant/:roleId/:permissionId/                   controllers.system_configuration.RolePermissionController.grantPermissionToRole(roleId: String, permissionId: String)
+GET            /role-permission/revoke/:roleId/:permissionId/                  controllers.system_configuration.RolePermissionController.revokePermissionFromRole(roleId: String, permissionId: String)
+GET            /role-permission/permissions/:roleId/                           controllers.system_configuration.RolePermissionController.getPermissionsForRole(roleId: String)
+GET            /role-permission/roles/:permissionId/                           controllers.system_configuration.RolePermissionController.getRolesForPermission(permissionId: String)
+GET            /role-permission/                                               controllers.system_configuration.RolePermissionController.getAllRolePermission()
+

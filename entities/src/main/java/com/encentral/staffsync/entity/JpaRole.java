@@ -23,6 +23,7 @@ public class JpaRole implements Serializable {
 	@Column(name="role_id", unique=true, nullable=false, length=64)
 	private String roleId;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -32,6 +33,7 @@ public class JpaRole implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
