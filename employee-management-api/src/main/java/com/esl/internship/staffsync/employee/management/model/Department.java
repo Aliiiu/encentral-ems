@@ -3,6 +3,7 @@ package com.esl.internship.staffsync.employee.management.model;
 import java.sql.Timestamp;
 
 public class Department {
+
     private String departmentId;
     private String createdBy;
     private Timestamp dateCreated;
@@ -12,7 +13,6 @@ public class Department {
     private String modifiedBy;
     private Integer workingHours;
     private DepartmentHead departmentHead;
-//    private List<Employee> employees;
 
 
     public String getDepartmentId() {

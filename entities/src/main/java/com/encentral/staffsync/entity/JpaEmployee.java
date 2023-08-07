@@ -1,5 +1,6 @@
 package com.encentral.staffsync.entity;
 
+import com.encentral.staffsync.entity.attribute.converter.EmployeeStatusConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -29,6 +30,7 @@ public class JpaEmployee implements Serializable {
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
+	@Convert(converter = EmployeeStatusConverter.class)
 	@Column(name="current_status", nullable=false, length=2147483647)
 	private String currentStatus;
 

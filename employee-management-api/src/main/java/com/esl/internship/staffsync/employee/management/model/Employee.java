@@ -1,5 +1,7 @@
 package com.esl.internship.staffsync.employee.management.model;
 
+import com.encentral.staffsync.entity.enums.EmployeeStatus;
+
 import java.security.Timestamp;
 import java.util.Date;
 
@@ -7,7 +9,7 @@ public class Employee {
     private String employeeId;
     private String address;
     private String createdBy;
-    private String currentStatus;
+    private EmployeeStatus currentStatus;
     private Timestamp dateCreated;
     private Date dateHired;
     private Timestamp dateModified;
@@ -25,6 +27,7 @@ public class Employee {
     private String phoneNumber;
     private String profilePictureUrl;
     private Department department;
+
 //    private Option countryOfOrigin;
 //    private Option employeeGender;
 //    private Option employeeMaritalStatus;
@@ -56,11 +59,11 @@ public class Employee {
         this.createdBy = createdBy;
     }
 
-    public String getCurrentStatus() {
+    public EmployeeStatus getCurrentStatus() {
         return currentStatus;
     }
 
-    public void setCurrentStatus(String currentStatus) {
+    public void setCurrentStatus(EmployeeStatus currentStatus) {
         this.currentStatus = currentStatus;
     }
 

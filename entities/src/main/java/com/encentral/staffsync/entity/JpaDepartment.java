@@ -44,11 +44,11 @@ public class JpaDepartment implements Serializable {
 	private Integer workingHours;
 
 	//bidirectional many-to-one association to JpaDepartmentHead
-	@OneToOne(mappedBy="department")
+	@OneToOne(mappedBy="department", fetch = FetchType.LAZY)
 	private JpaDepartmentHead departmentHead;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@OneToMany(mappedBy="department")
+	@OneToMany(mappedBy="department", fetch = FetchType.LAZY)
 	private Set<JpaEmployee> employees;
 
 	public JpaDepartment() {
