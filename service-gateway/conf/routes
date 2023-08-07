@@ -72,6 +72,7 @@ GET            /role-permission/roles/:permissionId/                           c
 GET            /role-permission/                                               controllers.system_configuration.RolePermissionController.getAllRolePermission()
 
 ###### Leave Management ######
+GET            /leave/                                                         controllers.leave_management.LeaveManagementController.getAllLeaveRequests()
 GET            /leave/:leaveRequestId/                                         controllers.leave_management.LeaveManagementController.getLeaveRequest(leaveRequestId: String)
 POST           /leave/                                                         controllers.leave_management.LeaveManagementController.createLeaveRequest()
 GET            /leave/employee/:employeeId/                                    controllers.leave_management.LeaveManagementController.getEmployeeLeaveRequests(employeeId: String)

@@ -1,15 +1,10 @@
 package com.esl.internship.staffsync.system.configuration.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.util.Optional;
-
 /**
  * @author Demilade
  * @dateCreated 01/08/2023
  * @description DTO class for editing notification templates
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class EditNotificationTemplateDTO {
 
     private String notificationTemplateId;

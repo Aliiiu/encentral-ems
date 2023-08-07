@@ -66,6 +66,26 @@ public class LeaveRequestImpl implements ILeaveRequest {
         return INSTANCE.jpaLeaveRequestToLeaveRequest(jpaLeaveRequest);
     }
 
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 07/08/2023
+     * @description Get all leave requests in the system
+     *
+     * @return List of leave requests
+     */
+    @Override
+    public List<LeaveRequest> getAllLeaveRequests() {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
+
+        return queryFactory.selectFrom(qJpaLeaveRequest)
+                .orderBy(qJpaLeaveRequest.dateCreated.asc())
+                .fetch()
+                .stream()
+                .map(INSTANCE::jpaLeaveRequestToLeaveRequest)
+                .collect(Collectors.toList());
+    }
+
     /**
      * @author DEMILADE
      * @dateCreated 06/08/2023
@@ -153,7 +173,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
      * @dateCreated 06/08/2023
      * @description Get all in progress leave requests
      *
-     * @return List of leave requests
+     * @return List of ongoing leave requests
      */
     @Override
     public List<LeaveRequest> getAllOngoingLeave() {
@@ -360,8 +380,10 @@ public class LeaveRequestImpl implements ILeaveRequest {
                     .where(qJpaLeaveRequest.employee.employeeId.eq(employee.getEmployeeId()))
                     .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
                     .execute() == 1;
-            isTransactionSuccessful.set(updatedRequest);
-            return updatedRequest;
+            if (!updatedRequest) return false;
+            boolean activatedEmployee =  updateEmployeeCurrentStatus(EmployeeStatus.ACTIVE, employee);
+            isTransactionSuccessful.set(activatedEmployee);
+            return activatedEmployee;
         });
         return isTransactionSuccessful.get();
     }

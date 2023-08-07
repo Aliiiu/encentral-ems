@@ -48,12 +48,12 @@ public class JpaLeaveRequest implements Serializable {
 	private Date startDate;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne
 	@JoinColumn(name="approver_id")
 	private JpaEmployee approver;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 

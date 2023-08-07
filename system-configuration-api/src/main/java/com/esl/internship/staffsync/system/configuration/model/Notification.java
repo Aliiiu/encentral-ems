@@ -25,9 +25,9 @@ public class Notification {
 
     private NotificationPriority priority;
 
-    private String receiverId;
+    private NotificationEmployee receiver;
 
-    private String senderId;
+    private NotificationEmployee sender;
 
     private String notificationTemplateBeanId;
 
@@ -112,20 +112,20 @@ public class Notification {
         this.priority = priority;
     }
 
-    public String getReceiverId() {
-        return receiverId;
+    public NotificationEmployee getReceiver() {
+        return receiver;
     }
 
-    public void setReceiverId(String receiverId) {
-        this.receiverId = receiverId;
+    public void setReceiver(NotificationEmployee receiver) {
+        this.receiver = receiver;
     }
 
-    public String getSenderId() {
-        return senderId;
+    public NotificationEmployee getSender() {
+        return sender;
     }
 
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
+    public void setSender(NotificationEmployee sender) {
+        this.sender = sender;
     }
 
     public String getNotificationTemplateBeanId() {

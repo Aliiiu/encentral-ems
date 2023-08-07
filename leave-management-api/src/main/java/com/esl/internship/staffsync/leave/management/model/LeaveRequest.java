@@ -15,9 +15,9 @@ public class LeaveRequest {
     private String reason;
     private String remarks;
     private Date startDate;
-    private String approverId;
-    private String employeeId;
-    private String leaveTypeId;
+    private LeaveRequestEmployee approver;
+    private LeaveRequestEmployee employee;
+    private LeaveOptionType leaveType;
 
     public LeaveRequest() {
     }
@@ -86,27 +86,27 @@ public class LeaveRequest {
         this.startDate = startDate;
     }
 
-    public String getApproverId() {
-        return approverId;
+    public LeaveRequestEmployee getApprover() {
+        return approver;
     }
 
-    public void setApproverId(String approverId) {
-        this.approverId = approverId;
+    public void setApprover(LeaveRequestEmployee approver) {
+        this.approver = approver;
     }
 
-    public String getEmployeeId() {
-        return employeeId;
+    public LeaveRequestEmployee getEmployee() {
+        return employee;
     }
 
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
+    public void setEmployee(LeaveRequestEmployee employee) {
+        this.employee = employee;
     }
 
-    public String getLeaveTypeId() {
-        return leaveTypeId;
+    public LeaveOptionType getLeaveType() {
+        return leaveType;
     }
 
-    public void setLeaveTypeId(String leaveTypeId) {
-        this.leaveTypeId = leaveTypeId;
+    public void setLeaveType(LeaveOptionType leaveType) {
+        this.leaveType = leaveType;
     }
 }

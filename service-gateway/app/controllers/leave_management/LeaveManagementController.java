@@ -46,6 +46,20 @@ public class LeaveManagementController extends Controller {
                 .orElseGet(Results::notFound);
     }
 
+    @ApiOperation("Get all leave requests in the system")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
+            }
+    )
+    public Result getAllLeaveRequests( ){
+        System.out.println(iLeaveRequest.getAllLeaveRequests());
+        //TODO: Check if user is admin
+        return Results.ok(myObjectMapper.toJsonString(
+                iLeaveRequest.getAllLeaveRequests()
+        ));
+    }
+
     @ApiOperation("Create a leave request")
     @ApiResponses(
             value = {
@@ -109,6 +123,7 @@ public class LeaveManagementController extends Controller {
             }
     )
     public Result getAllPendingRequests( ){
+        System.out.println(iLeaveRequest.getAllPendingRequests());
         //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getAllPendingRequests()

@@ -15,6 +15,8 @@ public interface ILeaveRequest {
 
     Optional<LeaveRequest> getLeaveRequest(String leaveRequestId);
 
+    List<LeaveRequest> getAllLeaveRequests();
+
     List<LeaveRequest> getEmployeeLeaveRequests(String employeeId);
 
     boolean checkIfEmployeeHasOpenLeaveRequest(String employeeId);

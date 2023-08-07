@@ -1,9 +1,9 @@
 package com.esl.internship.staffsync.leave.management.model;
 
+import com.encentral.staffsync.entity.JpaEmployee;
 import com.encentral.staffsync.entity.JpaLeaveRequest;
-import com.encentral.staffsync.entity.JpaNotificationTemplate;
+import com.encentral.staffsync.entity.JpaOption;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
-import com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -14,22 +14,23 @@ public interface LeaveManagementMapper {
 
     LeaveManagementMapper INSTANCE = Mappers.getMapper(LeaveManagementMapper.class);
 
-    @Mappings({
 
-            @Mapping(target = "employee.employeeId", source = "employeeId"),
-            @Mapping(target = "approver.employeeId", source = "approverId"),
-            @Mapping(target = "leaveType.optionId", source = "leaveTypeId")
-    })
     JpaLeaveRequest leaveRequestToJpaLeaveRequest(LeaveRequest leaveRequest);
 
-    @Mappings({
-
-            @Mapping(target = "employeeId", source = "employee.employeeId"),
-            @Mapping(target = "approverId", source = "approver.employeeId"),
-            @Mapping(target = "leaveTypeId", source = "leaveType.optionId")
-    })
     LeaveRequest jpaLeaveRequestToLeaveRequest(JpaLeaveRequest jpaLeaveRequest);
 
+    LeaveRequestEmployee jpaEmployeeToLeaveRequestEmployee(JpaEmployee jpaEmployee);
+
+    JpaEmployee leaveRequestEmployeeToJpaEmployee(LeaveRequestEmployee leaveRequestEmployee);
+
+    LeaveOptionType jpaOptionToLeaveOptionType(JpaOption jpaOption);
+
+    JpaOption leaveOptionTypeToJpaOption(LeaveOptionType leaveOptionType);
+
+    @Mappings({
+            @Mapping(target="employee.employeeId", source ="employeeId"),
+            @Mapping(target="leaveType.optionId", source = "leaveTypeId")
+    })
     LeaveRequest creationDtoToLeaveRequest(CreateLeaveRequestDTO createLeaveRequestDTO);
 
 }

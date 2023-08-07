@@ -1,14 +1,9 @@
 package com.esl.internship.staffsync.system.configuration.model;
 
-import com.encentral.staffsync.entity.JpaAppConfig;
-import com.encentral.staffsync.entity.JpaNotification;
-import com.encentral.staffsync.entity.JpaNotificationTemplate;
+import com.encentral.staffsync.entity.*;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
 import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;
-import com.encentral.staffsync.entity.JpaPermission;
-import com.encentral.staffsync.entity.JpaRole;
-import com.encentral.staffsync.entity.JpaRoleHasPermission;
 import com.esl.internship.staffsync.system.configuration.dto.PermissionDTO;
 import com.esl.internship.staffsync.system.configuration.dto.RoleDTO;
 import org.mapstruct.Mapper;
@@ -31,21 +26,25 @@ public interface SystemConfigurationMapper {
 
     @Mappings({
 
-            @Mapping(target = "receiver.employeeId", source = "receiverId"),
-            @Mapping(target = "sender.employeeId", source = "senderId"),
             @Mapping(target = "notificationTemplateBean.notificationTemplateId", source = "notificationTemplateBeanId")
     })
     JpaNotification notificationToJpaNotification(Notification notification);
 
+    @Mappings({
+            @Mapping(target="receiver.employeeId", source ="receiverId"),
+            @Mapping(target="sender.employeeId", source = "senderId")
+    })
     Notification createNotificationToNotification(CreateNotificationDTO createNotification);
 
     @Mappings({
 
-            @Mapping(target = "receiverId", source = "receiver.employeeId"),
-            @Mapping(target = "senderId", source = "sender.employeeId"),
             @Mapping(target = "notificationTemplateBeanId", source = "notificationTemplateBean.notificationTemplateId")
     })
     Notification jpaNotificationToNotification(JpaNotification jpaNotification);
+
+    JpaEmployee notificationEmployeeToJpaEmployee(NotificationEmployee notificationEmployee);
+
+    NotificationEmployee jpaEmployeeToNotificationEmployee(JpaEmployee jpaEmployee);
 
     @Mapping(target = "notificationList", source = "notifications")
     NotificationTemplate jpaNotificationTemplateToNotificationTemplate(JpaNotificationTemplate jpaNotificationTemplate);
