@@ -18,11 +18,11 @@ GET            /error                                                          c
 GET            /error/                                                         controllers.HomeController.error()
 GET            /api-docs                                                       controllers.HomeController.api()
 
-POST           /app-config/                                                    controllers.system_configuration.MyController.addAppConfig()
-PATCH          /app-config/:appConfigId/                                       controllers.system_configuration.MyController.updateAppConfig(appConfigId : String)
-GET            /app-config/:appConfigId/                                       controllers.system_configuration.MyController.getAppConfig(appConfigId : String)
-GET            /app-config/                                                    controllers.system_configuration.MyController.getAppConfigs()
-DELETE         /app-config/:appConfigId/                                       controllers.system_configuration.MyController.deleteAppConfig(appConfigId : String)
+POST           /app-config/                                                    controllers.system_configuration.AppConfigController.addAppConfig()
+PATCH          /app-config/:appConfigId/                                       controllers.system_configuration.AppConfigController.updateAppConfig(appConfigId : String)
+GET            /app-config/:appConfigId/                                       controllers.system_configuration.AppConfigController.getAppConfig(appConfigId : String)
+GET            /app-config/                                                    controllers.system_configuration.AppConfigController.getAppConfigs()
+DELETE         /app-config/:appConfigId/                                       controllers.system_configuration.AppConfigController.deleteAppConfig(appConfigId : String)
 
 
 ###### Notification Endpoints ######
@@ -85,3 +85,12 @@ PATCH          /leave/reject/                                                  c
 PATCH          /leave/accept/                                                  controllers.leave_management.LeaveManagementController.acceptLeaveRequest()
 PATCH          /leave/complete/:employeeId/                                    controllers.leave_management.LeaveManagementController.markLeaveRequestAsComplete(employeeId: String)
 DELETE         /leave/:leaveRequestId/                                         controllers.leave_management.LeaveManagementController.deleteLeaveRequest(leaveRequestId: String)
+
+
+###### Event Management ######
+GET            /event/                                                         controllers.event_management.EventController.getAllEvents()
+POST           /event/                                                         controllers.event_management.EventController.addEvent()
+GET            /event/:eventId                                                 controllers.event_management.EventController.getEvent(eventId: String)
+PATCH          /event/:eventId                                                 controllers.event_management.EventController.updateEvent(eventId: String)
+DELETE         /event/:eventId                                                 controllers.event_management.EventController.deleteEvent(eventId: String)
+

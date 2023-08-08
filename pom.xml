@@ -167,6 +167,9 @@
         <module>system-configuration-impl</module>
         <module>leave-management-api</module>
         <module>leave-management-impl</module>
+        <module>event-management-api</module>
+        <module>event-management-impl</module>
+
     </modules>
 </project>
 
