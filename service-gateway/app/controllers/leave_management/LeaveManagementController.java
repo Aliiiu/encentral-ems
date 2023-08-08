@@ -83,13 +83,7 @@ public class LeaveManagementController extends Controller {
         }
         //TODO: Check if user is admin or active user matches employeeID
         CreateLeaveRequestDTO createLeaveRequestDTO = leaveRequestCreationForm.value;
-        int leaveDays = createLeaveRequestDTO.getDuration() > 0 ? createLeaveRequestDTO.getDuration() : 0;
-        createLeaveRequestDTO.setDuration(leaveDays);
 
-        int days = iLeaveRequest.getNumberOfLeaveDaysLeft(createLeaveRequestDTO.getEmployeeId());
-        if (days < createLeaveRequestDTO.getDuration()) {
-            return Results.badRequest("Number of available leave days exceeded");
-        }
         if (iLeaveRequest.checkIfEmployeeHasOpenLeaveRequest(createLeaveRequestDTO.getEmployeeId()))
             return Results.status(409, "Employee already has a request pending ");
         return Results.ok(myObjectMapper.toJsonString(iLeaveRequest.addLeaveRequest(
@@ -306,11 +300,11 @@ public class LeaveManagementController extends Controller {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
-        //TODO: Check if user is the employee with id employeeid or admin
+        //TODO: Check if user is the employee with id employeeId or admin
         Optional<LeaveRequest> lr = iLeaveRequest.getOngoingLeaveRequestByEmployeeId(employeeId);
 
         if (lr.isPresent()) {
-            int leaveDuration = (int) iLeaveRequest.getActualLeaveDuration(lr.get().getStartDate(), lr.get().getDuration());
+            int leaveDuration = (int) iLeaveRequest.getActualLeaveDuration(lr.get().getStartDate());
             boolean result = iLeaveRequest.markLeaveRequestAsComplete(leaveDuration, employeeId, getTestEmployee());
             return Results.ok(myObjectMapper.toJsonString(result));
         }

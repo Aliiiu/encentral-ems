@@ -9,6 +9,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Date;
+import java.util.Optional;
+
 @Mapper
 public interface LeaveManagementMapper {
 
@@ -27,10 +30,26 @@ public interface LeaveManagementMapper {
 
     JpaOption leaveOptionTypeToJpaOption(LeaveOptionType leaveOptionType);
 
-    @Mappings({
-            @Mapping(target="employee.employeeId", source ="employeeId"),
-            @Mapping(target="leaveType.optionId", source = "leaveTypeId")
-    })
-    LeaveRequest creationDtoToLeaveRequest(CreateLeaveRequestDTO createLeaveRequestDTO);
+    default LeaveRequest creationDtoToLeaveRequest(CreateLeaveRequestDTO createLeaveRequestDTO){
+        if ( createLeaveRequestDTO == null ) {
+            return null;
+        }
 
+        LeaveRequestEmployee lre =  new LeaveRequestEmployee();
+        lre.setEmployeeId(createLeaveRequestDTO.getEmployeeId());
+
+        LeaveOptionType leaveOptionType = new LeaveOptionType();
+        leaveOptionType.setOptionId(createLeaveRequestDTO.getLeaveTypeId());
+
+        LeaveRequest leaveRequest = new LeaveRequest();
+        leaveRequest.setEmployee(lre);
+        leaveRequest.setLeaveType(leaveOptionType);
+        leaveRequest.setReason( createLeaveRequestDTO.getReason() );
+        leaveRequest.setStartDate( createLeaveRequestDTO.getStartDate() );
+        createLeaveRequestDTO.getEndDate().ifPresent((endDate)->{
+            leaveRequest.setEndDate(endDate);
+        });
+
+        return leaveRequest;
+    }
 }

@@ -393,17 +393,19 @@ public class LeaveRequestImpl implements ILeaveRequest {
     public boolean markLeaveRequestAsComplete(int days, String employeeId, Employee employee) {
         AtomicBoolean isTransactionSuccessful = new AtomicBoolean(false);
 
-        int daysRemaining = getNumberOfLeaveDaysLeft(employeeId) - days;
+        Date endDate = convertToDate(LocalDate.now());
+        int daysUsed = getNumberOfLeaveDays(employeeId) + days;
         jpaApi.withTransaction(em -> {
             boolean updatedRequest = new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                     .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.COMPLETED)
                     .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
-                    .set(qJpaLeaveRequest.duration, daysRemaining)
+                    .set(qJpaLeaveRequest.duration, daysUsed)
+                    .set(qJpaLeaveRequest.endDate, endDate)
                     .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
                     .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
                     .execute() == 1;
             if (!updatedRequest) return false;
-            boolean updatedEmployee = updateEmployeeLeaveDays(daysRemaining, employeeId, employee);
+            boolean updatedEmployee = updateEmployeeLeaveDays(daysUsed, employeeId, employee);
             if (!updatedEmployee) return false;
             boolean activatedEmployee =  updateEmployeeCurrentStatus(EmployeeStatus.ACTIVE,employeeId, employee);
             isTransactionSuccessful.set(activatedEmployee);
@@ -445,7 +447,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
      * @return Number of leave days
      */
     @Override
-    public Integer getNumberOfLeaveDaysLeft(String employeeId) {
+    public Integer getNumberOfLeaveDays(String employeeId) {
         int days = 0;
         try {
             return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaEmployee)
@@ -482,36 +484,29 @@ public class LeaveRequestImpl implements ILeaveRequest {
      * @description Method to get the time spent by a user on leave
      *
      * @param date Start date of leave
-     * @param duration Original number of days allocated for leave
      *
      * @return Duration of leave
      */
     @Override
-    public long getActualLeaveDuration(Date date, int duration) {
+    public long getActualLeaveDuration(Date date) {
         LocalDate currDate = LocalDate.now();
-        LocalDate resumptionDate = addDaysToDate(convertToLocalDate(date), duration);
-        long extraDays = 0;
-        if (currDate.isAfter(resumptionDate)) {
-            extraDays = 0 - ChronoUnit.DAYS.between(currDate, resumptionDate);
-        } else {
-            extraDays = ChronoUnit.DAYS.between(currDate, resumptionDate);
-        }
-        return duration - extraDays;
+        LocalDate startDate = convertToLocalDate(date);
+        return ChronoUnit.DAYS.between(startDate, currDate);
     }
 
     /**
      * @author DEMILADE
      * dateCreated 06/08/2023
-     * @description Method to add a date and a long to get a new date
+     * @description Method to convert a LocalDate object to a Date object
      *
-     * @param date Local date object
-     * @param daysToAdd  Difference in days
+     * @param localDate Local date object
      *
-     * @return LocalDate
+     * @return Date object
      */
-    private LocalDate addDaysToDate(LocalDate date, long daysToAdd) {
-        return date.plus(daysToAdd, ChronoUnit.DAYS);
+    private  Date convertToDate(LocalDate localDate){
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
+
 
     /**
      * @author DEMILADE
@@ -522,7 +517,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
      *
      * @return LocalDate object
      */
-    public LocalDate convertToLocalDate(Date date) {
+    private LocalDate convertToLocalDate(Date date) {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 

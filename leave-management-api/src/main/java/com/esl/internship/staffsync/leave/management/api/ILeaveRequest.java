@@ -41,14 +41,13 @@ public interface ILeaveRequest {
 
     boolean acceptLeaveRequest(Employee employee);
 
-
     boolean markLeaveRequestAsComplete(int days, String employeeId, Employee employee);
 
     boolean deleteLeaveRequest(String leaveRequestId);
 
-    Integer getNumberOfLeaveDaysLeft(String employeeId);
+    Integer getNumberOfLeaveDays(String employeeId);
 
     Optional<LeaveRequest> getOngoingLeaveRequestByEmployeeId(String employeeId);
 
-    long getActualLeaveDuration(Date date, int duration);
+    long getActualLeaveDuration(Date date);
 }

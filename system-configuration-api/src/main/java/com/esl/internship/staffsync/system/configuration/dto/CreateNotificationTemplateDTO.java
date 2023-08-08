@@ -1,5 +1,7 @@
 package com.esl.internship.staffsync.system.configuration.dto;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Demilade
  * @dateCreated 01/08/2023
@@ -7,10 +9,13 @@ package com.esl.internship.staffsync.system.configuration.dto;
  */
 public class CreateNotificationTemplateDTO {
 
+    @NotNull
     private String notificationDescription;
 
+    @NotNull
     private String notificationTemplateContent;
 
+    @NotNull
     private String notificationTemplateName;
 
     public CreateNotificationTemplateDTO() {

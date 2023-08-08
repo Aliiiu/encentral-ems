@@ -34,7 +34,7 @@ public class JpaLeaveRequest implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
-	@Column(nullable=false)
+	@Column()
 	private Integer duration;
 
 	@Column(length=2147483647)
@@ -46,6 +46,10 @@ public class JpaLeaveRequest implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="start_date", nullable=false)
 	private Date startDate;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name="end_date")
+	private Date endDate;
 
 	//bidirectional many-to-one association to JpaEmployee
 	@ManyToOne
@@ -127,6 +131,14 @@ public class JpaLeaveRequest implements Serializable {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return this.endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 	public JpaEmployee getApprover() {

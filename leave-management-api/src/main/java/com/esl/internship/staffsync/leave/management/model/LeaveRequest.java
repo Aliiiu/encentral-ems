@@ -8,15 +8,27 @@ import java.util.Date;
 public class LeaveRequest {
 
     private String leaveRequestId;
+
     private LeaveRequestStatus approvalStatus;
+
     private Timestamp dateCreated;
+
     private Timestamp dateModified;
+
     private Integer duration;
+
     private String reason;
+
     private String remarks;
+
     private Date startDate;
+
+    private Date endDate;
+
     private LeaveRequestEmployee approver;
+
     private LeaveRequestEmployee employee;
+
     private LeaveOptionType leaveType;
 
     public LeaveRequest() {
@@ -108,5 +120,13 @@ public class LeaveRequest {
 
     public void setLeaveType(LeaveOptionType leaveType) {
         this.leaveType = leaveType;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }

@@ -168,7 +168,7 @@ public class JpaEmployee implements Serializable {
 	private Set<JpaLeaveRequest> leaveRequestsApprovedByMe;
 
 	//bidirectional many-to-one association to JpaNotification
-	@OneToMany(mappedBy="receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OneToMany(mappedBy="receiver")
 	private Set<JpaNotification> receivedNotifications;
 
 	//bidirectional many-to-one association to JpaNotification

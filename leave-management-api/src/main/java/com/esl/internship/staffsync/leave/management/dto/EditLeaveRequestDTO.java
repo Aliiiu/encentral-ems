@@ -1,8 +1,13 @@
 package com.esl.internship.staffsync.leave.management.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class EditLeaveRequestDTO {
+
+    @NotNull
     private String leaveRequestId;
-    private String remarks ="";
+
+    private String remarks = "";
 
     public EditLeaveRequestDTO() {
     }
