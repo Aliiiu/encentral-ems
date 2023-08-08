@@ -45,7 +45,7 @@ public class JpaNotificationTemplate implements Serializable {
     private String notificationTemplateName;
 
     //bidirectional many-to-one association to JpaNotification
-    @OneToMany(mappedBy = "notificationTemplateBean", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "notificationTemplateBean")
     private Set<JpaNotification> notifications;
 
     public JpaNotificationTemplate() {

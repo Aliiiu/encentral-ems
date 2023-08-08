@@ -114,7 +114,29 @@ public class LeaveRequestImpl implements ILeaveRequest {
         JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
 
         return queryFactory.selectFrom(qJpaLeaveRequest)
-                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
+                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId.toString()))
+                .orderBy(qJpaLeaveRequest.dateCreated.desc())
+                .fetch()
+                .stream()
+                .map(INSTANCE::jpaLeaveRequestToLeaveRequest)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 08/08/2023
+     * @description Method gets all Leave requests approvedd by an employee
+     *
+     * @param employeeId Employee id
+     *
+     * @return List of leave request objects
+     */
+    @Override
+    public List<LeaveRequest> getEmployeeApprovedLeaveRequests(String employeeId) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
+
+        return queryFactory.selectFrom(qJpaLeaveRequest)
+                .where(qJpaLeaveRequest.approver.employeeId.eq(employeeId.toString()))
                 .orderBy(qJpaLeaveRequest.dateCreated.desc())
                 .fetch()
                 .stream()
@@ -162,7 +184,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
         JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
 
         return queryFactory.selectFrom(qJpaLeaveRequest)
-                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
+                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId.toString()))
                 .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
                 .orderBy(qJpaLeaveRequest.dateCreated.desc())
                 .fetch() != null;
@@ -206,12 +228,13 @@ public class LeaveRequestImpl implements ILeaveRequest {
                 .stream()
                 .map(INSTANCE::jpaLeaveRequestToLeaveRequest)
                 .collect(Collectors.toList());
+
     }
 
     /**
      * @author DEMILADE
      * @dateCreated 06/08/2023
-     * @description Get all ongoing and completed leave requests
+     * @description Get all ongoing and completed leave requests for an employee
      *
      * @param employeeId Employee id
      *
@@ -400,8 +423,15 @@ public class LeaveRequestImpl implements ILeaveRequest {
      */
     @Override
     public boolean deleteLeaveRequest(String leaveRequestId) {
+        LeaveRequestStatus[] requestStatusesToCheck = {
+                LeaveRequestStatus.IN_PROGRESS,
+                LeaveRequestStatus.APPROVED,
+                LeaveRequestStatus.PENDING
+        };
+
         return new JPAQueryFactory(jpaApi.em()).delete(qJpaLeaveRequest)
                 .where(qJpaLeaveRequest.leaveRequestId.eq(leaveRequestId))
+                .where(qJpaLeaveRequest.approvalStatus.notIn(requestStatusesToCheck))
                 .execute() == 1;
     }
 

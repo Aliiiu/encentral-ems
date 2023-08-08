@@ -160,7 +160,7 @@ public class JpaEmployee implements Serializable {
 	private Set<JpaEmployeeUpdateRequest> employeeUpdateRequests;
 
 	//bidirectional many-to-one association to JpaLeaveRequest
-	@OneToMany(mappedBy="employee", cascade =CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="employee")
 	private Set<JpaLeaveRequest> leaveRequests;
 
 	//bidirectional many-to-one association to JpaLeaveRequest
@@ -172,7 +172,7 @@ public class JpaEmployee implements Serializable {
 	private Set<JpaNotification> receivedNotifications;
 
 	//bidirectional many-to-one association to JpaNotification
-	@OneToMany(mappedBy="sender", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OneToMany(mappedBy="sender")
 	private Set<JpaNotification> sentNotifications;
 
 	public JpaEmployee() {

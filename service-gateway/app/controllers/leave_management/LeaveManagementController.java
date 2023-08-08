@@ -13,7 +13,6 @@ import play.mvc.Result;
 import play.mvc.Results;
 
 import javax.inject.Inject;
-
 import java.util.Optional;
 
 import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
@@ -52,8 +51,7 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
             }
     )
-    public Result getAllLeaveRequests( ){
-        System.out.println(iLeaveRequest.getAllLeaveRequests());
+    public Result getAllLeaveRequests() {
         //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getAllLeaveRequests()
@@ -99,22 +97,40 @@ public class LeaveManagementController extends Controller {
         )));
     }
 
-        @ApiOperation("Get all leave requests created by an employee")
-        @ApiResponses(
-                value = {
-                        @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
-                        @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
-                }
-        )
-        public Result getEmployeeLeaveRequests(@ApiParam(value = "Employee Id", required = true) String employeeId ){
-            if (employeeId.length() == 0) {
-                return Results.badRequest("Invalid employee id");
+    @ApiOperation("Get all leave requests created by an employee")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
+                    @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
             }
-            //TODO: Check if user is admin
-            return Results.ok(myObjectMapper.toJsonString(
-                    iLeaveRequest.getEmployeeLeaveRequests(employeeId)
-            ));
+    )
+    public Result getEmployeeLeaveRequests(@ApiParam(value = "Employee Id", required = true) String employeeId) {
+        if (employeeId.length() == 0) {
+            return Results.badRequest("Invalid employee id");
         }
+        //TODO: Check if user is admin
+        return Results.ok(myObjectMapper.toJsonString(
+                iLeaveRequest.getEmployeeLeaveRequests(employeeId)
+        ));
+    }
+
+    @ApiOperation("Get all leave requests approved by an employee")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
+                    @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+            }
+    )
+    public Result getEmployeeApprovedLeaveRequests(@ApiParam(value = "Employee Id", required = true) String employeeId) {
+        if (employeeId.length() == 0) {
+            return Results.badRequest("Invalid employee id");
+        }
+        //TODO: Check if user is admin
+        return Results.ok(myObjectMapper.toJsonString(
+                iLeaveRequest.getEmployeeApprovedLeaveRequests(employeeId)
+        ));
+    }
+
 
     @ApiOperation("Get all pending leave requests in the system")
     @ApiResponses(
@@ -122,8 +138,7 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
             }
     )
-    public Result getAllPendingRequests( ){
-        System.out.println(iLeaveRequest.getAllPendingRequests() + "f4efe");
+    public Result getAllPendingRequests() {
         //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getAllPendingRequests()
@@ -137,7 +152,7 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
             }
     )
-    public Result getEmployeeLeaveHistory(@ApiParam(value = "Employee Id", required = true) String employeeId ){
+    public Result getEmployeeLeaveHistory(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
@@ -151,9 +166,9 @@ public class LeaveManagementController extends Controller {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
-         }
+            }
     )
-    public Result getAllCompletedLeave( ){
+    public Result getAllCompletedLeave() {
 
         //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
@@ -167,7 +182,7 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
             }
     )
-    public Result getAllOngoingLeave( ){
+    public Result getAllOngoingLeave() {
 
         //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
@@ -193,7 +208,7 @@ public class LeaveManagementController extends Controller {
                     dataTypeClass = EditLeaveRequestDTO.class
             )
     })
-    public Result approveLeaveRequest(){
+    public Result approveLeaveRequest() {
         final var leaveRequestEditForm = validate(request().body().asJson(), EditLeaveRequestDTO.class);
         if (leaveRequestEditForm.hasError) {
             return Results.badRequest(leaveRequestEditForm.error);
@@ -201,7 +216,7 @@ public class LeaveManagementController extends Controller {
         //TODO: Check if user is admin
         EditLeaveRequestDTO editLeaveRequestDTO = leaveRequestEditForm.value;
         Optional<LeaveRequest> lr = iLeaveRequest.getLeaveRequest(editLeaveRequestDTO.getLeaveRequestId());
-        if (lr.isPresent()){
+        if (lr.isPresent()) {
             return Results.ok(myObjectMapper.toJsonString(
                     iLeaveRequest.approveLeaveRequest(editLeaveRequestDTO, getTestEmployee())
             ));
@@ -212,25 +227,31 @@ public class LeaveManagementController extends Controller {
     @ApiOperation("Cancel a pending or approved leave request")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, response = Boolean.class, message = "Leave request cancelled"),
+                    @ApiResponse(code = 200, response = String.class, message = "Leave request successfully cancelled"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+                    @ApiResponse(code = 404, response = String.class, message = "No open leave request found for user")
+
             }
     )
-    public Result cancelLeaveRequest(@ApiParam(value = "Employee Id", required = true) String employeeId ){
+    public Result cancelLeaveRequest(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
         //TODO: Check if user is the employee with id employeeid or admin
-        return Results.ok(myObjectMapper.toJsonString(
-                iLeaveRequest.cancelLeaveRequest(employeeId)
-        ));
+        boolean resp = iLeaveRequest.cancelLeaveRequest(employeeId);
+        if (resp) {
+            return Results.ok("Leave request successfully cancelled");
+        }
+        return Results.notFound("No open leave request found for user");
     }
 
     @ApiOperation("Reject an employee's pending leave request")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, response = Boolean.class, message = "Leave request rejected"),
-                    @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+                    @ApiResponse(code = 200, response = String.class, message = "Leave request successfully rejected"),
+                    @ApiResponse(code = 400, response = String.class, message = "Invalid data"),
+                    @ApiResponse(code = 4004, response = String.class, message = "No open leave request with that id")
+
             }
     )
     @ApiImplicitParams({
@@ -243,29 +264,34 @@ public class LeaveManagementController extends Controller {
                     dataTypeClass = EditLeaveRequestDTO.class
             )
     })
-    public Result rejectLeaveRequest( ){
+    public Result rejectLeaveRequest() {
         final var leaveRequestEditForm = validate(request().body().asJson(), EditLeaveRequestDTO.class);
         if (leaveRequestEditForm.hasError) {
             return Results.badRequest(leaveRequestEditForm.error);
         }
         //TODO: Check if user is admin
         EditLeaveRequestDTO editLeaveRequestDTO = leaveRequestEditForm.value;
-        return Results.ok(myObjectMapper.toJsonString(
-                iLeaveRequest.rejectLeaveRequest(editLeaveRequestDTO, getDummyEmployee())
-        ));
+        boolean resp = iLeaveRequest.rejectLeaveRequest(editLeaveRequestDTO, getDummyEmployee());
+        if (resp) {
+            return Results.ok("Leave request successfully rejected");
+        }
+        return Results.notFound("No open leave request with that id");
     }
 
     @ApiOperation("Accept an approved leave request")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, response = Boolean.class, message = "Leave request accepted")
+                    @ApiResponse(code = 200, response = String.class, message = "Leave request accepted"),
+                    @ApiResponse(code = 404, response = String.class, message = "No approved leave request found for user")
             }
     )
-    public Result acceptLeaveRequest(){
+    public Result acceptLeaveRequest() {
         //TODO: Check if user is the employee with id employeeid
-        return Results.ok(myObjectMapper.toJsonString(
-                iLeaveRequest.acceptLeaveRequest(getDummyEmployee())
-        ));
+        boolean resp = iLeaveRequest.acceptLeaveRequest(getDummyEmployee());
+        if (resp) {
+            return Results.ok("Leave request accepted");
+        }
+        return Results.notFound("No approved leave request found for user");
     }
 
     @ApiOperation("Mark a leave request as completed")
@@ -276,22 +302,20 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 404, response = String.class, message = "No on-going leave request found"),
             }
     )
-    public Result markLeaveRequestAsComplete(@ApiParam(value = "Employee Id", required = true) String employeeId ){
+    public Result markLeaveRequestAsComplete(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
         //TODO: Check if user is the employee with id employeeid or admin
         Optional<LeaveRequest> lr = iLeaveRequest.getOngoingLeaveRequestByEmployeeId(employeeId);
 
-        if(lr.isPresent()){
-            int leaveDuration = (int) iLeaveRequest.getActualLeaveDuration(lr.get().getStartDate(),lr.get().getDuration());
-            boolean result = iLeaveRequest.markLeaveRequestAsComplete(leaveDuration,employeeId, getTestEmployee());
+        if (lr.isPresent()) {
+            int leaveDuration = (int) iLeaveRequest.getActualLeaveDuration(lr.get().getStartDate(), lr.get().getDuration());
+            boolean result = iLeaveRequest.markLeaveRequestAsComplete(leaveDuration, employeeId, getTestEmployee());
             return Results.ok(myObjectMapper.toJsonString(result));
         }
 
-        return Results.notFound(myObjectMapper.toJsonString(
-                "No on-going leave request found"
-        ));
+        return Results.notFound("No on-going leave request found");
     }
 
     @ApiOperation("Delete a Leave request by  id")
@@ -314,6 +338,8 @@ public class LeaveManagementController extends Controller {
         return new Employee("92f6fac6-f49b-448f-9c33-f0d50608bc83", "employee");
     }
 
-    private Employee getTestEmployee() {return  new Employee("f04b5314-9f26-43a0-b129-3e149165253e", "Name");}
+    private Employee getTestEmployee() {
+        return new Employee("f04b5314-9f26-43a0-b129-3e149165253e", "Name");
+    }
 
 }

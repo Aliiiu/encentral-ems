@@ -46,8 +46,6 @@ GET            /notification-template/:notificationTemplateId/                 c
 GET            /notification-template/notification/:notificationTemplateId/    controllers.system_configuration.NotificationTemplateController.getTemplateNotifications(notificationTemplateId: String)
 POST           /notification-template/                                         controllers.system_configuration.NotificationTemplateController.createNotificationTemplate()
 PATCH          /notification-template/                                         controllers.system_configuration.NotificationTemplateController.editNotificationTemplate()
-DELETE         /notification-template/:notificationTemplateId/                 controllers.system_configuration.NotificationTemplateController.deleteNotificationTemplate(notificationTemplateId: String)
-
 
 ###### Permission Endpoints ######
 GET            /permission/                                                    controllers.system_configuration.PermissionController.getAllPermissions()
@@ -73,13 +71,14 @@ GET            /role-permission/                                               c
 
 ###### Leave Management ######
 GET            /leave/                                                         controllers.leave_management.LeaveManagementController.getAllLeaveRequests()
+GET            /leave/pending/                                                 controllers.leave_management.LeaveManagementController.getAllPendingRequests()
+GET            /leave/completed/                                               controllers.leave_management.LeaveManagementController.getAllCompletedLeave()
+GET            /leave/ongoing/                                                 controllers.leave_management.LeaveManagementController.getAllOngoingLeave()
 GET            /leave/:leaveRequestId/                                         controllers.leave_management.LeaveManagementController.getLeaveRequest(leaveRequestId: String)
 POST           /leave/                                                         controllers.leave_management.LeaveManagementController.createLeaveRequest()
 GET            /leave/employee/:employeeId/                                    controllers.leave_management.LeaveManagementController.getEmployeeLeaveRequests(employeeId: String)
-GET            /leave/pending/                                                 controllers.leave_management.LeaveManagementController.getAllPendingRequests()
+GET            /leave/approver/:employeeId/                                    controllers.leave_management.LeaveManagementController.getEmployeeApprovedLeaveRequests(employeeId: String)
 GET            /leave/history/:employeeId/                                     controllers.leave_management.LeaveManagementController.getEmployeeLeaveHistory(employeeId: String)
-GET            /leave/completed/                                               controllers.leave_management.LeaveManagementController.getAllCompletedLeave()
-GET            /leave/ongoing/                                                 controllers.leave_management.LeaveManagementController.getAllOngoingLeave()
 PATCH          /leave/                                                         controllers.leave_management.LeaveManagementController.approveLeaveRequest()
 PATCH          /leave/cancel/:employeeId/                                      controllers.leave_management.LeaveManagementController.cancelLeaveRequest(employeeId: String)
 PATCH          /leave/reject/                                                  controllers.leave_management.LeaveManagementController.rejectLeaveRequest()

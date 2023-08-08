@@ -169,22 +169,22 @@ public class NotificationTemplateController extends Controller {
 
     }
 
-    @ApiOperation("Delete Notification template by id")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, response = Boolean.class, message = "Notification template deleted"),
-                    @ApiResponse(code = 400, response = String.class, message = "Invalid notification template id"),
-            }
-    )
-    public Result deleteNotificationTemplate(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId) {
-
-        if (notificationTemplateId.length() == 0) {
-            return Results.badRequest("Invalid notification template id");
-        }
-        return ok(myObjectMapper.toJsonString(
-                iNotificationTemplate.deleteNotificationTemplate(notificationTemplateId)
-        ));
-    }
+//    @ApiOperation("Delete Notification template by id")
+//    @ApiResponses(
+//            value = {
+//                    @ApiResponse(code = 200, response = Boolean.class, message = "Notification template deleted"),
+//                    @ApiResponse(code = 400, response = String.class, message = "Invalid notification template id"),
+//            }
+//    )
+//    public Result deleteNotificationTemplate(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId) {
+//
+//        if (notificationTemplateId.length() == 0) {
+//            return Results.badRequest("Invalid notification template id");
+//        }
+//        return ok(myObjectMapper.toJsonString(
+//                iNotificationTemplate.deleteNotificationTemplate(notificationTemplateId)
+//        ));
+//    }
 
     private Employee getTestEmployee() {
         return new Employee("92f6fac6-f49b-448f-9c33-f0d50608bc83", "employee");

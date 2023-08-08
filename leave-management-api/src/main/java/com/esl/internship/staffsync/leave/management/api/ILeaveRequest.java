@@ -19,6 +19,8 @@ public interface ILeaveRequest {
 
     List<LeaveRequest> getEmployeeLeaveRequests(String employeeId);
 
+    List<LeaveRequest> getEmployeeApprovedLeaveRequests(String employeeId);
+
     boolean checkIfEmployeeHasOpenLeaveRequest(String employeeId);
 
     boolean isOnLeave(String employeeId);
@@ -38,6 +40,7 @@ public interface ILeaveRequest {
     boolean rejectLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO, Employee employee);
 
     boolean acceptLeaveRequest(Employee employee);
+
 
     boolean markLeaveRequestAsComplete(int days, String employeeId, Employee employee);
 
