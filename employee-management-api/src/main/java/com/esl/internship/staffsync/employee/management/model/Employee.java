@@ -27,13 +27,11 @@ public class Employee {
     private String phoneNumber;
     private String profilePictureUrl;
     private Department department;
-
-//    private Option countryOfOrigin;
-//    private Option employeeGender;
-//    private Option employeeMaritalStatus;
-//    private Option highestCertification;
-//    private Option stateOfOrigin;
-//    private Role role;
+    private String roleId;
+    private String countryOfOrigin;
+    private String employeeMaritalStatus;
+    private String highestCertification;
+    private String stateOfOrigin;
 
     public String getEmployeeId() {
         return employeeId;
@@ -203,54 +201,45 @@ public class Employee {
         this.department = department;
     }
 
-//    public Option getCountryOfOrigin() {
-//        return countryOfOrigin;
-//    }
-//
-//    public void setCountryOfOrigin(Option countryOfOrigin) {
-//        this.countryOfOrigin = countryOfOrigin;
-//    }
-//
-//    public Option getEmployeeGender() {
-//        return employeeGender;
-//    }
-//
-//    public void setEmployeeGender(Option employeeGender) {
-//        this.employeeGender = employeeGender;
-//    }
-//
-//    public Option getEmployeeMaritalStatus() {
-//        return employeeMaritalStatus;
-//    }
-//
-//    public void setEmployeeMaritalStatus(Option employeeMaritalStatus) {
-//        this.employeeMaritalStatus = employeeMaritalStatus;
-//    }
-//
-//    public Option getHighestCertification() {
-//        return highestCertification;
-//    }
-//
-//    public void setHighestCertification(Option highestCertification) {
-//        this.highestCertification = highestCertification;
-//    }
-//
-//    public Option getStateOfOrigin() {
-//        return stateOfOrigin;
-//    }
-//
-//    public void setStateOfOrigin(Option stateOfOrigin) {
-//        this.stateOfOrigin = stateOfOrigin;
-//    }
-//
-//    public Role getRole() {
-//        return role;
-//    }
-//
-//    public void setRole(Role role) {
-//        this.role = role;
-//    }
+    public String getRoleId() {
+        return roleId;
+    }
 
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getCountryOfOrigin() {
+        return countryOfOrigin;
+    }
+
+    public void setCountryOfOrigin(String countryOfOrigin) {
+        this.countryOfOrigin = countryOfOrigin;
+    }
+
+    public String getEmployeeMaritalStatus() {
+        return employeeMaritalStatus;
+    }
+
+    public void setEmployeeMaritalStatus(String employeeMaritalStatus) {
+        this.employeeMaritalStatus = employeeMaritalStatus;
+    }
+
+    public String getHighestCertification() {
+        return highestCertification;
+    }
+
+    public void setHighestCertification(String highestCertification) {
+        this.highestCertification = highestCertification;
+    }
+
+    public String getStateOfOrigin() {
+        return stateOfOrigin;
+    }
+
+    public void setStateOfOrigin(String stateOfOrigin) {
+        this.stateOfOrigin = stateOfOrigin;
+    }
 
     @Override
     public String toString() {

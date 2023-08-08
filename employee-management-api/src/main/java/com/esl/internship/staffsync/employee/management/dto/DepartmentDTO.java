@@ -1,15 +1,17 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
+
 import com.esl.internship.staffsync.employee.management.model.DepartmentHead;
 
 import java.sql.Timestamp;
+
 
 public class DepartmentDTO {
 
     private String departmentName;
     private String description;
     private Integer workingHours;
-    private String departmentHeadId;
+    private String departmentHeadEmployeeId;
 
     public String getDepartmentName() {
         return departmentName;
@@ -35,12 +37,12 @@ public class DepartmentDTO {
         this.workingHours = workingHours;
     }
 
-    public String getDepartmentHeadId() {
-        return departmentHeadId;
+    public String getDepartmentHeadEmployeeId() {
+        return departmentHeadEmployeeId;
     }
 
-    public void setDepartmentHeadId(String departmentHeadId) {
-        this.departmentHeadId = departmentHeadId;
+    public void setDepartmentHeadEmployeeId(String departmentHeadEmployeeId) {
+        this.departmentHeadEmployeeId = departmentHeadEmployeeId;
     }
 
 }

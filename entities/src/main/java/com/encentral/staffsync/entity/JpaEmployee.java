@@ -31,7 +31,7 @@ public class JpaEmployee implements Serializable {
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
-	@Convert(converter = EmployeeStatusConverter.class)
+//	@Convert(converter = EmployeeStatusConverter.class)
 	@Column(name="current_status", nullable=false, length=2147483647)
 	private EmployeeStatus currentStatus;
 

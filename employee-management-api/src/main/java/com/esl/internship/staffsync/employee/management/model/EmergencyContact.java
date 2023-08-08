@@ -1,8 +1,11 @@
 package com.esl.internship.staffsync.employee.management.model;
 
+
 import java.sql.Timestamp;
 
-public class EmployeeEmergencyContact {
+
+public class EmergencyContact {
+
     private String emergencyContactId;
     private String address;
     private String createdBy;
@@ -15,7 +18,7 @@ public class EmployeeEmergencyContact {
     private String phoneNumber;
     private String relationship;
     private Employee employee;
-//    private Option contactGender;
+    private String contactGender;
 
     public String getEmergencyContactId() {
         return emergencyContactId;
@@ -113,11 +116,12 @@ public class EmployeeEmergencyContact {
         this.employee = employee;
     }
 
-//    public Option getContactGender() {
-//        return contactGender;
-//    }
-//
-//    public void setContactGender(Option contactGender) {
-//        this.contactGender = contactGender;
-//    }
+    public String getContactGender() {
+        return contactGender;
+    }
+
+    public void setContactGender(String contactGender) {
+        this.contactGender = contactGender;
+    }
+
 }

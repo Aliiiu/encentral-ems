@@ -3,14 +3,16 @@ package com.esl.internship.staffsync.employee.management.model;
 import java.sql.Timestamp;
 
 public class EmployeeDocument {
+
     private String documentId;
     private String createdBy;
     private Timestamp dateCreated;
     private String employeeHasDocumentId;
     private Employee employee;
+    private String documentType;
 
 //    private Document document;
-//    private Option documentType;
+
 
     public String getDocumentId() {
         return documentId;
@@ -52,19 +54,12 @@ public class EmployeeDocument {
         this.employee = employee;
     }
 
-//    public Document getDocument() {
-//        return document;
-//    }
-//
-//    public void setDocument(Document document) {
-//        this.document = document;
-//    }
-//
-//    public Option getDocumentType() {
-//        return documentType;
-//    }
-//
-//    public void setDocumentType(Option documentType) {
-//        this.documentType = documentType;
-//    }
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
+
 }

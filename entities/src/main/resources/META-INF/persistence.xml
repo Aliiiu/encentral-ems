@@ -2,8 +2,16 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="ENTITY_PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+    <!-- Converters -->
+    <class>com.encentral.staffsync.entity.attribute.converter.JsonStringConverter</class>
+    <class>com.encentral.staffsync.entity.attribute.converter.ActionConverter</class>
     <class>com.encentral.staffsync.entity.attribute.converter.NotificationPriorityConverter</class>
     <class>com.encentral.staffsync.entity.attribute.converter.NotificationStatusConverter</class>
+    <class>com.encentral.staffsync.entity.attribute.converter.EmployeeStatusConverter</class>
+    <class>com.encentral.staffsync.entity.attribute.converter.EmployeeRequestStatusConverter</class>
+
+    <!--    Entities-->
     <class>com.encentral.staffsync.entity.JpaAnnouncement</class>
     <class>com.encentral.staffsync.entity.JpaAnnouncementRecipient</class>
     <class>com.encentral.staffsync.entity.JpaAppConfig</class>
@@ -26,8 +34,7 @@
     <class>com.encentral.staffsync.entity.JpaRole</class>
     <class>com.encentral.staffsync.entity.JpaRoleHasPermission</class>
 
-    <class>com.encentral.staffsync.entity.attribute.converter.JsonStringConverter</class>
-    <class>com.encentral.staffsync.entity.attribute.converter.ActionConverter</class>
+
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/staffsync"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>

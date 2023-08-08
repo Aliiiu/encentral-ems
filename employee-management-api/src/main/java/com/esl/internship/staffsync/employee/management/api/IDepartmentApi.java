@@ -1,11 +1,13 @@
 package com.esl.internship.staffsync.employee.management.api;
 
+
+import com.encentral.scaffold.commons.model.Employee;
 import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.model.Department;
-import com.esl.internship.staffsync.employee.management.model.Employee;
 
 import java.util.List;
 import java.util.Optional;
+
 
 public interface IDepartmentApi {
 

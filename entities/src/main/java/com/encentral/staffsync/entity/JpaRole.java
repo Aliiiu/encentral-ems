@@ -45,11 +45,11 @@ public class JpaRole implements Serializable {
 	private String roleName;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@OneToMany(mappedBy="role")
+	@OneToMany(mappedBy="role", fetch = FetchType.LAZY)
 	private Set<JpaEmployee> employees;
 
 	//bidirectional many-to-one association to JpaRoleHasPermission
-	@OneToMany(mappedBy="role")
+	@OneToMany(mappedBy="role", fetch = FetchType.LAZY)
 	private Set<JpaRoleHasPermission> roleHasPermissions;
 
 	//bidirectional many-to-many association to JpaPermission

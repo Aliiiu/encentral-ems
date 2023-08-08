@@ -1,6 +1,8 @@
 package com.esl.internship.staffsync.employee.management.model;
 
+
 import java.sql.Timestamp;
+
 
 public class Department {
 
@@ -96,4 +98,5 @@ public class Department {
                 ", departmentHead=" + departmentHead +
                 '}';
     }
+
 }
