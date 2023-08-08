@@ -5,8 +5,8 @@
     <persistence-unit name="portalpu" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <non-jta-data-source>DefaultDS</non-jta-data-source>
-        <class>com.encentral.staffsync.entity.enums.attribute.converter.NotificationPriorityConverter</class>
-        <class>com.encentral.staffsync.entity.enums.attribute.converter.NotificationStatusConverter</class>
+        <class>com.encentral.staffsync.entity.attribute.converter.NotificationPriorityConverter</class>
+        <class>com.encentral.staffsync.entity.attribute.converter.NotificationStatusConverter</class>
         <class>com.encentral.staffsync.entity.JpaAnnouncement</class>
         <class>com.encentral.staffsync.entity.JpaAnnouncementRecipient</class>
         <class>com.encentral.staffsync.entity.JpaAppConfig</class>
@@ -29,7 +29,7 @@
         <class>com.encentral.staffsync.entity.JpaRole</class>
         <class>com.encentral.staffsync.entity.JpaRoleHasPermission</class>
 
-        <class>com.encentral.staffsync.entity.JsonStringConverter</class>
+        <class>com.encentral.staffsync.entity.attribute.converter.JsonStringConverter</class>
         <class>com.encentral.staffsync.entity.attribute.converter.ActionConverter</class>
 
         <properties>

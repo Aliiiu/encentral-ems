@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.persistence.criteria.Fetch;
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -36,13 +37,13 @@ public class JpaEmployeeHasDocument implements Serializable {
 	private JpaDocument document;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
-	@JoinColumn(name="option_value", nullable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="document_type", referencedColumnName = "option_id",  nullable=false)
 	private JpaOption documentType;
 
 	public JpaEmployeeHasDocument() {

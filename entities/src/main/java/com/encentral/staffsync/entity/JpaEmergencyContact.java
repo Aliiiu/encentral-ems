@@ -52,13 +52,13 @@ public class JpaEmergencyContact implements Serializable {
 	private String relationship;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 
 	//bidirectional many-to-one association to JpaOption
 	@ManyToOne
-	@JoinColumn(name="option_value")
+	@JoinColumn(name="contact_gender", referencedColumnName = "option_id")
 	private JpaOption contactGender;
 
 	public JpaEmergencyContact() {

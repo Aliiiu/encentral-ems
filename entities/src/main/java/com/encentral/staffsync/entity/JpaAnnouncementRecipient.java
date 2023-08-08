@@ -1,7 +1,6 @@
 package com.encentral.staffsync.entity;
 
 import com.encentral.staffsync.entity.enums.NotificationStatus;
-import com.encentral.staffsync.entity.enums.attribute.converter.NotificationStatusConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;

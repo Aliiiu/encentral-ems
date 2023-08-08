@@ -1,4 +1,4 @@
-package com.encentral.staffsync.entity;
+package com.encentral.staffsync.entity.attribute.converter;
 
 import org.postgresql.util.PGobject;
 

@@ -1,9 +1,10 @@
 package com.encentral.staffsync.entity;
 
+import com.encentral.staffsync.entity.attribute.converter.JsonStringConverter;
 import com.encentral.staffsync.entity.enums.NotificationPriority;
 import com.encentral.staffsync.entity.enums.NotificationStatus;
-import com.encentral.staffsync.entity.enums.attribute.converter.NotificationPriorityConverter;
-import com.encentral.staffsync.entity.enums.attribute.converter.NotificationStatusConverter;
+import com.encentral.staffsync.entity.attribute.converter.NotificationPriorityConverter;
+import com.encentral.staffsync.entity.attribute.converter.NotificationStatusConverter;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import javax.persistence.*;

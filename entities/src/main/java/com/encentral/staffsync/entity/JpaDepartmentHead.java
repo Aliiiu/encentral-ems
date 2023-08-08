@@ -35,12 +35,12 @@ public class JpaDepartmentHead implements Serializable {
 	private String modifiedBy;
 
 	//bidirectional many-to-one association to JpaDepartment
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="department_id", nullable=false)
 	private JpaDepartment department;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 
