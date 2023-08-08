@@ -123,7 +123,7 @@ public class LeaveManagementController extends Controller {
             }
     )
     public Result getAllPendingRequests( ){
-        System.out.println(iLeaveRequest.getAllPendingRequests());
+        System.out.println(iLeaveRequest.getAllPendingRequests() + "f4efe");
         //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getAllPendingRequests()
@@ -203,7 +203,7 @@ public class LeaveManagementController extends Controller {
         Optional<LeaveRequest> lr = iLeaveRequest.getLeaveRequest(editLeaveRequestDTO.getLeaveRequestId());
         if (lr.isPresent()){
             return Results.ok(myObjectMapper.toJsonString(
-                    iLeaveRequest.approveLeaveRequest(editLeaveRequestDTO)
+                    iLeaveRequest.approveLeaveRequest(editLeaveRequestDTO, getTestEmployee())
             ));
         }
         return Results.notFound("Leave request not found");
@@ -220,7 +220,7 @@ public class LeaveManagementController extends Controller {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
-        //TODO: Check if user is the employee with id employeeid
+        //TODO: Check if user is the employee with id employeeid or admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.cancelLeaveRequest(employeeId)
         ));
@@ -251,24 +251,20 @@ public class LeaveManagementController extends Controller {
         //TODO: Check if user is admin
         EditLeaveRequestDTO editLeaveRequestDTO = leaveRequestEditForm.value;
         return Results.ok(myObjectMapper.toJsonString(
-                iLeaveRequest.rejectLeaveRequest(editLeaveRequestDTO)
+                iLeaveRequest.rejectLeaveRequest(editLeaveRequestDTO, getDummyEmployee())
         ));
     }
 
     @ApiOperation("Accept an approved leave request")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, response = Boolean.class, message = "Leave request accepted"),
-                    @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+                    @ApiResponse(code = 200, response = Boolean.class, message = "Leave request accepted")
             }
     )
-    public Result acceptLeaveRequest(@ApiParam(value = "Employee Id", required = true) String employeeId ){
-        if (employeeId.length() == 0) {
-            return Results.badRequest("Invalid employee id");
-        }
+    public Result acceptLeaveRequest(){
         //TODO: Check if user is the employee with id employeeid
         return Results.ok(myObjectMapper.toJsonString(
-                iLeaveRequest.acceptLeaveRequest(getTestEmployee())
+                iLeaveRequest.acceptLeaveRequest(getDummyEmployee())
         ));
     }
 
@@ -284,12 +280,12 @@ public class LeaveManagementController extends Controller {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
-        //TODO: Check if user is the employee with id employeeid
+        //TODO: Check if user is the employee with id employeeid or admin
         Optional<LeaveRequest> lr = iLeaveRequest.getOngoingLeaveRequestByEmployeeId(employeeId);
 
         if(lr.isPresent()){
             int leaveDuration = (int) iLeaveRequest.getActualLeaveDuration(lr.get().getStartDate(),lr.get().getDuration());
-            boolean result = iLeaveRequest.markLeaveRequestAsComplete(leaveDuration, getTestEmployee());
+            boolean result = iLeaveRequest.markLeaveRequestAsComplete(leaveDuration,employeeId, getTestEmployee());
             return Results.ok(myObjectMapper.toJsonString(result));
         }
 
@@ -314,7 +310,10 @@ public class LeaveManagementController extends Controller {
         ));
     }
 
-    private Employee getTestEmployee() {
-        return new Employee("12345", "employee");
+    private Employee getDummyEmployee() {
+        return new Employee("92f6fac6-f49b-448f-9c33-f0d50608bc83", "employee");
     }
+
+    private Employee getTestEmployee() {return  new Employee("f04b5314-9f26-43a0-b129-3e149165253e", "Name");}
+
 }

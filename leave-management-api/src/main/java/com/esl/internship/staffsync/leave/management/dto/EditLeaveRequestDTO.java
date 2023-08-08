@@ -3,7 +3,6 @@ package com.esl.internship.staffsync.leave.management.dto;
 public class EditLeaveRequestDTO {
     private String leaveRequestId;
     private String remarks ="";
-    private String approverId;
 
     public EditLeaveRequestDTO() {
     }
@@ -24,11 +23,4 @@ public class EditLeaveRequestDTO {
         this.remarks = remarks;
     }
 
-    public String getApproverId() {
-        return approverId;
-    }
-
-    public void setApproverId(String approverId) {
-        this.approverId = approverId;
-    }
 }

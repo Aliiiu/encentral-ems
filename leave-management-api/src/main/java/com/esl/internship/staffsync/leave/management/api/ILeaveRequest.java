@@ -31,15 +31,15 @@ public interface ILeaveRequest {
 
     List<LeaveRequest> getAllOngoingLeave();
 
-    boolean approveLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO);
+    boolean approveLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO, Employee employee);
 
     boolean cancelLeaveRequest(String employeeId);
 
-    boolean rejectLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO);
+    boolean rejectLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO, Employee employee);
 
     boolean acceptLeaveRequest(Employee employee);
 
-    boolean markLeaveRequestAsComplete(int days, Employee employee);
+    boolean markLeaveRequestAsComplete(int days, String employeeId, Employee employee);
 
     boolean deleteLeaveRequest(String leaveRequestId);
 
@@ -47,5 +47,5 @@ public interface ILeaveRequest {
 
     Optional<LeaveRequest> getOngoingLeaveRequestByEmployeeId(String employeeId);
 
-    public long getActualLeaveDuration(Date date, int duration);
+    long getActualLeaveDuration(Date date, int duration);
 }

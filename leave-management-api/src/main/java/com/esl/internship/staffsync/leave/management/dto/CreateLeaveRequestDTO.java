@@ -10,6 +10,9 @@ public class CreateLeaveRequestDTO {
     private Integer duration;
     private String reason ="";
 
+    public CreateLeaveRequestDTO() {
+    }
+
     public String getReason() {
         return reason;
     }

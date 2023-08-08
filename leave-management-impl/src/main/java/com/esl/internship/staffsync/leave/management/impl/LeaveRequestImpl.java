@@ -79,7 +79,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
         JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
 
         return queryFactory.selectFrom(qJpaLeaveRequest)
-                .orderBy(qJpaLeaveRequest.dateCreated.asc())
+                .orderBy(qJpaLeaveRequest.dateCreated.desc())
                 .fetch()
                 .stream()
                 .map(INSTANCE::jpaLeaveRequestToLeaveRequest)
@@ -265,9 +265,9 @@ public class LeaveRequestImpl implements ILeaveRequest {
      * @return Boolean indicating success
      */
     @Override
-    public boolean approveLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO) {
+    public boolean approveLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO, Employee employee) {
         JpaEmployee approver = new JpaEmployee();
-        approver.setEmployeeId(editLeaveRequestDTO.getApproverId());
+        approver.setEmployeeId(employee.getEmployeeId());
 
         return new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                 .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.APPROVED)
@@ -313,9 +313,9 @@ public class LeaveRequestImpl implements ILeaveRequest {
      * @return Boolean indicating success
      */
     @Override
-    public boolean rejectLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO) {
+    public boolean rejectLeaveRequest(EditLeaveRequestDTO editLeaveRequestDTO, Employee employee) {
         JpaEmployee approver = new JpaEmployee();
-        approver.setEmployeeId(editLeaveRequestDTO.getApproverId());
+        approver.setEmployeeId(employee.getEmployeeId());
 
         return new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                 .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.REJECTED)
@@ -341,16 +341,16 @@ public class LeaveRequestImpl implements ILeaveRequest {
 
         AtomicBoolean isTransactionSuccessful = new AtomicBoolean(false);
         jpaApi.withTransaction(em -> {
-            boolean updatedEmployee = updateEmployeeCurrentStatus(EmployeeStatus.ON_LEAVE, employee);
-            if (!updatedEmployee) return false;
             boolean updatedRequest = new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                     .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.IN_PROGRESS)
                     .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
                     .where(qJpaLeaveRequest.employee.employeeId.eq(employee.getEmployeeId()))
                     .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.APPROVED))
                     .execute() == 1;
-            isTransactionSuccessful.set(updatedRequest);
-            return updatedRequest;
+            if (!updatedRequest) return false;
+            boolean updatedEmployee = updateEmployeeCurrentStatus(EmployeeStatus.ON_LEAVE, employee.getEmployeeId(), employee);
+            isTransactionSuccessful.set(updatedEmployee);
+            return updatedEmployee;
         });
         return isTransactionSuccessful.get();
     }
@@ -361,27 +361,28 @@ public class LeaveRequestImpl implements ILeaveRequest {
      * @description Method to mark a leave request as completed
      *
      * @param days number of days used for the leave
+     * @param employeeId Employee id
      * @param employee Employee object
      *
      * @return Boolean indicating success
      */
     @Override
-    public boolean markLeaveRequestAsComplete(int days, Employee employee) {
+    public boolean markLeaveRequestAsComplete(int days, String employeeId, Employee employee) {
         AtomicBoolean isTransactionSuccessful = new AtomicBoolean(false);
 
-        int daysRemaining = getNumberOfLeaveDaysLeft(employee.getEmployeeId()) - days;
+        int daysRemaining = getNumberOfLeaveDaysLeft(employeeId) - days;
         jpaApi.withTransaction(em -> {
-            boolean updatedEmployee = updateEmployeeLeaveDays(daysRemaining, employee);
-            if (!updatedEmployee) return false;
             boolean updatedRequest = new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                     .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.COMPLETED)
                     .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
-                    .set(qJpaLeaveRequest.duration, 4)
-                    .where(qJpaLeaveRequest.employee.employeeId.eq(employee.getEmployeeId()))
+                    .set(qJpaLeaveRequest.duration, daysRemaining)
+                    .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
                     .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
                     .execute() == 1;
             if (!updatedRequest) return false;
-            boolean activatedEmployee =  updateEmployeeCurrentStatus(EmployeeStatus.ACTIVE, employee);
+            boolean updatedEmployee = updateEmployeeLeaveDays(daysRemaining, employeeId, employee);
+            if (!updatedEmployee) return false;
+            boolean activatedEmployee =  updateEmployeeCurrentStatus(EmployeeStatus.ACTIVE,employeeId, employee);
             isTransactionSuccessful.set(activatedEmployee);
             return activatedEmployee;
         });
@@ -415,10 +416,16 @@ public class LeaveRequestImpl implements ILeaveRequest {
      */
     @Override
     public Integer getNumberOfLeaveDaysLeft(String employeeId) {
-        return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaEmployee)
-                .where(qJpaEmployee.employeeId.eq(employeeId))
-                .fetchOne()
-                .getLeaveDays();
+        int days = 0;
+        try {
+            return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaEmployee)
+                    .where(qJpaEmployee.employeeId.eq(employeeId))
+                    .fetchOne()
+                    .getLeaveDays();
+        }
+        catch (Exception e) {
+            return days;
+        }
     }
 
     /**
@@ -510,16 +517,17 @@ public class LeaveRequestImpl implements ILeaveRequest {
      * @description Method to update an employee's current status
      *
      * @param employeeStatus Employee status
+     * @param employeeId Employee id
      * @param employee Employee object
      *
      * @return Boolean indicating success
      */
-    private boolean updateEmployeeCurrentStatus(EmployeeStatus employeeStatus, Employee employee) {
+    private boolean updateEmployeeCurrentStatus(EmployeeStatus employeeStatus,String employeeId,  Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaEmployee)
                 .set(qJpaEmployee.currentStatus, employeeStatus)
                 .set(qJpaEmployee.modifiedBy, stringifyEmployee(employee, "Updated employee current status"))
                 .set(qJpaEmployee.dateModified, Timestamp.from(Instant.now()))
-                .where(qJpaEmployee.employeeId.eq(employee.getEmployeeId()))
+                .where(qJpaEmployee.employeeId.eq(employeeId))
                 .execute() == 1;
     }
 
@@ -529,16 +537,17 @@ public class LeaveRequestImpl implements ILeaveRequest {
      * @description method to update the number of leave days an employee has
      *
      * @param leaveDays New number of leave days
+     * @param employeeId Employee id
      * @param employee Employee object
      *
      * @return Boolean indicating success
      */
-    private boolean updateEmployeeLeaveDays(int leaveDays, Employee employee) {
+    private boolean updateEmployeeLeaveDays(int leaveDays, String employeeId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaEmployee)
                 .set(qJpaEmployee.leaveDays, leaveDays)
                 .set(qJpaEmployee.modifiedBy, stringifyEmployee(employee, "Updated employee current status"))
                 .set(qJpaEmployee.dateModified, Timestamp.from(Instant.now()))
-                .where(qJpaEmployee.employeeId.eq(employee.getEmployeeId()))
+                .where(qJpaEmployee.employeeId.eq(employeeId))
                 .execute() == 1;
     }
 
