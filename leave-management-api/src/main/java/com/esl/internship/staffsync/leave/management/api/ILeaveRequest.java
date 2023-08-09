@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.leave.management.api;
 
-import com.encentral.scaffold.commons.model.Employee;
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.model.LeaveRequest;

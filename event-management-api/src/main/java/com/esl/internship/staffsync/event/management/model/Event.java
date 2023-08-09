@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.event.management.model;
 
-import com.encentral.staffsync.entity.enums.EventStatus;
+import com.esl.internship.staffsync.entities.enums.EventStatus;
 
 import java.sql.Timestamp;
 import java.util.Date;

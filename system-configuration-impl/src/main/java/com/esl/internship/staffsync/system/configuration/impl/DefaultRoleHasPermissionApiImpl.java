@@ -1,8 +1,8 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.*;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.system.configuration.api.IRoleHasPermissionApi;
 import com.esl.internship.staffsync.system.configuration.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 

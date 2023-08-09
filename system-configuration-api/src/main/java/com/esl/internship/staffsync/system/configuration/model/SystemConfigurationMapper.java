@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.model;
 
-import com.encentral.staffsync.entity.*;
+import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
 import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;
@@ -111,16 +111,33 @@ public interface SystemConfigurationMapper {
     }
 
     JpaPermission mapPermission(Permission model);
+
     Permission mapPermission(JpaPermission entity);
+
     JpaPermission mapPermissionDto(PermissionDTO dto);
+
     PermissionDTO mapPermissionDto(JpaPermission entity);
 
     JpaRole mapRole(Role model);
+
     Role mapRole(JpaRole entity);
+
     JpaRole mapRoleDto(RoleDTO dto);
+
     RoleDTO mapRoleDto(JpaRole entity);
 
     JpaRoleHasPermission mapRoleHasPermission(RoleHasPermission model);
+
     RoleHasPermission mapRoleHasPermission(JpaRoleHasPermission entity);
+
+    JpaOptionType mapOptionType(OptionType model);
+
+    OptionType mapOptionType(JpaOptionType entity);
+
+    @Mapping(target = "optionType", expression = "java( mapOptionType(model.getOptionType()) )")
+    JpaOption mapOption(Option model);
+
+    @Mapping(target = "optionType", expression = "java( mapOptionType(entity.getOptionType()) )")
+    Option mapOption(JpaOption entity);
 
 }

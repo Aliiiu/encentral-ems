@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.event.management.api;
 
 
-import com.encentral.scaffold.commons.model.Employee;
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.event.management.dto.EventDTO;
 import com.esl.internship.staffsync.event.management.model.Event;
 

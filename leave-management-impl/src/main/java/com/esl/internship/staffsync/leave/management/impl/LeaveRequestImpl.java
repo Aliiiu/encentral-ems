@@ -1,12 +1,12 @@
 package com.esl.internship.staffsync.leave.management.impl;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.JpaEmployee;
-import com.encentral.staffsync.entity.JpaLeaveRequest;
-import com.encentral.staffsync.entity.QJpaEmployee;
-import com.encentral.staffsync.entity.QJpaLeaveRequest;
-import com.encentral.staffsync.entity.enums.EmployeeStatus;
-import com.encentral.staffsync.entity.enums.LeaveRequestStatus;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.JpaEmployee;
+import com.esl.internship.staffsync.entities.JpaLeaveRequest;
+import com.esl.internship.staffsync.entities.QJpaEmployee;
+import com.esl.internship.staffsync.entities.QJpaLeaveRequest;
+import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
+import com.esl.internship.staffsync.entities.enums.LeaveRequestStatus;
 import com.esl.internship.staffsync.leave.management.api.ILeaveRequest;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO;
@@ -27,7 +27,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.leave.management.model.LeaveManagementMapper.INSTANCE;
 
 /**
@@ -400,7 +400,7 @@ public class LeaveRequestImpl implements ILeaveRequest {
                     .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.COMPLETED)
                     .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
                     .set(qJpaLeaveRequest.duration, daysUsed)
-                    .set(qJpaLeaveRequest.endDate, endDate)
+                    //.set(qJpaLeaveRequest.endDate, endDate)
                     .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
                     .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
                     .execute() == 1;
@@ -547,9 +547,9 @@ public class LeaveRequestImpl implements ILeaveRequest {
      *
      * @return Boolean indicating success
      */
-    private boolean updateEmployeeCurrentStatus(EmployeeStatus employeeStatus,String employeeId,  Employee employee) {
+    private boolean updateEmployeeCurrentStatus(EmployeeStatus employeeStatus, String employeeId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaEmployee)
-                .set(qJpaEmployee.currentStatus, employeeStatus)
+                //.set(qJpaEmployee.currentStatus, employeeStatus)
                 .set(qJpaEmployee.modifiedBy, stringifyEmployee(employee, "Updated employee current status"))
                 .set(qJpaEmployee.dateModified, Timestamp.from(Instant.now()))
                 .where(qJpaEmployee.employeeId.eq(employeeId))

@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.system.configuration.api;
 
 
-import com.encentral.scaffold.commons.model.Employee;
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.system.configuration.dto.RoleDTO;
 import com.esl.internship.staffsync.system.configuration.model.Role;
 

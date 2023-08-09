@@ -94,3 +94,14 @@ GET            /event/:eventId                                                 c
 PATCH          /event/:eventId                                                 controllers.event_management.EventController.updateEvent(eventId: String)
 DELETE         /event/:eventId                                                 controllers.event_management.EventController.deleteEvent(eventId: String)
 
+
+###### Options Management ######
+GET            /option/                                                        controllers.system_configuration.OptionsAndTypesController.getOptions()
+POST           /option/                                                        controllers.system_configuration.OptionsAndTypesController.addOption()
+GET            /option/:optionId                                               controllers.system_configuration.OptionsAndTypesController.getOption(optionId: String)
+PATCH          /option/:optionId/value/:value                                  controllers.system_configuration.OptionsAndTypesController.editOption(optionId: String, value: String)
+GET            /option/:optionTypeId/type                                      controllers.system_configuration.OptionsAndTypesController.getOptionsForType(optionTypeId: String)
+
+GET            /option-type/                                                   controllers.system_configuration.OptionsAndTypesController.getOptionTypes()
+GET            /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.getOptionType(optionTypeId: String)
+PATCH          /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.editOptionType(optionTypeId: String)

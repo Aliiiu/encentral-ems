@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.leave.management.model;
 
-import com.encentral.staffsync.entity.enums.EmployeeStatus;
+import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 
 public class LeaveRequestEmployee {
     private String employeeId;
