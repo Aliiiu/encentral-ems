@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
 
-@Api("Application Controller")
+@Api("Application Configuration")
 @Transactional
 public class AppConfigController extends Controller {
 
