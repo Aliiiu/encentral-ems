@@ -1,5 +1,6 @@
 package com.encentral.staffsync.entity;
 
+import com.encentral.staffsync.entity.attribute.converter.LeaveRequestStatusConverter;
 import com.encentral.staffsync.entity.enums.LeaveRequestStatus;
 import com.google.common.base.MoreObjects;
 
@@ -24,7 +25,7 @@ public class JpaLeaveRequest implements Serializable {
 	private String leaveRequestId;
 
 	@Column(name="approval_status", nullable=false, length=2147483647)
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = LeaveRequestStatusConverter.class)
 	private LeaveRequestStatus approvalStatus;
 
 	@Column(name="date_created", nullable=false)
@@ -33,7 +34,7 @@ public class JpaLeaveRequest implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
-	@Column(nullable=false)
+	@Column()
 	private Integer duration;
 
 	@Column(length=2147483647)
@@ -45,6 +46,10 @@ public class JpaLeaveRequest implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="start_date", nullable=false)
 	private Date startDate;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name="end_date")
+	private Date endDate;
 
 	//bidirectional many-to-one association to JpaEmployee
 	@ManyToOne
@@ -58,7 +63,7 @@ public class JpaLeaveRequest implements Serializable {
 
 	//bidirectional many-to-one association to JpaOption
 	@ManyToOne
-	@JoinColumn(name="option_value", nullable=false)
+	@JoinColumn(name="leave_type", nullable=false)
 	private JpaOption leaveType;
 
 	public JpaLeaveRequest() {
@@ -126,6 +131,14 @@ public class JpaLeaveRequest implements Serializable {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return this.endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 	public JpaEmployee getApprover() {

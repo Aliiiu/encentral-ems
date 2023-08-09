@@ -1,6 +1,7 @@
 package com.encentral.staffsync.entity;
 
 import com.encentral.staffsync.entity.attribute.converter.EmployeeStatusConverter;
+import com.encentral.staffsync.entity.attribute.converter.JsonStringConverter;
 import com.encentral.staffsync.entity.enums.EmployeeStatus;
 import com.google.common.base.MoreObjects;
 
@@ -28,6 +29,7 @@ public class JpaEmployee implements Serializable {
 	@Column(nullable=false, length=225)
 	private String address;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -41,6 +43,7 @@ public class JpaEmployee implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="date_hired", nullable=false)
 	private Date dateHired;
+
 
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
@@ -73,6 +76,7 @@ public class JpaEmployee implements Serializable {
 	@Column(name="login_attempts", nullable=false)
 	private Integer loginAttempts;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 

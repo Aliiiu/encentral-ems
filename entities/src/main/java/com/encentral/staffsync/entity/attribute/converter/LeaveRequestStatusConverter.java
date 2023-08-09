@@ -1,24 +1,22 @@
 package com.encentral.staffsync.entity.attribute.converter;
 
-import com.encentral.staffsync.entity.enums.EmployeeStatus;
+
+import com.encentral.staffsync.entity.enums.LeaveRequestStatus;
 import org.postgresql.util.PGobject;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.sql.SQLException;
 
-
 @Converter
-public class EmployeeStatusConverter implements AttributeConverter<EmployeeStatus, Object> {
-
+public class LeaveRequestStatusConverter implements AttributeConverter<LeaveRequestStatus, Object> {
     @Override
-    public Object convertToDatabaseColumn(EmployeeStatus leaveRequest) {
+    public Object convertToDatabaseColumn(LeaveRequestStatus leaveRequest) {
         try {
             PGobject pgObject = new PGobject();
-            pgObject.setType("employee_status");
+            pgObject.setType("leave_request_status");
             pgObject.setValue(leaveRequest.name());
             return pgObject;
-
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -26,11 +24,11 @@ public class EmployeeStatusConverter implements AttributeConverter<EmployeeStatu
     }
 
     @Override
-    public EmployeeStatus convertToEntityAttribute(Object obj) {
+    public LeaveRequestStatus convertToEntityAttribute(Object obj) {
         if (obj instanceof String)
-            return EmployeeStatus.valueOf((String)obj);
+            return LeaveRequestStatus.valueOf((String)obj);
         else if (obj instanceof PGobject)
-            return EmployeeStatus.valueOf(((PGobject)obj).getValue());
+            return LeaveRequestStatus.valueOf(((PGobject)obj).getValue());
         return null;
     }
 }

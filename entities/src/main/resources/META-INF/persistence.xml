@@ -10,6 +10,7 @@
     <class>com.encentral.staffsync.entity.attribute.converter.NotificationStatusConverter</class>
     <class>com.encentral.staffsync.entity.attribute.converter.EmployeeStatusConverter</class>
     <class>com.encentral.staffsync.entity.attribute.converter.EmployeeRequestStatusConverter</class>
+    <class>com.encentral.staffsync.entity.attribute.converter.LeaveRequestStatusConverter</class>
 
     <!--    Entities-->
     <class>com.encentral.staffsync.entity.JpaAnnouncement</class>
@@ -33,7 +34,6 @@
     <class>com.encentral.staffsync.entity.JpaPermission</class>
     <class>com.encentral.staffsync.entity.JpaRole</class>
     <class>com.encentral.staffsync.entity.JpaRoleHasPermission</class>
-
 
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/staffsync"/>

@@ -1,18 +1,26 @@
 package com.esl.internship.staffsync.system.configuration.dto;
 
 import com.encentral.staffsync.entity.enums.NotificationPriority;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Demilade
  * @dateCreated 01/08/2023
  * @description DTO class for creating notifications
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateNotificationDTO {
+
+    @NotNull
     private NotificationPriority priority;
+
+    @NotNull
     private String receiverId;
+
+    @NotNull
     private String senderId;
+
+    @NotNull
     private String notificationTemplateBeanId;
 
     public CreateNotificationDTO() {
