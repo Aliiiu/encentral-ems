@@ -5,8 +5,10 @@ import com.encentral.staffsync.entity.enums.EmployeeRequestStatus;
 import org.postgresql.util.PGobject;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.sql.SQLException;
 
+@Converter
 public class EmployeeRequestStatusConverter implements AttributeConverter<EmployeeRequestStatus, Object> {
 
     @Override

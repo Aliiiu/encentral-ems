@@ -57,7 +57,7 @@ public class JpaEmergencyContact implements Serializable {
 	private JpaEmployee employee;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="contact_gender", referencedColumnName = "option_id")
 	private JpaOption contactGender;
 

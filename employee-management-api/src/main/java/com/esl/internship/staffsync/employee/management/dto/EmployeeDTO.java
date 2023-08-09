@@ -2,9 +2,7 @@ package com.esl.internship.staffsync.employee.management.dto;
 
 
 import com.encentral.staffsync.entity.enums.EmployeeStatus;
-import com.esl.internship.staffsync.employee.management.model.Department;
 
-import java.security.Timestamp;
 import java.util.Date;
 
 

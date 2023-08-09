@@ -2,22 +2,26 @@ package com.esl.internship.staffsync.employee.management.api;
 
 
 import com.encentral.staffsync.entity.enums.EmployeeStatus;
+import com.esl.internship.staffsync.employee.management.service.response.Response;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
 import com.esl.internship.staffsync.employee.management.model.Employee;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 
 public interface IEmployeeApi {
 
-    Employee addEmployee(EmployeeDTO employeeDTO, com.encentral.scaffold.commons.model.Employee employee);
+    Response<Employee> addEmployee(EmployeeDTO employeeDTO, com.encentral.scaffold.commons.model.Employee employee);
 
     Optional<Employee> getEmployeeById(String employeeId);
 
     List<Employee> getAllEmployee();
 
-    boolean updateEmployee(String employeeId, EmployeeDTO employeeDTO, com.encentral.scaffold.commons.model.Employee employee);
+    boolean checkEmployeePassword(String employeeId, String password);
+
+    boolean setEmployeePassword(String employeeId, String password, com.encentral.scaffold.commons.model.Employee employee);
 
     boolean deleteEmployee(String employeeId);
 
@@ -33,6 +37,10 @@ public interface IEmployeeApi {
 
     boolean setEmployeeLeaveDays(String employeeId, int leaveDays, com.encentral.scaffold.commons.model.Employee employee);
 
-    boolean updateAnEmployeeRecordField(String fieldName, Object newValue, com.encentral.scaffold.commons.model.Employee employee);
+    boolean employeeExists(String employeeId);
+
+    boolean setLoginAttempts(String employeeId, int loginAttempt);
+
+    boolean setLastLogin(String employeeId, Timestamp lastLogin);
 
 }

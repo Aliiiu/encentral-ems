@@ -12,10 +12,9 @@ public class Department {
     private Timestamp dateModified;
     private String departmentName;
     private String description;
-    private String modifiedBy;
     private Integer workingHours;
-    private DepartmentHead departmentHead;
-
+    private String modifiedBy;
+    private String departmentHeadEmployeeId;
 
     public String getDepartmentId() {
         return departmentId;
@@ -65,14 +64,6 @@ public class Department {
         this.description = description;
     }
 
-    public String getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
     public Integer getWorkingHours() {
         return workingHours;
     }
@@ -81,22 +72,28 @@ public class Department {
         this.workingHours = workingHours;
     }
 
-    public DepartmentHead getDepartmentHead() {
-        return departmentHead;
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 
-    public void setDepartmentHead(DepartmentHead departmentHead) {
-        this.departmentHead = departmentHead;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public String getDepartmentHeadEmployeeId() {
+        return departmentHeadEmployeeId;
+    }
+
+    public void setDepartmentHeadEmployeeId(String departmentHeadEmployeeId) {
+        this.departmentHeadEmployeeId = departmentHeadEmployeeId;
     }
 
     @Override
     public String toString() {
         return "Department{" +
-                "departmentName='" + departmentName + '\'' +
-                ", description='" + description + '\'' +
+                "departmentId='" + departmentId + '\'' +
+                ", departmentName='" + departmentName + '\'' +
                 ", workingHours=" + workingHours +
-                ", departmentHead=" + departmentHead +
                 '}';
     }
-
 }

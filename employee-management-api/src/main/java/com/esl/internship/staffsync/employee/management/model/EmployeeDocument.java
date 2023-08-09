@@ -1,25 +1,26 @@
 package com.esl.internship.staffsync.employee.management.model;
 
+
+import com.encentral.scaffold.commons.model.Document;
+
 import java.sql.Timestamp;
+
 
 public class EmployeeDocument {
 
-    private String documentId;
+    private String employeeHasDocumentId;
     private String createdBy;
     private Timestamp dateCreated;
-    private String employeeHasDocumentId;
-    private Employee employee;
+    private Document document;
+    private String employeeId;
     private String documentType;
 
-//    private Document document;
-
-
-    public String getDocumentId() {
-        return documentId;
+    public String getEmployeeHasDocumentId() {
+        return employeeHasDocumentId;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
+    public void setEmployeeHasDocumentId(String employeeHasDocumentId) {
+        this.employeeHasDocumentId = employeeHasDocumentId;
     }
 
     public String getCreatedBy() {
@@ -38,20 +39,20 @@ public class EmployeeDocument {
         this.dateCreated = dateCreated;
     }
 
-    public String getEmployeeHasDocumentId() {
-        return employeeHasDocumentId;
+    public Document getDocument() {
+        return document;
     }
 
-    public void setEmployeeHasDocumentId(String employeeHasDocumentId) {
-        this.employeeHasDocumentId = employeeHasDocumentId;
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getDocumentType() {
@@ -60,6 +61,15 @@ public class EmployeeDocument {
 
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
+    }
+
+    @Override
+    public String toString() {
+        return "EmployeeDocument{" +
+                "employeeHasDocumentId='" + employeeHasDocumentId + '\'' +
+                ", employeeId='" + employeeId + '\'' +
+                ", documentType='" + documentType + '\'' +
+                '}';
     }
 
 }

@@ -17,7 +17,7 @@ public class EmergencyContact {
     private String modifiedBy;
     private String phoneNumber;
     private String relationship;
-    private Employee employee;
+    private String employeeId;
     private String contactGender;
 
     public String getEmergencyContactId() {
@@ -108,12 +108,12 @@ public class EmergencyContact {
         this.relationship = relationship;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getContactGender() {
@@ -122,6 +122,16 @@ public class EmergencyContact {
 
     public void setContactGender(String contactGender) {
         this.contactGender = contactGender;
+    }
+
+    @Override
+    public String toString() {
+        return "EmergencyContact{" +
+                "emergencyContactId='" + emergencyContactId + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", relationship='" + relationship + '\'' +
+                ", employeeId='" + employeeId + '\'' +
+                '}';
     }
 
 }

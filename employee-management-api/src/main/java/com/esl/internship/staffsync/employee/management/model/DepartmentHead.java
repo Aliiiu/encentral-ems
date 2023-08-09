@@ -73,8 +73,8 @@ public class DepartmentHead {
     @Override
     public String toString() {
         return "DepartmentHead{" +
-                "department=" + department.getDepartmentName() +
-                ", employee=" + employee.getEmployeeEmail() +
+                "departmentHeadId='" + departmentHeadId + '\'' +
+                ", dateCreated=" + dateCreated +
                 '}';
     }
 }

@@ -1,14 +1,10 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
-
-
-public class DepartmentDTO {
+public class UpdateDepartmentDTO {
 
     private String departmentName;
     private String description;
     private Integer workingHours;
-
-    private String departmentHeadEmployeeId;
 
     public String getDepartmentName() {
         return departmentName;
@@ -33,13 +29,4 @@ public class DepartmentDTO {
     public void setWorkingHours(Integer workingHours) {
         this.workingHours = workingHours;
     }
-
-    public String getDepartmentHeadEmployeeId() {
-        return departmentHeadEmployeeId;
-    }
-
-    public void setDepartmentHeadEmployeeId(String departmentHeadEmployeeId) {
-        this.departmentHeadEmployeeId = departmentHeadEmployeeId;
-    }
-
 }

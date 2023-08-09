@@ -16,20 +16,18 @@ import java.util.Objects;
 @Entity
 @Table(name="employee_has_document")
 public class JpaEmployeeHasDocument implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="document_id", unique=true, nullable=false, length=64)
-	private String documentId;
+	@Column(name="employee_has_document_id", nullable=false, length=64)
+	private String employeeHasDocumentId;
 
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
 	@Column(name="date_created", nullable=false)
 	private Timestamp dateCreated;
-
-	@Column(name="employee_has_document_id", nullable=false, length=64)
-	private String employeeHasDocumentId;
 
 	//bidirectional one-to-one association to JpaDocument
 	@OneToOne
@@ -47,14 +45,6 @@ public class JpaEmployeeHasDocument implements Serializable {
 	private JpaOption documentType;
 
 	public JpaEmployeeHasDocument() {
-	}
-
-	public String getDocumentId() {
-		return this.documentId;
-	}
-
-	public void setDocumentId(String documentId) {
-		this.documentId = documentId;
 	}
 
 	public String getCreatedBy() {

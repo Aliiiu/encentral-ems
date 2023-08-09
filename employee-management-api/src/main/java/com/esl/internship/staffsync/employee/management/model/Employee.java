@@ -1,11 +1,14 @@
 package com.esl.internship.staffsync.employee.management.model;
 
+
 import com.encentral.staffsync.entity.enums.EmployeeStatus;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.Date;
 
+
 public class Employee {
+
     private String employeeId;
     private String address;
     private String createdBy;
@@ -18,20 +21,19 @@ public class Employee {
     private String employeeEmail;
     private String firstName;
     private String jobTitle;
-    private Timestamp lastLogin;
     private String lastName;
     private Integer leaveDays;
-    private Integer loginAttempts;
-    private String modifiedBy;
-    private String password;
+    private Timestamp lastLogin;
     private String phoneNumber;
     private String profilePictureUrl;
-    private Department department;
-    private String roleId;
+    private String modifiedBy;
+    private String departmentId;
     private String countryOfOrigin;
+    private String employeeGender;
     private String employeeMaritalStatus;
     private String highestCertification;
     private String stateOfOrigin;
+    private String roleId;
 
     public String getEmployeeId() {
         return employeeId;
@@ -129,14 +131,6 @@ public class Employee {
         this.jobTitle = jobTitle;
     }
 
-    public Timestamp getLastLogin() {
-        return lastLogin;
-    }
-
-    public void setLastLogin(Timestamp lastLogin) {
-        this.lastLogin = lastLogin;
-    }
-
     public String getLastName() {
         return lastName;
     }
@@ -153,28 +147,12 @@ public class Employee {
         this.leaveDays = leaveDays;
     }
 
-    public Integer getLoginAttempts() {
-        return loginAttempts;
+    public Timestamp getLastLogin() {
+        return lastLogin;
     }
 
-    public void setLoginAttempts(Integer loginAttempts) {
-        this.loginAttempts = loginAttempts;
-    }
-
-    public String getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setLastLogin(Timestamp lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
     public String getPhoneNumber() {
@@ -193,20 +171,20 @@ public class Employee {
         this.profilePictureUrl = profilePictureUrl;
     }
 
-    public Department getDepartment() {
-        return department;
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public String getDepartmentId() {
+        return departmentId;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setDepartmentId(String departmentId) {
+        this.departmentId = departmentId;
     }
 
     public String getCountryOfOrigin() {
@@ -215,6 +193,14 @@ public class Employee {
 
     public void setCountryOfOrigin(String countryOfOrigin) {
         this.countryOfOrigin = countryOfOrigin;
+    }
+
+    public String getEmployeeGender() {
+        return employeeGender;
+    }
+
+    public void setEmployeeGender(String employeeGender) {
+        this.employeeGender = employeeGender;
     }
 
     public String getEmployeeMaritalStatus() {
@@ -241,11 +227,19 @@ public class Employee {
         this.stateOfOrigin = stateOfOrigin;
     }
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
-                "dateHired=" + dateHired +
-                ", employeeActive=" + employeeActive +
+                "employeeId='" + employeeId + '\'' +
+                ", currentStatus=" + currentStatus +
                 ", employeeEmail='" + employeeEmail + '\'' +
                 ", firstName='" + firstName + '\'' +
                 '}';

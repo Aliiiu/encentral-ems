@@ -23,7 +23,7 @@ public class JpaEmployeeUpdateRequest implements Serializable {
 	@Column(name="employee_update_request_id", unique=true, nullable=false, length=64)
 	private String employeeUpdateRequestId;
 
-//	@Convert(converter = EmployeeRequestStatusConverter.class)
+	@Convert(converter = EmployeeRequestStatusConverter.class)
 	@Column(name="approval_status", nullable=false, length=2147483647)
 	private EmployeeRequestStatus approvalStatus;
 

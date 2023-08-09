@@ -1,12 +1,6 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
 
-import com.encentral.staffsync.entity.enums.EmployeeRequestStatus;
-import com.esl.internship.staffsync.employee.management.model.Employee;
-
-import java.sql.Timestamp;
-
-
 public class EmployeeUpdateRequestDTO {
 
     private String oldValue;

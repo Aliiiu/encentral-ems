@@ -4,8 +4,11 @@ import com.encentral.staffsync.entity.enums.EmployeeStatus;
 import org.postgresql.util.PGobject;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.sql.SQLException;
 
+
+@Converter
 public class EmployeeStatusConverter implements AttributeConverter<EmployeeStatus, Object> {
     @Override
     public Object convertToDatabaseColumn(EmployeeStatus employeeStatus) {

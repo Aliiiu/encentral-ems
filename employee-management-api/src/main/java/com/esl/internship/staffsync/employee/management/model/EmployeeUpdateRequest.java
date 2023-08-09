@@ -1,10 +1,13 @@
 package com.esl.internship.staffsync.employee.management.model;
 
+import com.encentral.staffsync.entity.attribute.converter.EmployeeRequestStatusConverter;
 import com.encentral.staffsync.entity.enums.EmployeeRequestStatus;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 public class EmployeeUpdateRequest {
+
     private String employeeUpdateRequestId;
     private EmployeeRequestStatus approvalStatus;
     private Timestamp dateCreated;
@@ -14,8 +17,8 @@ public class EmployeeUpdateRequest {
     private String remarks;
     private String updateFieldName;
     private String updateNewValue;
-    private Employee approver;
-    private Employee employee;
+    private String approverEmployeeId;
+    private String employeeId;
 
     public String getEmployeeUpdateRequestId() {
         return employeeUpdateRequestId;
@@ -89,19 +92,32 @@ public class EmployeeUpdateRequest {
         this.updateNewValue = updateNewValue;
     }
 
-    public Employee getApprover() {
-        return approver;
+    public String getApproverEmployeeId() {
+        return approverEmployeeId;
     }
 
-    public void setApprover(Employee approver) {
-        this.approver = approver;
+    public void setApproverEmployeeId(String approverEmployeeId) {
+        this.approverEmployeeId = approverEmployeeId;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
+
+    @Override
+    public String toString() {
+        return "EmployeeUpdateRequest{" +
+                "employeeUpdateRequestId='" + employeeUpdateRequestId + '\'' +
+                ", approvalStatus=" + approvalStatus +
+                ", oldValue='" + oldValue + '\'' +
+                ", updateFieldName='" + updateFieldName + '\'' +
+                ", updateNewValue='" + updateNewValue + '\'' +
+                ", employeeId='" + employeeId + '\'' +
+                '}';
+    }
+
 }

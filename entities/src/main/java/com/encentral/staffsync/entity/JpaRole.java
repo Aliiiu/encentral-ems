@@ -53,16 +53,16 @@ public class JpaRole implements Serializable {
 	private Set<JpaRoleHasPermission> roleHasPermissions;
 
 	//bidirectional many-to-many association to JpaPermission
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
-		name="role_has_permission"
-		, joinColumns={
+		name = "role_has_permission",
+		joinColumns = {
 			@JoinColumn(name="role_id", nullable=false)
-			}
-		, inverseJoinColumns={
+		},
+		inverseJoinColumns = {
 			@JoinColumn(name="permission_id", nullable=false)
-			}
-		)
+		}
+	)
 	private Set<JpaPermission> permissions;
 
 	public JpaRole() {
