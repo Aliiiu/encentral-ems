@@ -11,16 +11,16 @@ import javax.validation.constraints.NotNull;
  */
 public class CreateNotificationDTO {
 
-    @NotNull
+    @NotNull(message = "Notification priority cannot be null")
     private NotificationPriority priority;
 
-    @NotNull
+    @NotNull(message = "Receiver id field cannot be null")
     private String receiverId;
 
-    @NotNull
+    @NotNull(message = "Sender id field cannot be null")
     private String senderId;
 
-    @NotNull
+    @NotNull(message = "Notification template id field cannot be null")
     private String notificationTemplateBeanId;
 
     public CreateNotificationDTO() {

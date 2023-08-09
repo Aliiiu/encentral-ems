@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 public class EditLeaveRequestDTO {
 
-    @NotNull
+    @NotNull(message = "Leave request id field cannot be null")
     private String leaveRequestId;
 
     private String remarks = "";

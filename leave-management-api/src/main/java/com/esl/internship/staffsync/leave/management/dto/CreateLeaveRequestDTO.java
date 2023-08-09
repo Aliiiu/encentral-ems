@@ -6,10 +6,10 @@ import java.util.Date;
 import java.util.Optional;
 
 public class CreateLeaveRequestDTO {
-    @NotNull
+    @NotNull(message = "Employee id field cannot be null")
     private String employeeId;
 
-    @NotNull
+    @NotNull(message = "Leave type id field cannot be null ")
     private String leaveTypeId;
 
     @NotNull(message = "Start date cannot be null")
@@ -18,7 +18,6 @@ public class CreateLeaveRequestDTO {
     @Future(message = "Leave date must be greater than current date")
     private Date endDate;
 
-    @NotNull
     private String reason = "";
 
     public CreateLeaveRequestDTO() {
