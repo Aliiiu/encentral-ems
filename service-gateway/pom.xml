@@ -38,11 +38,13 @@
             <artifactId>play-jdbc-api_${scala.binary.version}</artifactId>
             <version>${play2.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-slf4j_2.12</artifactId>
             <version>2.5.26</version>
         </dependency>
+
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.12</artifactId>
@@ -54,6 +56,7 @@
             <artifactId>play-enhancer</artifactId>
             <version>${play2-enhancer.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>filters-helpers_${scala.binary.version}</artifactId>
@@ -65,31 +68,37 @@
             <artifactId>play-akka-http-server_${scala.binary.version}</artifactId>
             <version>${play2.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-logback_${scala.binary.version}</artifactId>
             <version>${play2.version}</version>
         </dependency>
+
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-core</artifactId>
             <version>${swagger.version}</version>
         </dependency>
+
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-models</artifactId>
             <version>${swagger.version}</version>
         </dependency>
+
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-play2_${scala.binary.version}</artifactId>
             <version>1.7.1</version>
         </dependency>
+
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-parser</artifactId>
             <version>1.0.54</version>
         </dependency>
+
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
@@ -113,6 +122,7 @@
             <artifactId>commons-codec</artifactId>
             <version>1.14</version>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-scala_2.12</artifactId>
@@ -130,14 +140,20 @@
             <artifactId>validation-api</artifactId>
             <version>2.0.1.Final</version>
         </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>leave-management-api</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.encentral.scaffold</groupId>
             <artifactId>event-management-api</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
-
-
     </dependencies>
 
 

@@ -49,15 +49,22 @@
         </dependency>
 
         <dependency>
-            <groupId>D4C</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>system-configuration-impl</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>event-management-impl</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>leave-management-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

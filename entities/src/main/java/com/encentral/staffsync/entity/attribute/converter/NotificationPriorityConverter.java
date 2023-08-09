@@ -1,4 +1,4 @@
-package com.encentral.staffsync.entity.enums.attribute.converter;
+package com.encentral.staffsync.entity.attribute.converter;
 
 import com.encentral.staffsync.entity.enums.NotificationPriority;
 import org.postgresql.util.PGobject;

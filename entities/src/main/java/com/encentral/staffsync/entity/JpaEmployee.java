@@ -1,5 +1,7 @@
 package com.encentral.staffsync.entity;
 
+import com.encentral.staffsync.entity.attribute.converter.EmployeeStatusConverter;
+import com.encentral.staffsync.entity.enums.EmployeeStatus;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -26,11 +28,13 @@ public class JpaEmployee implements Serializable {
 	@Column(nullable=false, length=225)
 	private String address;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
 	@Column(name="current_status", nullable=false, length=2147483647)
-	private String currentStatus;
+	@Convert(converter = EmployeeStatusConverter.class)
+	private EmployeeStatus currentStatus;
 
 	@Column(name="date_created", nullable=false)
 	private Timestamp dateCreated;
@@ -38,6 +42,7 @@ public class JpaEmployee implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="date_hired", nullable=false)
 	private Date dateHired;
+
 
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
@@ -70,6 +75,7 @@ public class JpaEmployee implements Serializable {
 	@Column(name="login_attempts", nullable=false)
 	private Integer loginAttempts;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
@@ -196,11 +202,11 @@ public class JpaEmployee implements Serializable {
 		this.createdBy = createdBy;
 	}
 
-	public String getCurrentStatus() {
+	public EmployeeStatus getCurrentStatus() {
 		return this.currentStatus;
 	}
 
-	public void setCurrentStatus(String currentStatus) {
+	public void setCurrentStatus(EmployeeStatus currentStatus) {
 		this.currentStatus = currentStatus;
 	}
 
