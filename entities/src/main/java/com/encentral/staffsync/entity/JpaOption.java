@@ -21,6 +21,7 @@ public class JpaOption implements Serializable {
 	@Column(name="option_id", unique=true, nullable=false, length=64)
 	private String optionId;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -30,6 +31,7 @@ public class JpaOption implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
@@ -38,7 +40,7 @@ public class JpaOption implements Serializable {
 
 	//bidirectional many-to-one association to JpaOptionType
 	@ManyToOne
-	@JoinColumn(name="option_type_id", nullable=false)
+	@JoinColumn(name="option_type_id", referencedColumnName = "option_type_id", nullable=false)
 	private JpaOptionType optionType;
 
 	public JpaOption() {
@@ -118,7 +120,7 @@ public class JpaOption implements Serializable {
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this.getClass())
-				.add("Type", this.getOptionType().getOptionType())
+				.add("Type", this.getOptionType().getOptionTypeName())
 				.add("Value", this.getOptionValue())
 				.toString();
 	}

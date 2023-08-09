@@ -22,6 +22,13 @@ public class JpaOptionType implements Serializable {
 	@Column(name="option_type_id", unique=true, nullable=false, length=100)
 	private String optionTypeId;
 
+	@Column(name="option_type", nullable=false, length=100)
+	private String optionTypeName;
+
+	@Column(name="option_description", nullable=false, length=2147483647)
+	private String optionTypeDescription;
+
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -31,14 +38,9 @@ public class JpaOptionType implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
-
-	@Column(name="option_description", nullable=false, length=2147483647)
-	private String optionDescription;
-
-	@Column(name="option_type", nullable=false, length=100)
-	private String optionType;
 
 	//bidirectional many-to-one association to JpaOption
 	@OneToMany(mappedBy="optionType")
@@ -87,20 +89,20 @@ public class JpaOptionType implements Serializable {
 		this.modifiedBy = modifiedBy;
 	}
 
-	public String getOptionDescription() {
-		return this.optionDescription;
+	public String getOptionTypeDescription() {
+		return this.optionTypeDescription;
 	}
 
-	public void setOptionDescription(String optionDescription) {
-		this.optionDescription = optionDescription;
+	public void setOptionTypeDescription(String optionTypeDescription) {
+		this.optionTypeDescription = optionTypeDescription;
 	}
 
-	public String getOptionType() {
-		return this.optionType;
+	public String getOptionTypeName() {
+		return this.optionTypeName;
 	}
 
-	public void setOptionType(String optionType) {
-		this.optionType = optionType;
+	public void setOptionTypeName(String optionTypeName) {
+		this.optionTypeName = optionTypeName;
 	}
 
 	public Set<JpaOption> getOptions() {
@@ -137,13 +139,13 @@ public class JpaOptionType implements Serializable {
 		if (this == obj) return true;
 		if (obj == null || getClass() != obj.getClass()) return false;
 		JpaOptionType optionType = (JpaOptionType) obj;
-		return Objects.equals(this.getOptionTypeId(), optionType.getOptionType());
+		return Objects.equals(this.getOptionTypeId(), optionType.getOptionTypeName());
 	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this.getClass())
-				.add("TypeName", this.getOptionType())
+				.add("TypeName", this.getOptionTypeName())
 				.toString();
 	}
 
