@@ -7,6 +7,6 @@ public class AuthenticationModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(IAuthentication.class).to(AuthenticationImpl.class);
+        bind(IAuthentication.class).to(DefaultAuthenticationImpl.class);
     }
 }

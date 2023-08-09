@@ -1,6 +1,7 @@
 package com.esl.internship.staffsync.authentication.api;
 
-import com.encentral.staffsync.entity.JpaEmployee;
+import com.esl.internship.staffsync.authentication.model.AuthEmployeeSlice;
+import com.esl.internship.staffsync.entities.JpaEmployee;
 
 import java.util.Optional;
 
@@ -10,12 +11,11 @@ public interface IAuthentication {
 
     boolean updateEmployeeLoginAttempts(String employeeEmail);
 
-    Optional<String> signInEmployee(JpaEmployee jpaEmployee);
+    Optional<String> signInEmployee(AuthEmployeeSlice authEmployeeSlice);
 
-    boolean updateEmployeeLastLogin(String employeeId);
+    boolean updateEmployeeLastLogin(String employeeEmail);
 
     boolean restrictAccount(String employeeEmail);
 
-    Optional<JpaEmployee> getJpaEmployeeByEmail(String email);
-
+    Optional<AuthEmployeeSlice> getEmployeeSliceByEmail(String email);
 }

@@ -67,9 +67,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.encentral.scaffold</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>authentication-impl</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 

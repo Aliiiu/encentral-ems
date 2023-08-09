@@ -15,7 +15,7 @@ import java.util.Date;
  */
 public class JwtUtil {
 
-    //TODO: Changes to a more secure key
+    //TODO: Change to a more secure key
     private final String secret = ConfigFactory.load().getString("play.crypto.secret");
 
     private final Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -46,6 +46,15 @@ public class JwtUtil {
                 .sign(algorithm);
     }
 
+    /**
+     * @author DEMILADE
+     * @dateCreatedc 09/08/2023
+     * @description Method to verify a JWT's signature
+     *
+     * @param token JWT token to be verified
+     *
+     * @return DecodedJWT object containing payload
+     */
     public DecodedJWT verifyToken(String token) {
         DecodedJWT jwt = JWT.require(algorithm).build().verify(token);
         return jwt;

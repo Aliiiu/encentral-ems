@@ -95,11 +95,6 @@ PATCH          /event/:eventId                                                 c
 DELETE         /event/:eventId                                                 controllers.event_management.EventController.deleteEvent(eventId: String)
 
 
-###### Authentication ######
-POST           /auth/signin/                                                   controllers.authentication.AuthenticationController.signEmployeeIn()
-
-
-
 ###### Options Management ######
 GET            /option/                                                        controllers.system_configuration.OptionsAndTypesController.getOptions()
 POST           /option/                                                        controllers.system_configuration.OptionsAndTypesController.addOption()
@@ -110,4 +105,8 @@ GET            /option/:optionTypeId/type                                      c
 GET            /option-type/                                                   controllers.system_configuration.OptionsAndTypesController.getOptionTypes()
 GET            /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.getOptionType(optionTypeId: String)
 PATCH          /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.editOptionType(optionTypeId: String)
->>>>>>> main
+
+
+###### Authentication ######
+POST           /auth/signin/                                                   controllers.authentication.AuthenticationController.signEmployeeIn()
+

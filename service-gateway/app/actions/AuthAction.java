@@ -13,11 +13,25 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+/**
+ * @author DEMILADE
+ * @dateCreated 09/08/2023
+ * @description Authentication Action class
+ */
 public class AuthAction extends Action.Simple {
 
     @Inject
     JwtUtil jwtUtil;
 
+    /**
+     * @author Demilade
+     * @dateCreated 09/08/2023
+     * @description Method to add current user employee details to context object
+     *
+     * @param ctx Http Context object
+     *
+     * @return Async Result
+     */
     @Override
     public CompletionStage<Result> call(Http.Context ctx) {
         Optional<String> tokenOptional = ctx.request().getHeaders().get("Authorization");
