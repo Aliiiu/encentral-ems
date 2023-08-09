@@ -5,7 +5,7 @@ import com.encentral.scaffold.commons.util.MyObjectMapper;
 import com.encentral.staffsync.entity.JpaEmployee;
 import com.esl.internship.staffsync.authentication.api.IAuthentication;
 import com.esl.internship.staffsync.authentication.dto.LoginDTO;
-import com.esl.internship.staffsync.authentication.model.LoginResult;
+import com.esl.internship.staffsync.authentication.model.AuthToken;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -28,7 +28,7 @@ class AuthenticationController extends Controller {
     MyObjectMapper myObjectMapper;
 
 
-    @ApiOperation("Employee sign in")
+    @ApiOperation("Authenticate user and provide token")
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, response = String.class, message = "Successfully signed in"),
@@ -78,6 +78,6 @@ class AuthenticationController extends Controller {
             return Results.badRequest(response);
         }
         return iAuthentication.signInEmployee(jpaEmployee)
-                .map(e -> ok(myObjectMapper.toJsonString(e))).orElseGet(Results::internalServerError);
+                .map(e -> ok(myObjectMapper.toJsonString(new AuthToken(e)))).orElseGet(Results::internalServerError);
     }
 }

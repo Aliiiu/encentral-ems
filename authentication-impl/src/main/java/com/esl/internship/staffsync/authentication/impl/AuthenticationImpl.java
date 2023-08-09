@@ -23,11 +23,14 @@ public class AuthenticationImpl implements IAuthentication {
     @Inject
     JPAApi jpaApi;
 
+    @Inject
+    JwtUtil jwtUtil;
+
     @Override
     public Optional<String> signInEmployee(JpaEmployee jpaEmployee) {
         EmployeeAuthInfo employeeAuthInfo = INSTANCE.jpaEmployeeToEmployeeAuthInfo(jpaEmployee);
         updateEmployeeLastLogin(jpaEmployee.getEmployeeEmail());
-        return Optional.ofNullable(JwtUtil.generateToken(employeeAuthInfo));
+        return Optional.ofNullable(jwtUtil.generateToken(employeeAuthInfo));
     }
 
     @Override

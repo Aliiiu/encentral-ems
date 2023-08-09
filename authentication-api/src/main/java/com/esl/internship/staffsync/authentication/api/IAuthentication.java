@@ -1,8 +1,6 @@
 package com.esl.internship.staffsync.authentication.api;
 
 import com.encentral.staffsync.entity.JpaEmployee;
-import com.esl.internship.staffsync.authentication.dto.LoginDTO;
-import com.esl.internship.staffsync.authentication.model.LoginResult;
 
 import java.util.Optional;
 

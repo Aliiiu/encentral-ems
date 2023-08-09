@@ -94,3 +94,6 @@ GET            /event/:eventId                                                 c
 PATCH          /event/:eventId                                                 controllers.event_management.EventController.updateEvent(eventId: String)
 DELETE         /event/:eventId                                                 controllers.event_management.EventController.deleteEvent(eventId: String)
 
+###### Authenticationm ######
+POST           /auth/signin/                                                   controllers.authentication.AuthenticationController.signEmployeeIn()
+

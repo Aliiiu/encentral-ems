@@ -6,8 +6,6 @@ public class EmployeeAuthInfo {
 
     private String employeeEmail;
 
-    private Boolean employeeActive;
-
     private String firstName;
 
     private String lastName;
@@ -31,14 +29,6 @@ public class EmployeeAuthInfo {
 
     public void setEmployeeEmail(String employeeEmail) {
         this.employeeEmail = employeeEmail;
-    }
-
-    public Boolean getEmployeeActive() {
-        return employeeActive;
-    }
-
-    public void setEmployeeActive(Boolean employeeActive) {
-        this.employeeActive = employeeActive;
     }
 
     public String getFirstName() {
