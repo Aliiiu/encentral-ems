@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.dto;
 
-import com.encentral.staffsync.entity.enums.NotificationPriority;
+import com.esl.internship.staffsync.entities.enums.NotificationPriority;
 
 import javax.validation.constraints.NotNull;
 

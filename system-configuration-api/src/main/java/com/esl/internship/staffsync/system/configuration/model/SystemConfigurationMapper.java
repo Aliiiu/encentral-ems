@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.model;
 
-import com.encentral.staffsync.entity.*;
+import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
 import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;

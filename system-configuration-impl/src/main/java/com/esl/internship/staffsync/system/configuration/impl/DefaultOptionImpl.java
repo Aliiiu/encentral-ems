@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.QJpaOption;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.QJpaOption;
 import com.esl.internship.staffsync.system.configuration.api.IOption;
 import com.esl.internship.staffsync.system.configuration.model.Option;
 import com.google.inject.Inject;
@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 public class DefaultOptionImpl implements IOption {

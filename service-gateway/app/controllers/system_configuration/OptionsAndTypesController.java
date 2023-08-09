@@ -1,7 +1,7 @@
 package controllers.system_configuration;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.scaffold.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.IOption;
 import com.esl.internship.staffsync.system.configuration.api.IOptionType;
 import com.esl.internship.staffsync.system.configuration.model.Option;
@@ -14,7 +14,7 @@ import play.mvc.Results;
 
 import javax.inject.Inject;
 
-import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
+import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
 
 @Api("Options and Types")

@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.QJpaOptionType;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.QJpaOptionType;
 import com.esl.internship.staffsync.system.configuration.api.IOptionType;
 import com.esl.internship.staffsync.system.configuration.model.Option;
 import com.esl.internship.staffsync.system.configuration.model.OptionType;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 public class DefaultOptionTypeImpl implements IOptionType {
@@ -29,8 +29,8 @@ public class DefaultOptionTypeImpl implements IOptionType {
     @Override
     public boolean editOptionType(final String optionId, final OptionType optionType, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(Q_JPA_OPTION_TYPE)
-                .set(Q_JPA_OPTION_TYPE.optionType, optionType.getOptionTypeName())
-                .set(Q_JPA_OPTION_TYPE.optionDescription, optionType.getOptionTypeDescription())
+                .set(Q_JPA_OPTION_TYPE.optionTypeName, optionType.getOptionTypeName())
+                .set(Q_JPA_OPTION_TYPE.optionTypeDescription, optionType.getOptionTypeDescription())
                 .set(Q_JPA_OPTION_TYPE.dateModified, Timestamp.from(Instant.now()))
                 .set(Q_JPA_OPTION_TYPE.modifiedBy, stringifyEmployee(employee, "Updated optionType value"))
                 .where(Q_JPA_OPTION_TYPE.optionTypeId.eq(optionId))
