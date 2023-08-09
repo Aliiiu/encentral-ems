@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.leave.management.model;
 
-import com.encentral.staffsync.entity.enums.LeaveRequestStatus;
+import com.esl.internship.staffsync.entities.enums.LeaveRequestStatus;
 
 import java.sql.Timestamp;
 import java.util.Date;

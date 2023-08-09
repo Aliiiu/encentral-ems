@@ -1,9 +1,9 @@
 package com.esl.internship.staffsync.event.management.impl;
 
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.JpaEvent;
-import com.encentral.staffsync.entity.QJpaEvent;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.JpaEvent;
+import com.esl.internship.staffsync.entities.QJpaEvent;
 import com.esl.internship.staffsync.event.management.api.IEventApi;
 import com.esl.internship.staffsync.event.management.dto.EventDTO;
 import com.esl.internship.staffsync.event.management.model.Event;
@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.event.management.model.EventMapper.INSTANCE;
 
 

@@ -1,11 +1,11 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.JpaPermission;
-import com.encentral.staffsync.entity.JpaRole;
-import com.encentral.staffsync.entity.QJpaPermission;
-import com.encentral.staffsync.entity.QJpaRole;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.JpaPermission;
+import com.esl.internship.staffsync.entities.JpaRole;
+import com.esl.internship.staffsync.entities.QJpaPermission;
+import com.esl.internship.staffsync.entities.QJpaRole;
 import com.esl.internship.staffsync.system.configuration.api.IRoleApi;
 import com.esl.internship.staffsync.system.configuration.dto.RoleDTO;
 import com.esl.internship.staffsync.system.configuration.model.Role;
@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 

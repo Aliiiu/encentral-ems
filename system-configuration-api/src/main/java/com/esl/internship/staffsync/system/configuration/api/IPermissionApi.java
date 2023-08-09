@@ -1,8 +1,8 @@
 package com.esl.internship.staffsync.system.configuration.api;
 
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.enums.Action;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.enums.Action;
 import com.esl.internship.staffsync.system.configuration.dto.PermissionDTO;
 import com.esl.internship.staffsync.system.configuration.model.Permission;
 import com.esl.internship.staffsync.system.configuration.model.Role;

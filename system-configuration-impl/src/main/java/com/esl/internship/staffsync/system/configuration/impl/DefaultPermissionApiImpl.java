@@ -1,9 +1,9 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.JpaPermission;
-import com.encentral.staffsync.entity.QJpaPermission;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.JpaPermission;
+import com.esl.internship.staffsync.entities.QJpaPermission;
 import com.esl.internship.staffsync.system.configuration.api.IPermissionApi;
 import com.esl.internship.staffsync.system.configuration.dto.PermissionDTO;
 import com.esl.internship.staffsync.system.configuration.model.Permission;
@@ -16,7 +16,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 

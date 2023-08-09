@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.model;
 
-import com.encentral.staffsync.entity.enums.EmployeeStatus;
+import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 
 public class NotificationEmployee {
     private String employeeId;
