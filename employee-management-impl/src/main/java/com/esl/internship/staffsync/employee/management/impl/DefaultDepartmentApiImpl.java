@@ -35,6 +35,16 @@ public class DefaultDepartmentApiImpl implements IDepartmentApi {
     private static final QJpaDepartment qJpaDepartment = QJpaDepartment.jpaDepartment;
     private static final QJpaDepartmentHead qJpaDepartmentHead = QJpaDepartmentHead.jpaDepartmentHead;
 
+    /**
+     * @author WARITH
+     * @dateCreated 08/08/2023
+     * @description Creates a Department, with a department head
+     *
+     * @param departmentDTO DTO for creating a leave request
+     * @param employee Employee creating the record
+     *
+     * @return Response<Department>
+     */
     @Override
     public Response<Department> addDepartment(DepartmentDTO departmentDTO, Employee employee) {
         JpaDepartment jpaDepartment = INSTANCE.mapDepartment(departmentDTO);

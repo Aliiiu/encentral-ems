@@ -5,6 +5,7 @@
  */
 package com.encentral.scaffold.binder;
 
+import com.esl.internship.staffsync.employee.management.impl.EmployeeManagementModule;
 import com.esl.internship.staffsync.leave.management.impl.LeaveManagementModule;
 import com.esl.internship.staffsync.event.management.impl.EventManagementModule;
 import com.esl.internship.staffsync.system.configuration.impl.SystemConfigurationModule;
@@ -30,6 +31,8 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
         install(new LeaveManagementModule());
 
         install(new EventManagementModule());
+
+        install(new EmployeeManagementModule());
 
     }
 }

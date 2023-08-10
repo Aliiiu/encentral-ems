@@ -149,6 +149,12 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>event-management-api</artifactId>
+            <version>${project.groupId}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.encentral.scaffold</groupId>
             <artifactId>event-management-api</artifactId>
             <version>1.0</version>

@@ -18,12 +18,12 @@ GET            /error                                                          c
 GET            /error/                                                         controllers.HomeController.error()
 GET            /api-docs                                                       controllers.HomeController.api()
 
+###### AppConfig Endpoints ######
 POST           /app-config/                                                    controllers.system_configuration.AppConfigController.addAppConfig()
 PATCH          /app-config/:appConfigId/                                       controllers.system_configuration.AppConfigController.updateAppConfig(appConfigId : String)
 GET            /app-config/:appConfigId/                                       controllers.system_configuration.AppConfigController.getAppConfig(appConfigId : String)
 GET            /app-config/                                                    controllers.system_configuration.AppConfigController.getAppConfigs()
 DELETE         /app-config/:appConfigId/                                       controllers.system_configuration.AppConfigController.deleteAppConfig(appConfigId : String)
-
 
 ###### Notification Endpoints ######
 GET            /notification/                                                  controllers.system_configuration.NotificationController.getSystemNotifications()
@@ -39,7 +39,6 @@ PATCH          /notification/employee/delete/:employeeId/                      c
 PATCH          /notification/employee/read/:employeeId/                        controllers.system_configuration.NotificationController.markAllEmployeeNotificationsAsRead(employeeId: String)
 POST           /notification/                                                  controllers.system_configuration.NotificationController.createNotification()
 
-
 ###### Notification Template Endpoints ######
 GET            /notification-template/                                         controllers.system_configuration.NotificationTemplateController.getAllNotificationTemplates()
 GET            /notification-template/:notificationTemplateId/                 controllers.system_configuration.NotificationTemplateController.getNotificationTemplate(notificationTemplateId: String)
@@ -53,7 +52,6 @@ POST           /permission/                                                    c
 GET            /permission/:permissionId/                                      controllers.system_configuration.PermissionController.getPermission(permissionId: String)
 PATCH          /permission/:permissionId/                                      controllers.system_configuration.PermissionController.updatePermission(permissionId: String)
 DELETE         /permission/:permissionId/                                      controllers.system_configuration.PermissionController.deletePermission(permissionId: String)
-
 
 ###### Role Endpoints ######
 GET            /role/                                                          controllers.system_configuration.RoleController.getAllRole()
@@ -86,11 +84,42 @@ PATCH          /leave/accept/                                                  c
 PATCH          /leave/complete/:employeeId/                                    controllers.leave_management.LeaveManagementController.markLeaveRequestAsComplete(employeeId: String)
 DELETE         /leave/:leaveRequestId/                                         controllers.leave_management.LeaveManagementController.deleteLeaveRequest(leaveRequestId: String)
 
-
 ###### Event Management ######
 GET            /event/                                                         controllers.event_management.EventController.getAllEvents()
 POST           /event/                                                         controllers.event_management.EventController.addEvent()
-GET            /event/:eventId                                                 controllers.event_management.EventController.getEvent(eventId: String)
-PATCH          /event/:eventId                                                 controllers.event_management.EventController.updateEvent(eventId: String)
-DELETE         /event/:eventId                                                 controllers.event_management.EventController.deleteEvent(eventId: String)
+GET            /event/:eventId/                                                controllers.event_management.EventController.getEvent(eventId: String)
+PATCH          /event/:eventId/                                                controllers.event_management.EventController.updateEvent(eventId: String)
+DELETE         /event/:eventId/                                                controllers.event_management.EventController.deleteEvent(eventId: String)
 
+###### Department Endpoints ######
+GET            /department/                                                    controllers.employee_management.DepartmentController.getAllDepartments()
+POST           /department/                                                    controllers.employee_management.DepartmentController.addDepartment()
+GET            /department/:departmentId/                                      controllers.employee_management.DepartmentController.getDepartmentById(departmentId: String)
+PATCH          /department/:departmentId/                                      controllers.employee_management.DepartmentController.updateDepartment(departmentId: String)
+DELETE         /department/:departmentId/                                      controllers.employee_management.DepartmentController.deleteDepartment(departmentId: String)
+
+###### Department-Head Endpoints ######
+GET            /department-head/                                               controllers.employee_management.DepartmentHeadController.getAllDepartmentHeads()
+GET            /department-head/:departmentHeadId/                             controllers.employee_management.DepartmentHeadController.getDepartmentHeadById(departmentHeadId: String)
+GET            /department-head/department/:employeeId/                        controllers.employee_management.DepartmentHeadController.getDepartmentsHeadByEmployee(employeeId: String)
+GET            /department-head/employee/:departmentId/                        controllers.employee_management.DepartmentHeadController.getDepartmentHeadByDepartmentId(departmentId: String)
+GET            /department-head/set/:employeeId/:departmentId/                 controllers.employee_management.DepartmentHeadController.setEmployeeAsDepartmentHead(employeeId: String, departmentId: String)
+GET            /department-head/remove/:employeeId/:departmentId/              controllers.employee_management.DepartmentHeadController.removeEmployeeAsDepartmentHead(employeeId: String, departmentId: String)
+
+###### Emergency Contact Endpoints ######
+GET            /emergency-contact/                                             controllers.employee_management.EmergencyContactController.getAllEmergencyContacts()
+POST           /emergency-contact/add/:employeeId                              controllers.employee_management.EmergencyContactController.addEmergencyContact(employeeId: String)
+GET            /emergency-contact/:emergencyContactId/                         controllers.employee_management.EmergencyContactController.getEmergencyContact(emergencyContactId: String)
+PATCH          /emergency-contact/:emergencyContactId/                         controllers.employee_management.EmergencyContactController.updateEmergencyContact(emergencyContactId: String)
+DELETE         /emergency-contact/:emergencyContactId/                         controllers.employee_management.EmergencyContactController.deleteEmergencyContact(emergencyContactId: String)
+GET            /emergency-contact/employee/:employeeId/                        controllers.employee_management.EmergencyContactController.getEmergencyContactsOfEmployee(employeeId: String)
+
+###### Employee Endpoints ######
+GET            /employee/                                                      controllers.employee_management.EmployeeController.getAllEmployee()
+POST           /employee/                                                      controllers.employee_management.EmployeeController.addEmployee()
+GET            /employee/:employeeId/                                          controllers.employee_management.EmployeeController.getEmployeeById(employeeId: String)
+DELETE         /employee/:employeeId/                                          controllers.employee_management.EmployeeController.deleteEmployee(employeeId: String)
+GET            /employee/set-active/:employeeId/                               controllers.employee_management.EmployeeController.markEmployeeActive(employeeId: String)
+GET            /employee/set-inactive/:employeeId/                             controllers.employee_management.EmployeeController.markEmployeeInactive(employeeId: String)
+POST           /employee/set-status/:employeeId/                               controllers.employee_management.EmployeeController.setEmployeeStatus(employeeId: String)
+GET            /employee/set-role/:employeeId/:roleId/                         controllers.employee_management.EmployeeController.setEmployeeRole(employeeId: String, roleId: String)

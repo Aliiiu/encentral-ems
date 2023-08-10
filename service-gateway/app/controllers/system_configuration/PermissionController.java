@@ -84,7 +84,7 @@ public class PermissionController extends Controller {
         return ok(myObjectMapper.toJsonString(iPermissionApi.updatePermission(permissionId, permissionDtoForm.value, getEmployee())));
     }
 
-    @ApiOperation(value = "Get permission")
+    @ApiOperation(value = "Get all permissions")
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "permissions", response = Permission.class, responseContainer = "List")
