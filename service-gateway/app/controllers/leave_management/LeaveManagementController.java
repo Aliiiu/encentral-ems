@@ -1,7 +1,7 @@
 package controllers.leave_management;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.scaffold.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.leave.management.api.ILeaveRequest;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO;
@@ -15,7 +15,7 @@ import play.mvc.Results;
 import javax.inject.Inject;
 import java.util.Optional;
 
-import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
+import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
 @Api("Leave Management")
 @Transactional

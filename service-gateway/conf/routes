@@ -123,3 +123,15 @@ GET            /employee/set-active/:employeeId/                               c
 GET            /employee/set-inactive/:employeeId/                             controllers.employee_management.EmployeeController.markEmployeeInactive(employeeId: String)
 POST           /employee/set-status/:employeeId/                               controllers.employee_management.EmployeeController.setEmployeeStatus(employeeId: String)
 GET            /employee/set-role/:employeeId/:roleId/                         controllers.employee_management.EmployeeController.setEmployeeRole(employeeId: String, roleId: String)
+
+###### Options Management ######
+GET            /option/                                                        controllers.system_configuration.OptionsAndTypesController.getOptions()
+POST           /option/                                                        controllers.system_configuration.OptionsAndTypesController.addOption()
+GET            /option/:optionId                                               controllers.system_configuration.OptionsAndTypesController.getOption(optionId: String)
+PATCH          /option/:optionId/value/:value                                  controllers.system_configuration.OptionsAndTypesController.editOption(optionId: String, value: String)
+GET            /option/:optionTypeId/type                                      controllers.system_configuration.OptionsAndTypesController.getOptionsForType(optionTypeId: String)
+
+GET            /option-type/                                                   controllers.system_configuration.OptionsAndTypesController.getOptionTypes()
+GET            /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.getOptionType(optionTypeId: String)
+PATCH          /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.editOptionType(optionTypeId: String)
+

@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.system.configuration.model;
 
 
-import com.encentral.staffsync.entity.enums.Action;
+import com.esl.internship.staffsync.entities.enums.Action;
 
 import java.sql.Timestamp;
 

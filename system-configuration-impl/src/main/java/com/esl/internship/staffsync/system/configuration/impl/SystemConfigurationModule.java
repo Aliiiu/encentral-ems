@@ -1,11 +1,6 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
-import com.esl.internship.staffsync.system.configuration.api.IAppConfigApi;
-import com.esl.internship.staffsync.system.configuration.api.INotification;
-import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
-import com.esl.internship.staffsync.system.configuration.api.IPermissionApi;
-import com.esl.internship.staffsync.system.configuration.api.IRoleApi;
-import com.esl.internship.staffsync.system.configuration.api.IRoleHasPermissionApi;
+import com.esl.internship.staffsync.system.configuration.api.*;
 import com.google.inject.AbstractModule;
 
 public class SystemConfigurationModule extends AbstractModule {
@@ -18,5 +13,7 @@ public class SystemConfigurationModule extends AbstractModule {
         bind(IRoleApi.class).to(DefaultRoleApiImpl.class);
         bind(IPermissionApi.class).to(DefaultPermissionApiImpl.class);
         bind(IRoleHasPermissionApi.class).to(DefaultRoleHasPermissionApiImpl.class);
+        bind(IOption.class).to(DefaultOptionImpl.class);
+        bind(IOptionType.class).to(DefaultOptionTypeImpl.class);
     }
 }

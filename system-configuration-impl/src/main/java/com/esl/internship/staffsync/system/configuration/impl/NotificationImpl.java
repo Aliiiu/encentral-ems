@@ -1,11 +1,11 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.staffsync.entity.JpaNotification;
-import com.encentral.staffsync.entity.JpaNotificationTemplate;
-import com.encentral.staffsync.entity.QJpaNotification;
-import com.encentral.staffsync.entity.QJpaNotificationTemplate;
-import com.encentral.staffsync.entity.enums.NotificationStatus;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.JpaNotification;
+import com.esl.internship.staffsync.entities.JpaNotificationTemplate;
+import com.esl.internship.staffsync.entities.QJpaNotification;
+import com.esl.internship.staffsync.entities.QJpaNotificationTemplate;
+import com.esl.internship.staffsync.entities.enums.NotificationStatus;
 import com.esl.internship.staffsync.system.configuration.api.INotification;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import com.esl.internship.staffsync.system.configuration.model.Notification;
@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.encentral.scaffold.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.system.configuration.model.SystemConfigurationMapper.INSTANCE;
 
 /**

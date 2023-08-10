@@ -1,8 +1,8 @@
 package com.esl.internship.staffsync.leave.management.model;
 
-import com.encentral.staffsync.entity.JpaEmployee;
-import com.encentral.staffsync.entity.JpaLeaveRequest;
-import com.encentral.staffsync.entity.JpaOption;
+import com.esl.internship.staffsync.entities.JpaEmployee;
+import com.esl.internship.staffsync.entities.JpaLeaveRequest;
+import com.esl.internship.staffsync.entities.JpaOption;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

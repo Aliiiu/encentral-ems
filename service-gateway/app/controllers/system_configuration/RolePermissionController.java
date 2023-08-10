@@ -1,8 +1,8 @@
 package controllers.system_configuration;
 
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.scaffold.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.IRoleHasPermissionApi;
 import com.esl.internship.staffsync.system.configuration.model.Permission;
 import com.esl.internship.staffsync.system.configuration.model.Role;

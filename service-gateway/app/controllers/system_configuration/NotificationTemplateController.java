@@ -1,7 +1,7 @@
 package controllers.system_configuration;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.scaffold.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
 import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;
@@ -16,7 +16,7 @@ import play.mvc.Results;
 import javax.inject.Inject;
 import java.util.Optional;
 
-import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
+import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
 @Transactional
 @Api("Notification template")

@@ -1,7 +1,7 @@
 package controllers.system_configuration;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.scaffold.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.IAppConfigApi;
 import com.esl.internship.staffsync.system.configuration.model.AppConfig;
 import io.swagger.annotations.*;
@@ -11,9 +11,9 @@ import play.mvc.Result;
 import play.mvc.Results;
 import javax.inject.Inject;
 
-import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
+import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
-@Api("Application Controller")
+@Api("Application Configuration")
 @Transactional
 public class AppConfigController extends Controller {
 

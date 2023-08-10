@@ -7,37 +7,38 @@
         <non-jta-data-source>DefaultDS</non-jta-data-source>
 
         <!-- Converters -->
-        <class>com.encentral.staffsync.entity.attribute.converter.JsonStringConverter</class>
-        <class>com.encentral.staffsync.entity.attribute.converter.ActionConverter</class>
-        <class>com.encentral.staffsync.entity.attribute.converter.NotificationPriorityConverter</class>
-        <class>com.encentral.staffsync.entity.attribute.converter.NotificationStatusConverter</class>
-        <class>com.encentral.staffsync.entity.attribute.converter.EmployeeStatusConverter</class>
-        <class>com.encentral.staffsync.entity.attribute.converter.EmployeeRequestStatusConverter</class>
-        <class>com.encentral.staffsync.entity.attribute.converter.LeaveRequestStatusConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.ActionConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.LeaveRequestStatusConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.NotificationPriorityConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.NotificationStatusConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.EmployeeRequestStatusConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.EmployeeStatusConverter</class>
 
         <!-- Entities -->
-        <class>com.encentral.staffsync.entity.JpaAnnouncement</class>
-        <class>com.encentral.staffsync.entity.JpaAnnouncementRecipient</class>
-        <class>com.encentral.staffsync.entity.JpaAppConfig</class>
-        <class>com.encentral.staffsync.entity.JpaAttendance</class>
-        <class>com.encentral.staffsync.entity.JpaAuditLog</class>
-        <class>com.encentral.staffsync.entity.JpaDepartment</class>
-        <class>com.encentral.staffsync.entity.JpaDepartmentHead</class>
-        <class>com.encentral.staffsync.entity.JpaDocument</class>
-        <class>com.encentral.staffsync.entity.JpaEmergencyContact</class>
-        <class>com.encentral.staffsync.entity.JpaEmployee</class>
-        <class>com.encentral.staffsync.entity.JpaEmployeeHasDocument</class>
-        <class>com.encentral.staffsync.entity.JpaEmployeeUpdateRequest</class>
-        <class>com.encentral.staffsync.entity.JpaEvent</class>
-        <class>com.encentral.staffsync.entity.JpaLeaveRequest</class>
-        <class>com.encentral.staffsync.entity.JpaNotification</class>
-        <class>com.encentral.staffsync.entity.JpaNotificationTemplate</class>
-        <class>com.encentral.staffsync.entity.JpaOption</class>
-        <class>com.encentral.staffsync.entity.JpaOptionType</class>
-        <class>com.encentral.staffsync.entity.JpaPermission</class>
-        <class>com.encentral.staffsync.entity.JpaRole</class>
-        <class>com.encentral.staffsync.entity.JpaRoleHasPermission</class>
-            
+        <class>com.esl.internship.staffsync.entities.JpaAnnouncement</class>
+        <class>com.esl.internship.staffsync.entities.JpaAnnouncementRecipient</class>
+        <class>com.esl.internship.staffsync.entities.JpaAppConfig</class>
+        <class>com.esl.internship.staffsync.entities.JpaAttendance</class>
+        <class>com.esl.internship.staffsync.entities.JpaAuditLog</class>
+        <class>com.esl.internship.staffsync.entities.JpaDepartment</class>
+        <class>com.esl.internship.staffsync.entities.JpaDepartmentHead</class>
+        <class>com.esl.internship.staffsync.entities.JpaDocument</class>
+        <class>com.esl.internship.staffsync.entities.JpaEmergencyContact</class>
+        <class>com.esl.internship.staffsync.entities.JpaEmployee</class>
+        <class>com.esl.internship.staffsync.entities.JpaEmployeeHasDocument</class>
+        <class>com.esl.internship.staffsync.entities.JpaEmployeeUpdateRequest</class>
+        <class>com.esl.internship.staffsync.entities.JpaEvent</class>
+        <class>com.esl.internship.staffsync.entities.JpaLeaveRequest</class>
+        <class>com.esl.internship.staffsync.entities.JpaNotification</class>
+        <class>com.esl.internship.staffsync.entities.JpaNotificationTemplate</class>
+        <class>com.esl.internship.staffsync.entities.JpaOption</class>
+        <class>com.esl.internship.staffsync.entities.JpaOptionType</class>
+        <class>com.esl.internship.staffsync.entities.JpaPermission</class>
+        <class>com.esl.internship.staffsync.entities.JpaRole</class>
+        <class>com.esl.internship.staffsync.entities.JpaRoleHasPermission</class>
+
+
         <properties>
             <property name="eclipselink.weaving" value="static"/>
             <!--	    <property name="eclipselink.cache.shared.default" value="true"/>-->
