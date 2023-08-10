@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface IEmployeeEmergencyContactApi {
 
-    Response<EmergencyContact> createEmergencyContact(String employeeId, EmergencyContactDTO emergencyContactDTO, com.encentral.scaffold.commons.model.Employee employee);
+    Response<EmergencyContact> createEmergencyContact(String employeeId, EmergencyContactDTO emergencyContactDTO, com.esl.internship.staffsync.commons.model.Employee employee);
 
     Optional<EmergencyContact> getEmergencyContact(String emergencyContactId);
 
@@ -19,7 +19,7 @@ public interface IEmployeeEmergencyContactApi {
 
     List<EmergencyContact> getAllEmergencyContacts();
 
-    boolean updateEmergencyContact(String emergencyContactId, EmergencyContactDTO emergencyContactDTO, com.encentral.scaffold.commons.model.Employee employee);
+    boolean updateEmergencyContact(String emergencyContactId, EmergencyContactDTO emergencyContactDTO, com.esl.internship.staffsync.commons.model.Employee employee);
 
     boolean deleteEmergencyContact(String emergencyContactId);
 

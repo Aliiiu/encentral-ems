@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.employee.management.model;
 
 
-import com.encentral.staffsync.entity.enums.EmployeeStatus;
+import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 
 import java.sql.Timestamp;
 import java.util.Date;

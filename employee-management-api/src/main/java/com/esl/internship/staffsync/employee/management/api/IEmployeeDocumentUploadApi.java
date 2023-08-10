@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface IEmployeeDocumentUploadApi {
 
-    EmployeeDocument addEmployeeDocument(String employeeId, EmployeeDocumentDTO employeeDocumentDTO, com.encentral.scaffold.commons.model.Employee employee);
+    EmployeeDocument addEmployeeDocument(String employeeId, EmployeeDocumentDTO employeeDocumentDTO, com.esl.internship.staffsync.commons.model.Employee employee);
 
     Optional<EmployeeDocument> getEmployeeDocument(String employeeDocumentId);
 
@@ -18,7 +18,7 @@ public interface IEmployeeDocumentUploadApi {
 
     List<EmployeeDocument> getAllEmployeeDocuments();
 
-    boolean updateEmployeeDocument(String employeeDocumentId, EmployeeDocumentDTO employeeDocumentDTO, com.encentral.scaffold.commons.model.Employee Employee);
+    boolean updateEmployeeDocument(String employeeDocumentId, EmployeeDocumentDTO employeeDocumentDTO, com.esl.internship.staffsync.commons.model.Employee Employee);
 
     boolean deleteEmployeeDocument(String employeeDocumentId);
 

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface IEmployeeUpdateRequestApi {
 
-    EmployeeUpdateRequest createEmployeeUpdateRequest(String employeeId, EmployeeUpdateRequestDTO employeeUpdateRequestDTO, com.encentral.scaffold.commons.model.Employee employee);
+    EmployeeUpdateRequest createEmployeeUpdateRequest(String employeeId, EmployeeUpdateRequestDTO employeeUpdateRequestDTO, com.esl.internship.staffsync.commons.model.Employee employee);
 
     Optional<EmployeeUpdateRequest> getEmployeeUpdateRequest(String employeeRequestUpdateId);
 

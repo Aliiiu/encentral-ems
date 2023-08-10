@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
 
-import com.encentral.staffsync.entity.enums.EmployeeStatus;
+import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 
 import java.util.Date;
 
@@ -20,7 +20,6 @@ public class EmployeeDTO {
     private Integer leaveDays;
     private String password;
     private String phoneNumber;
-    private String profilePictureUrl;
     private String departmentId;
     private String roleId;
     private String countryOfOriginOptionId;
@@ -123,14 +122,6 @@ public class EmployeeDTO {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
-    }
-
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
     }
 
     public String getDepartmentId() {

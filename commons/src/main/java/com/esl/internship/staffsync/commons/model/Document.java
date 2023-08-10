@@ -1,4 +1,4 @@
-package com.encentral.scaffold.commons.model;
+package com.esl.internship.staffsync.commons.model;
 
 import java.sql.Timestamp;
 

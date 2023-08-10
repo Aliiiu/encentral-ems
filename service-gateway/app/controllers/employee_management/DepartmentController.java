@@ -1,7 +1,8 @@
 package controllers.employee_management;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.scaffold.commons.util.MyObjectMapper;
+
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.employee.management.api.IDepartmentApi;
 import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.dto.UpdateDepartmentDTO;
@@ -15,7 +16,7 @@ import play.mvc.Results;
 
 import javax.inject.Inject;
 
-import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
+import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
 
 @Transactional

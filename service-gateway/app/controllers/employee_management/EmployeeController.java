@@ -1,7 +1,7 @@
 package controllers.employee_management;
 
 
-import com.encentral.scaffold.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeStatusUpdateDTO;
@@ -14,7 +14,7 @@ import play.mvc.Result;
 
 import javax.inject.Inject;
 
-import static com.encentral.scaffold.commons.util.ImmutableValidator.validate;
+import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
 
 @Transactional
@@ -141,7 +141,7 @@ public class EmployeeController extends Controller {
      *
      * @return Employee
      */
-    com.encentral.scaffold.commons.model.Employee getEmployee() {
-        return new com.encentral.scaffold.commons.model.Employee("Test-001-EMP", "Test Employee");
+    com.esl.internship.staffsync.commons.model.Employee getEmployee() {
+        return new com.esl.internship.staffsync.commons.model.Employee("Test-001-EMP", "Test Employee");
     }
 }

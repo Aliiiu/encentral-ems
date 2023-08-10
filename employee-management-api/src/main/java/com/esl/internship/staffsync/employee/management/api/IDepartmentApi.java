@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.employee.management.api;
 
 
-import com.encentral.scaffold.commons.model.Employee;
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.employee.management.service.response.Response;
 import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.dto.UpdateDepartmentDTO;

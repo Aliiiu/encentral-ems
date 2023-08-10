@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
 
-import com.encentral.staffsync.entity.enums.EmployeeRequestStatus;
+import com.esl.internship.staffsync.entities.enums.EmployeeRequestStatus;
 
 
 public class EmployeeUpdateApprovalDTO {

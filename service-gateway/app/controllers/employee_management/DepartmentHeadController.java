@@ -1,7 +1,8 @@
 package controllers.employee_management;
 
-import com.encentral.scaffold.commons.model.Employee;
-import com.encentral.scaffold.commons.util.MyObjectMapper;
+
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.employee.management.api.IDepartmentHeadApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

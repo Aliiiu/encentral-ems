@@ -16,7 +16,7 @@ public class Error {
     }
 
     public boolean isPresent() {
-        return node.isEmpty();
+        return !node.isEmpty();
     }
 
     public String toJsonString() {

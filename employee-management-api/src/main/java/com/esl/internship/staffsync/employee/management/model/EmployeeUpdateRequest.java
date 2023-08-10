@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.employee.management.model;
 
-import com.encentral.staffsync.entity.attribute.converter.EmployeeRequestStatusConverter;
-import com.encentral.staffsync.entity.enums.EmployeeRequestStatus;
+import com.esl.internship.staffsync.entities.attribute.converter.EmployeeRequestStatusConverter;
+import com.esl.internship.staffsync.entities.enums.EmployeeRequestStatus;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

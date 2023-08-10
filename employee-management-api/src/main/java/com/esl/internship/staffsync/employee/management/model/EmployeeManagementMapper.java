@@ -1,8 +1,8 @@
 package com.esl.internship.staffsync.employee.management.model;
 
 
-import com.encentral.scaffold.commons.model.Document;
-import com.encentral.staffsync.entity.*;
+import com.esl.internship.staffsync.commons.model.Document;
+import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmergencyContactDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
@@ -27,9 +27,6 @@ public interface EmployeeManagementMapper {
     })
     JpaEmployee mapEmployee(EmployeeDTO modelDto);
 
-    @Mappings({
-            @Mapping(source = "departmentHeadEmployeeId", target = "departmentHead.employee.employeeId")
-    })
     JpaDepartment mapDepartment(DepartmentDTO modelDto);
 
     @Mappings({

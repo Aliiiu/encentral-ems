@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.employee.management.model;
 
 
-import com.encentral.scaffold.commons.model.Document;
+import com.esl.internship.staffsync.commons.model.Document;
 
 import java.sql.Timestamp;
 
