@@ -5,9 +5,14 @@
  */
 package com.esl.internship.staffsync.binder;
 
+<<<<<<< HEAD
 import com.esl.internship.staffsync.employee.management.impl.EmployeeManagementModule;
 import com.esl.internship.staffsync.leave.management.impl.LeaveManagementModule;
+=======
+import com.esl.internship.staffsync.authentication.impl.AuthenticationModule;
+>>>>>>> main
 import com.esl.internship.staffsync.event.management.impl.EventManagementModule;
+import com.esl.internship.staffsync.leave.management.impl.LeaveManagementModule;
 import com.esl.internship.staffsync.system.configuration.impl.SystemConfigurationModule;
 import com.google.inject.AbstractModule;
 import play.libs.akka.AkkaGuiceSupport;
@@ -33,6 +38,8 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
         install(new EventManagementModule());
 
         install(new EmployeeManagementModule());
+
+        install(new AuthenticationModule());
 
     }
 }

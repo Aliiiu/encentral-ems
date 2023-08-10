@@ -8,8 +8,8 @@ public class SystemConfigurationModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(IAppConfigApi.class).to(DefaultAppConfigApiImpl.class);
-        bind(INotification.class).to(NotificationImpl.class);
-        bind(INotificationTemplate.class).to(NotificationTemplateImpl.class);
+        bind(INotification.class).to(DefaultNotificationImpl.class);
+        bind(INotificationTemplate.class).to(DefaultNotificationTemplateImpl.class);
         bind(IRoleApi.class).to(DefaultRoleApiImpl.class);
         bind(IPermissionApi.class).to(DefaultPermissionApiImpl.class);
         bind(IRoleHasPermissionApi.class).to(DefaultRoleHasPermissionApiImpl.class);

@@ -5,12 +5,7 @@ import com.esl.internship.staffsync.entities.JpaLeaveRequest;
 import com.esl.internship.staffsync.entities.JpaOption;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
-
-import java.util.Date;
-import java.util.Optional;
 
 @Mapper
 public interface LeaveManagementMapper {

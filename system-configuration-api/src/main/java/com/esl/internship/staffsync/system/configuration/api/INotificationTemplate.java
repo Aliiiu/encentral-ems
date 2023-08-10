@@ -25,4 +25,6 @@ public interface INotificationTemplate {
     boolean deleteNotificationTemplate(String notificationTemplateId);
 
     boolean checkIfNotificationTemplateNameInUse(String templateName);
+
+    boolean checkIfNotificationTemplateExists(String notificationTemplateId);
 }

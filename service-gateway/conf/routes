@@ -131,7 +131,10 @@ GET            /option/:optionId                                               c
 PATCH          /option/:optionId/value/:value                                  controllers.system_configuration.OptionsAndTypesController.editOption(optionId: String, value: String)
 GET            /option/:optionTypeId/type                                      controllers.system_configuration.OptionsAndTypesController.getOptionsForType(optionTypeId: String)
 
+###### Option Type ######
 GET            /option-type/                                                   controllers.system_configuration.OptionsAndTypesController.getOptionTypes()
 GET            /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.getOptionType(optionTypeId: String)
 PATCH          /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.editOptionType(optionTypeId: String)
 
+###### Authentication ######
+POST           /auth/signin/                                                   controllers.authentication.AuthenticationController.signEmployeeIn()
