@@ -9,7 +9,7 @@ public class LoginDTO {
     @Email(message = "Invalid email format")
     private String employeeEmail;
 
-    @NotNull(message = "Password fiel cannot be empty")
+    @NotNull(message = "Password field cannot be empty")
     private String password;
 
     public LoginDTO() {

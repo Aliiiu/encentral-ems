@@ -5,6 +5,8 @@ import com.esl.internship.staffsync.authentication.api.IAuthentication;
 import com.esl.internship.staffsync.authentication.dto.LoginDTO;
 import com.esl.internship.staffsync.authentication.model.AuthEmployeeSlice;
 import com.esl.internship.staffsync.authentication.model.AuthToken;
+import com.esl.internship.staffsync.commons.exceptions.LoginAttemptExceededException;
+import com.esl.internship.staffsync.commons.exceptions.InvalidCredentialsException;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
@@ -54,29 +56,23 @@ public class AuthenticationController extends Controller {
         }
 
         LoginDTO loginDTO = loginForm.value;
-
-        //TODO: Replace with method from Employee module
         Optional<AuthEmployeeSlice> optionalAuthEmployeeSlice = iAuthentication.getEmployeeSliceByEmail(loginDTO.getEmployeeEmail());
         if (optionalAuthEmployeeSlice.isEmpty()) {
             return Results.unauthorized("Invalid log in details");
         }
 
         AuthEmployeeSlice employeeSlice = optionalAuthEmployeeSlice.get();
-
         if (!employeeSlice.getEmployeeActive()) {
-            return Results.status(423, "Account has been restricted due to multiple failed log in attempts");
+            return Results.status(423, "Account has been restricted");
         }
 
         //TODO: UNSALT PASSWORD
-        if (!employeeSlice.getPassword().equals(loginDTO.getPassword())) {
-            int loginAttempts = employeeSlice.getLoginAttempts();
-            if (loginAttempts >= 5) {
-                iAuthentication.restrictAccount(loginDTO.getEmployeeEmail());
-                return Results.status(423, "Account has been restricted due to multiple failed log in attempts");
-            }
-            iAuthentication.updateEmployeeLoginAttempts(loginDTO.getEmployeeEmail());
-            String response = iAuthentication.generateInvalidPasswordMessage(loginAttempts);
-            return Results.badRequest(response);
+        try {
+            iAuthentication.verifyEmployeeLogin(employeeSlice, loginDTO);
+        } catch (LoginAttemptExceededException e) {
+            Results.status(423, e.getMessage());
+        } catch (InvalidCredentialsException e) {
+            return Results.badRequest(e.getMessage());
         }
         return iAuthentication.signInEmployee(employeeSlice)
                 .map(e -> ok(myObjectMapper.toJsonString(new AuthToken(e)))).orElseGet(Results::internalServerError);

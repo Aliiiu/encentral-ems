@@ -19,8 +19,8 @@ public class JwtUtil {
     private final String secret = ConfigFactory.load().getString("play.crypto.secret");
 
     private final Algorithm algorithm = Algorithm.HMAC256(secret);
-    //15min
-    private final long expirationMillis = 900000;
+    //6 hours
+    private final double expirationMillis = 2.16e+7;
 
 
     /**
@@ -34,7 +34,7 @@ public class JwtUtil {
      */
     public String generateToken(EmployeeAuthInfo employeeAuthInfo) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + expirationMillis);
+        Date expiration = new Date(now.getTime() + (long) expirationMillis);
 
         return JWT.create()
                 .withClaim("employeeId", employeeAuthInfo.getEmployeeId())
@@ -56,7 +56,6 @@ public class JwtUtil {
      * @return DecodedJWT object containing payload
      */
     public DecodedJWT verifyToken(String token) {
-        DecodedJWT jwt = JWT.require(algorithm).build().verify(token);
-        return jwt;
+        return JWT.require(algorithm).build().verify(token);
     }
 }
