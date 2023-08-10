@@ -1,14 +1,20 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
-
 import com.esl.internship.staffsync.entities.enums.EmployeeRequestStatus;
 
+import javax.validation.constraints.NotNull;
 
 public class EmployeeUpdateApprovalDTO {
 
+    @NotNull
     private String employeeUpdateRequestId;
+
+    @NotNull
     private EmployeeRequestStatus approvalStatus;
+
+    @NotNull
     private String approverEmployeeId;
+
     private String remarks;
 
     public String getEmployeeUpdateRequestId() {

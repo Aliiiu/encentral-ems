@@ -1,23 +1,33 @@
 package com.esl.internship.staffsync.employee.management.model;
 
-
 import java.sql.Timestamp;
-
 
 public class EmergencyContact {
 
     private String emergencyContactId;
+
     private String address;
+
     private String createdBy;
+
     private Timestamp dateCreated;
+
     private Timestamp dateModified;
+
     private String email;
+
     private String firstName;
+
     private String lastName;
+
     private String modifiedBy;
+
     private String phoneNumber;
+
     private String relationship;
+
     private String employeeId;
+
     private String contactGender;
 
     public String getEmergencyContactId() {

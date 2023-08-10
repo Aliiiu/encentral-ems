@@ -1,6 +1,6 @@
 package com.esl.internship.staffsync.employee.management.api;
 
-
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeUpdateApprovalDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeUpdateRequestDTO;
 import com.esl.internship.staffsync.employee.management.model.EmployeeUpdateRequest;
@@ -8,10 +8,9 @@ import com.esl.internship.staffsync.employee.management.model.EmployeeUpdateRequ
 import java.util.List;
 import java.util.Optional;
 
-
 public interface IEmployeeUpdateRequestApi {
 
-    EmployeeUpdateRequest createEmployeeUpdateRequest(String employeeId, EmployeeUpdateRequestDTO employeeUpdateRequestDTO, com.esl.internship.staffsync.commons.model.Employee employee);
+    EmployeeUpdateRequest createEmployeeUpdateRequest(String employeeId, EmployeeUpdateRequestDTO employeeUpdateRequestDTO, Employee employee);
 
     Optional<EmployeeUpdateRequest> getEmployeeUpdateRequest(String employeeRequestUpdateId);
 

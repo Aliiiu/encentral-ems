@@ -1,18 +1,21 @@
 package com.esl.internship.staffsync.employee.management.model;
 
-
 import com.esl.internship.staffsync.commons.model.Document;
 
 import java.sql.Timestamp;
 
-
 public class EmployeeDocument {
 
     private String employeeHasDocumentId;
+
     private String createdBy;
+
     private Timestamp dateCreated;
+
     private Document document;
+
     private String employeeId;
+
     private String documentType;
 
     public String getEmployeeHasDocumentId() {

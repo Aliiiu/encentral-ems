@@ -1,12 +1,20 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
+import javax.validation.constraints.NotNull;
 
 public class EmployeeUpdateRequestDTO {
 
     private String oldValue;
+
     private String reason;
+
+    @NotNull
     private String updateFieldName;
+
+    @NotNull
     private String updateNewValue;
+
+    @NotNull
     private String employeeId;
 
     public String getOldValue() {

@@ -1,31 +1,63 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
-
 import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
-
 
 public class EmployeeDTO {
 
+    @NotNull
     private String address;
+
+    @NotNull
     private EmployeeStatus currentStatus;
+
+    @NotNull
     private Date dateHired;
+
+    @NotNull
     private Date dateOfBirth;
+
+    @NotNull
     private Boolean employeeActive;
+
+    @NotNull
     private String employeeEmail;
+
+    @NotNull
     private String firstName;
+
+    @NotNull
     private String jobTitle;
+
+    @NotNull
     private String lastName;
+
+    @NotNull
     private Integer leaveDays;
+
+    @NotNull
     private String password;
+
+    @NotNull
     private String phoneNumber;
+
     private String departmentId;
+
+    @NotNull
     private String roleId;
+
+    @NotNull
     private String countryOfOriginOptionId;
+
+    @NotNull
     private String employeeGenderOptionId;
+
     private String employeeMaritalStatusOptionId;
+
     private String highestCertificationOptionId;
+
     private String stateOfOriginOptionId;
 
     public String getAddress() {

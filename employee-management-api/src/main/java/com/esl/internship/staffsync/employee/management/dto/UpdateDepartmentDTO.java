@@ -3,7 +3,9 @@ package com.esl.internship.staffsync.employee.management.dto;
 public class UpdateDepartmentDTO {
 
     private String departmentName;
+
     private String description;
+
     private Integer workingHours;
 
     public String getDepartmentName() {

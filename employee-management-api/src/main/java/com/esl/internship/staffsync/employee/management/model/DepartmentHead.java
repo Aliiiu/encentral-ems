@@ -1,17 +1,23 @@
 package com.esl.internship.staffsync.employee.management.model;
 
+import com.esl.internship.staffsync.commons.model.Employee;
 
 import java.sql.Timestamp;
-
 
 public class DepartmentHead {
 
     private String departmentHeadId;
+
     private String createdBy;
+
     private Timestamp dateCreated;
+
     private Timestamp dateModified;
+
     private String modifiedBy;
+
     private Department department;
+
     private Employee employee;
 
     public String getDepartmentHeadId() {

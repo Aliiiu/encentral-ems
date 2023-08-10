@@ -1,14 +1,30 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class EmergencyContactDTO {
 
+    @NotNull
     private String address;
+
+    @NotNull
     private String email;
+
+    @NotNull
     private String firstName;
+
+    @NotNull
     private String lastName;
+
+    @NotNull
     private String phoneNumber;
+
+    @NotNull
     private String relationship;
+
+    @NotNull
     private String employeeId;
+
     private String contactGenderOptionId;
 
     public String getAddress() {

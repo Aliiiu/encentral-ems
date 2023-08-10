@@ -7,7 +7,7 @@ import com.esl.internship.staffsync.employee.management.api.IDepartmentApi;
 import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.dto.UpdateDepartmentDTO;
 import com.esl.internship.staffsync.employee.management.model.Department;
-import com.esl.internship.staffsync.employee.management.service.response.Response;
+import com.esl.internship.staffsync.commons.service.response.Response;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;

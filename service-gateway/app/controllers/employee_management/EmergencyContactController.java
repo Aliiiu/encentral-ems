@@ -6,7 +6,7 @@ import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.employee.management.api.IEmployeeEmergencyContactApi;
 import com.esl.internship.staffsync.employee.management.dto.EmergencyContactDTO;
 import com.esl.internship.staffsync.employee.management.model.EmergencyContact;
-import com.esl.internship.staffsync.employee.management.service.response.Response;
+import com.esl.internship.staffsync.commons.service.response.Response;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -144,6 +144,6 @@ public class EmergencyContactController extends Controller {
      * @return Employee
      */
     Employee getEmployee() {
-        return new Employee("Test-001-EMP", "Test Employee");
+        return new Employee();
     }
 }

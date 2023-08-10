@@ -1,12 +1,12 @@
 package com.esl.internship.staffsync.employee.management.impl;
 
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 import com.esl.internship.staffsync.employee.management.api.IPasswordManagementApi;
-import com.esl.internship.staffsync.employee.management.service.response.Response;
+import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
-import com.esl.internship.staffsync.employee.management.model.Employee;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 
@@ -47,38 +47,58 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return JpaEmployee An employee record or null if not found
      */
     @Override
-    public Response<Employee> addEmployee(EmployeeDTO employeeDto, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public Response<Employee> addEmployee(EmployeeDTO employeeDto, Employee employee) {
         JpaEmployee jpaEmployee = INSTANCE.mapEmployee(employeeDto);
 
         Response<Employee> response = new Response<>();
+
+        if (employeeWithEmailExists(employeeDto.getEmployeeEmail()))
+        {
+            response.putError("employeeEmail", "Email Exists!");
+            return response;
+        }
 
         JpaRole role = getJpaRole(employeeDto.getRoleId());
         if (role == null)
             response.putError("roleId", "Role does not exist");
 
-        JpaDepartment department = getJpaDepartment(employeeDto.getDepartmentId());
-        if (department == null )
-            response.putError("departmentId", "Department does not exist");
+        JpaDepartment department = null;
+        if (employeeDto.getDepartmentId() != null) {
+            department = getJpaDepartment(employeeDto.getDepartmentId());
+
+            if (department == null)
+                response.putError("departmentId", "Department does not exist");
+        }
 
         JpaOption employeeGender = getJpaOption(employeeDto.getEmployeeGenderOptionId());
         if (employeeGender == null)
             response.putError("employeeGenderOptionId", "Option does not exist");
 
-        JpaOption stateOfOrigin = getJpaOption(employeeDto.getStateOfOriginOptionId());
-        if (stateOfOrigin == null)
-            response.putError("stateOfOriginOptionId", "Option does not exist");
+        JpaOption stateOfOrigin = null;
+        if (employeeDto.getStateOfOriginOptionId() != null) {
+            stateOfOrigin = getJpaOption(employeeDto.getStateOfOriginOptionId());
+
+            if (stateOfOrigin == null)
+                response.putError("stateOfOriginOptionId", "Option does not exist");
+        }
 
         JpaOption countryOfOrigin = getJpaOption(employeeDto.getCountryOfOriginOptionId());
-        if (stateOfOrigin == null)
+        if (countryOfOrigin == null)
             response.putError("countryOfOriginOptionId", "Option does not exist");
 
-        JpaOption highestCertification = getJpaOption(employeeDto.getHighestCertificationOptionId());
-        if (stateOfOrigin == null)
-            response.putError("highestCertificationOptionId", "Option does not exist");
+        JpaOption highestCertification = null;
+        if (employeeDto.getHighestCertificationOptionId() != null) {
+            highestCertification = getJpaOption(employeeDto.getHighestCertificationOptionId());
+            if (highestCertification == null)
+                response.putError("highestCertificationOptionId", "Option does not exist");
+        }
 
-        JpaOption employeeMaritalStatus = getJpaOption(employeeDto.getEmployeeMaritalStatusOptionId());
-        if (stateOfOrigin == null)
-            response.putError("employeeMaritalStatusOptionId", "Option does not exist");
+        JpaOption employeeMaritalStatus = null;
+        if (employeeDto.getEmployeeMaritalStatusOptionId() != null) {
+            employeeMaritalStatus = getJpaOption(employeeDto.getEmployeeMaritalStatusOptionId());
+            if (employeeMaritalStatus == null)
+                response.putError("employeeMaritalStatusOptionId", "Option does not exist");
+        }
 
 
         if (response.requestHasErrors())
@@ -113,6 +133,20 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
     @Override
     public Optional<Employee> getEmployeeById(String employeeId) {
         return Optional.ofNullable(INSTANCE.mapEmployee(getJpaEmployee(employeeId)));
+    }
+
+    /**
+     * @author WARITH
+     * @dateCreated 09/08/2023
+     * @description Get an employee record by email
+     *
+     * @param email Email of the employee to fetch
+     *
+     * @return Optional<Employee>
+     */
+    @Override
+    public Optional<Employee> getEmployeeByEmail(String email) {
+        return Optional.ofNullable(INSTANCE.mapEmployee(getJpaEmployeeByEmail(email)));
     }
 
     /**
@@ -162,7 +196,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return boolean
      */
     @Override
-    public boolean setEmployeePassword(String employeeId, String password, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public boolean setEmployeePassword(String employeeId, String password, Employee employee) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
@@ -200,7 +234,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return boolean
      */
     @Override
-    public boolean setEmployeeStatus(String employeeId, EmployeeStatus employeeStatus, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public boolean setEmployeeStatus(String employeeId, EmployeeStatus employeeStatus, Employee employee) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
@@ -221,7 +255,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return boolean
      */
     @Override
-    public boolean markEmployeeActive(String employeeId, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public boolean markEmployeeActive(String employeeId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
@@ -242,7 +276,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return boolean
      */
     @Override
-    public boolean markEmployeeInactive(String employeeId, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public boolean markEmployeeInactive(String employeeId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
@@ -264,7 +298,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return boolean
      */
     @Override
-    public boolean setEmployeeRole(String employeeId, String roleId, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public boolean setEmployeeRole(String employeeId, String roleId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
@@ -284,7 +318,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return boolean
      */
     @Override
-    public boolean setEmployeeProfilePictureUrl(String employeeId, String url, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public boolean setEmployeeProfilePictureUrl(String employeeId, String url, Employee employee) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
@@ -306,7 +340,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return boolean
      */
     @Override
-    public boolean setEmployeeLeaveDays(String employeeId, int leaveDays, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public boolean setEmployeeLeaveDays(String employeeId, int leaveDays, Employee employee) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
@@ -328,6 +362,20 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
     @Override
     public boolean employeeExists(String employeeId) {
         return getJpaEmployee(employeeId) != null;
+    }
+
+    /**
+     * @author WARITH
+     * @dateCreated 10/08/2023
+     * @description Check if an employee exists by email
+     *
+     * @param email email of the employee
+     *
+     * @return boolean
+     */
+    @Override
+    public boolean employeeWithEmailExists(String email) {
+        return getJpaEmployeeByEmail(email) != null;
     }
 
     /**
@@ -419,6 +467,21 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
     private JpaEmployee getJpaEmployee(String employeeId) {
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
+                .fetchOne();
+    }
+
+    /**
+     * @author WARITH
+     * @dateCreated 10/08/2023
+     * @description A helper method to fetch an employee record from the database by email
+     *
+     * @param email ID of the employee to fetch
+     *
+     * @return JpaEmployee An employee record or null if not found
+     */
+    private JpaEmployee getJpaEmployeeByEmail(String email) {
+        return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaEmployee)
+                .where(qJpaEmployee.employeeEmail.eq(email))
                 .fetchOne();
     }
 

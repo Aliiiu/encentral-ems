@@ -1,12 +1,12 @@
 package controllers.employee_management;
 
 
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeStatusUpdateDTO;
-import com.esl.internship.staffsync.employee.management.model.Employee;
-import com.esl.internship.staffsync.employee.management.service.response.Response;
+import com.esl.internship.staffsync.commons.service.response.Response;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -141,7 +141,7 @@ public class EmployeeController extends Controller {
      *
      * @return Employee
      */
-    com.esl.internship.staffsync.commons.model.Employee getEmployee() {
-        return new com.esl.internship.staffsync.commons.model.Employee("Test-001-EMP", "Test Employee");
+    Employee getEmployee() {
+        return new Employee();
     }
 }

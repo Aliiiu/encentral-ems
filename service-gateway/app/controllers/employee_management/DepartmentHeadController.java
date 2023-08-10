@@ -79,7 +79,7 @@ public class DepartmentHeadController extends Controller {
             @ApiResponse(
                     code = 200,
                     message = "Employee",
-                    response = com.esl.internship.staffsync.employee.management.model.Employee.class
+                    response = Employee.class
             )
     })
     public Result getDepartmentHeadByDepartmentId(String departmentId) {
@@ -111,7 +111,7 @@ public class DepartmentHeadController extends Controller {
      * @return Employee
      */
     Employee getEmployee() {
-        return new Employee("Test-001-EMP", "Test Employee");
+        return new Employee();
     }
 
 }

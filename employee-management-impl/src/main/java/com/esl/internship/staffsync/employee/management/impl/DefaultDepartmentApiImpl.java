@@ -2,7 +2,7 @@ package com.esl.internship.staffsync.employee.management.impl;
 
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.entities.*;
-import com.esl.internship.staffsync.employee.management.service.response.Response;
+import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.employee.management.api.IDepartmentApi;
 import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.dto.UpdateDepartmentDTO;
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
 import static com.esl.internship.staffsync.employee.management.model.EmployeeManagementMapper.INSTANCE;
 
-
 public class DefaultDepartmentApiImpl implements IDepartmentApi {
 
     @Inject
@@ -29,7 +28,6 @@ public class DefaultDepartmentApiImpl implements IDepartmentApi {
 
     private static final QJpaEmployee qJpaEmployee = QJpaEmployee.jpaEmployee;
     private static final QJpaDepartment qJpaDepartment = QJpaDepartment.jpaDepartment;
-    private static final QJpaDepartmentHead qJpaDepartmentHead = QJpaDepartmentHead.jpaDepartmentHead;
 
     /**
      * @author WARITH

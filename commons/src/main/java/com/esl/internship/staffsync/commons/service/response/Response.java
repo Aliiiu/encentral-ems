@@ -1,4 +1,4 @@
-package com.esl.internship.staffsync.employee.management.service.response;
+package com.esl.internship.staffsync.commons.service.response;
 
 import play.libs.Json;
 
@@ -8,7 +8,9 @@ import play.libs.Json;
  * @description A custom Response class for passing data from services to controllers
  */
 public class Response<T> {
+
     private T value;
+
     private Error error;
 
     public Response(T value) {

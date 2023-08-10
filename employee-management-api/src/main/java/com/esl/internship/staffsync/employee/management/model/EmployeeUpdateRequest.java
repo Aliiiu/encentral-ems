@@ -9,15 +9,25 @@ import java.sql.Timestamp;
 public class EmployeeUpdateRequest {
 
     private String employeeUpdateRequestId;
+
     private EmployeeRequestStatus approvalStatus;
+
     private Timestamp dateCreated;
+
     private Timestamp dateModified;
+
     private String oldValue;
+
     private String reason;
+
     private String remarks;
+
     private String updateFieldName;
+
     private String updateNewValue;
+
     private String approverEmployeeId;
+
     private String employeeId;
 
     public String getEmployeeUpdateRequestId() {

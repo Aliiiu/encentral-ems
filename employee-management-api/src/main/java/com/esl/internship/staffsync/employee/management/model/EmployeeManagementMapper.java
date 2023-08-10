@@ -1,7 +1,7 @@
 package com.esl.internship.staffsync.employee.management.model;
 
-
 import com.esl.internship.staffsync.commons.model.Document;
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmergencyContactDTO;

@@ -1,9 +1,10 @@
-package com.esl.internship.staffsync.employee.management.service.response;
+package com.esl.internship.staffsync.commons.service.response;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.libs.Json;
 
 public class Error {
+
     private ObjectNode node;
 
     public Error() {

@@ -6,7 +6,7 @@ import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.employee.management.api.IEmployeeEmergencyContactApi;
 import com.esl.internship.staffsync.employee.management.dto.EmergencyContactDTO;
 import com.esl.internship.staffsync.employee.management.model.EmergencyContact;
-import com.esl.internship.staffsync.employee.management.service.response.Response;
+import com.esl.internship.staffsync.commons.service.response.Response;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 

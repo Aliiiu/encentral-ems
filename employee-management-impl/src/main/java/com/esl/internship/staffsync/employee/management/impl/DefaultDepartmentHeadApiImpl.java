@@ -1,10 +1,10 @@
 package com.esl.internship.staffsync.employee.management.impl;
 
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.employee.management.api.IDepartmentHeadApi;
 import com.esl.internship.staffsync.employee.management.model.Department;
 import com.esl.internship.staffsync.employee.management.model.DepartmentHead;
-import com.esl.internship.staffsync.employee.management.model.Employee;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 
@@ -41,7 +41,7 @@ public class DefaultDepartmentHeadApiImpl implements IDepartmentHeadApi {
      * @return boolean
      */
     @Override
-    public boolean setEmployeeAsDepartmentHead(String employeeId, String departmentId, com.esl.internship.staffsync.commons.model.Employee employee) {
+    public boolean setEmployeeAsDepartmentHead(String employeeId, String departmentId, Employee employee) {
         JpaEmployee jpaEmployee = getJpaEmployee(employeeId);
         JpaDepartment jpaDepartment = getJpaDepartment(departmentId);
 
@@ -203,7 +203,7 @@ public class DefaultDepartmentHeadApiImpl implements IDepartmentHeadApi {
      *
      * @return JpaDepartment
      */
-    private JpaDepartmentHead createNewDepartmentHeadRecord(com.esl.internship.staffsync.commons.model.Employee employee) {
+    private JpaDepartmentHead createNewDepartmentHeadRecord(Employee employee) {
         JpaDepartmentHead jpaDepartmentHead = new JpaDepartmentHead();
 
         jpaDepartmentHead.setDepartmentHeadId(UUID.randomUUID().toString());
