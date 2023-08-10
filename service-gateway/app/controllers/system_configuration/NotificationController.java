@@ -4,6 +4,7 @@ package controllers.system_configuration;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.INotification;
+import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import com.esl.internship.staffsync.system.configuration.model.Notification;
 import io.swagger.annotations.*;
@@ -22,6 +23,9 @@ public class NotificationController extends Controller {
 
     @Inject
     INotification iNotification;
+
+    @Inject
+    INotificationTemplate iNotificationTemplate;
 
     @Inject
     MyObjectMapper myObjectMapper;
@@ -220,6 +224,7 @@ public class NotificationController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Notification.class, message = "Notification created"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid data"),
+                    @ApiResponse(code = 404, response = String.class, message = "Notification template not found")
             }
     )
     @ApiImplicitParams({
@@ -239,7 +244,10 @@ public class NotificationController extends Controller {
         }
         //TODO: Check if user is admin
         CreateNotificationDTO notificationDTO = notificationCreationForm.value;
-
+        boolean res =  iNotificationTemplate.checkIfNotificationTemplateExists(
+                notificationDTO.getNotificationTemplateBeanId()
+        );
+        if (!res) return Results.notFound("Notification template not found");
         return ok(myObjectMapper.toJsonString(iNotification.createNotification(
                 notificationDTO,
                 getTestEmployee()

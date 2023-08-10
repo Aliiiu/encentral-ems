@@ -29,7 +29,7 @@ import static com.esl.internship.staffsync.system.configuration.model.SystemConf
  * @dateCreated 03/07/2023
  * @description General implementation of INotificationTemplate
  */
-public class NotificationTemplateImpl implements INotificationTemplate {
+public class DefaultNotificationTemplateImpl implements INotificationTemplate {
 
     private static final QJpaNotification qJpaNotification = QJpaNotification.jpaNotification;
     private static final QJpaNotificationTemplate qJpaNotificationTemplate = QJpaNotificationTemplate.jpaNotificationTemplate;
@@ -111,7 +111,7 @@ public class NotificationTemplateImpl implements INotificationTemplate {
     @Override
     public boolean editNotificationTemplate(EditNotificationTemplateDTO notificationTemplateDTO, Employee employee) {
         AtomicBoolean isTransactionSuccessful = new AtomicBoolean(false);
-        jpaApi.withTransaction(em->{
+        jpaApi.withTransaction(em -> {
             JpaNotificationTemplate jpaNotificationTemplate = getJpaNotificationTemplateById(notificationTemplateDTO.getNotificationTemplateId());
             INSTANCE.editDTOToJpaNotificationTemplate(jpaNotificationTemplate, notificationTemplateDTO);
             jpaNotificationTemplate.setDateModified(Timestamp.from(Instant.now()));
@@ -153,6 +153,20 @@ public class NotificationTemplateImpl implements INotificationTemplate {
 
     /**
      * @param notificationTemplateId JpaNotificationTemplate id
+     * @return boolean indicating presence of template
+     * @author DEMILADE
+     * @dateCreated 09/08/2023
+     * @description Checks if a JpaNotificationTemplate exists via its id
+     */
+    @Override
+    public boolean checkIfNotificationTemplateExists(String notificationTemplateId) {
+        return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaNotificationTemplate)
+                .where(qJpaNotificationTemplate.notificationTemplateId.eq(notificationTemplateId))
+                .fetchOne() != null;
+    }
+
+    /**
+     * @param notificationTemplateId JpaNotificationTemplate id
      * @return JpaNotificationTemplate object
      * @author DEMILADE
      * @dateCreated 04/08/2023
@@ -163,6 +177,4 @@ public class NotificationTemplateImpl implements INotificationTemplate {
                 .where(qJpaNotificationTemplate.notificationTemplateId.eq(notificationTemplateId))
                 .fetchOne();
     }
-
-
 }

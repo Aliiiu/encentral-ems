@@ -28,7 +28,7 @@ import static com.esl.internship.staffsync.system.configuration.model.SystemConf
  * @dateCreated 03/07/2023
  * @description General implementation of INotification
  */
-public class NotificationImpl implements INotification {
+public class DefaultNotificationImpl implements INotification {
     private static final QJpaNotification qJpaNotification = QJpaNotification.jpaNotification;
     private static final QJpaNotificationTemplate qJpaNotificationTemplate = QJpaNotificationTemplate.jpaNotificationTemplate;
     @Inject

@@ -7,6 +7,6 @@ public class LeaveManagementModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ILeaveRequest.class).to(LeaveRequestImpl.class);
+        bind(ILeaveRequest.class).to(DefaultLeaveRequestImpl.class);
     }
 }

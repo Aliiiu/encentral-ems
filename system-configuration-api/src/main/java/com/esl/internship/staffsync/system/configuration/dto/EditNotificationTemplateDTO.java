@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull;
  */
 public class EditNotificationTemplateDTO {
 
-    @NotNull
+    @NotNull(message = "Notification template id field cannot be null")
     private String notificationTemplateId;
-    private String notificationDescription= "";
+    private String notificationDescription = "";
 
     private String notificationTemplateContent = "";
 

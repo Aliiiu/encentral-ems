@@ -35,7 +35,7 @@ import static com.esl.internship.staffsync.leave.management.model.LeaveManagemen
  * @dateCreated 06/08/2023
  * @description General implementation of ILeaveRequest
  */
-public class LeaveRequestImpl implements ILeaveRequest {
+public class DefaultLeaveRequestImpl implements ILeaveRequest {
 
     private static final QJpaLeaveRequest qJpaLeaveRequest = QJpaLeaveRequest.jpaLeaveRequest;
 

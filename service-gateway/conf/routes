@@ -105,3 +105,8 @@ GET            /option/:optionTypeId/type                                      c
 GET            /option-type/                                                   controllers.system_configuration.OptionsAndTypesController.getOptionTypes()
 GET            /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.getOptionType(optionTypeId: String)
 PATCH          /option-type/:optionTypeId                                      controllers.system_configuration.OptionsAndTypesController.editOptionType(optionTypeId: String)
+
+
+###### Authentication ######
+POST           /auth/signin/                                                   controllers.authentication.AuthenticationController.signEmployeeIn()
+

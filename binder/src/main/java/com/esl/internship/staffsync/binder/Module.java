@@ -5,8 +5,9 @@
  */
 package com.esl.internship.staffsync.binder;
 
-import com.esl.internship.staffsync.leave.management.impl.LeaveManagementModule;
+import com.esl.internship.staffsync.authentication.impl.AuthenticationModule;
 import com.esl.internship.staffsync.event.management.impl.EventManagementModule;
+import com.esl.internship.staffsync.leave.management.impl.LeaveManagementModule;
 import com.esl.internship.staffsync.system.configuration.impl.SystemConfigurationModule;
 import com.google.inject.AbstractModule;
 import play.libs.akka.AkkaGuiceSupport;
@@ -30,6 +31,8 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
         install(new LeaveManagementModule());
 
         install(new EventManagementModule());
+
+        install(new AuthenticationModule());
 
     }
 }
