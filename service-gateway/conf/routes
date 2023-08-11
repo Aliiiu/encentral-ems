@@ -123,6 +123,10 @@ GET            /employee/set-active/:employeeId/                               c
 GET            /employee/set-inactive/:employeeId/                             controllers.employee_management.EmployeeController.markEmployeeInactive(employeeId: String)
 POST           /employee/set-status/:employeeId/                               controllers.employee_management.EmployeeController.setEmployeeStatus(employeeId: String)
 GET            /employee/set-role/:employeeId/:roleId/                         controllers.employee_management.EmployeeController.setEmployeeRole(employeeId: String, roleId: String)
+PUT            /employe/fileupload/                                            controllers.employee_management.EmployeeController.addEmployeeWithProfilePicture()
+
+PUT            /document/fileupload/                                           controllers.document_management.DocumentController.uploadADocument()
+
 
 ###### Options Management ######
 GET            /option/                                                        controllers.system_configuration.OptionsAndTypesController.getOptions()

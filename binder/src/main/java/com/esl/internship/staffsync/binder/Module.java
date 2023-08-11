@@ -6,6 +6,7 @@
 package com.esl.internship.staffsync.binder;
 
 
+import com.esl.internship.staffsync.document.management.impl.DocumentManagementModule;
 import com.esl.internship.staffsync.employee.management.impl.EmployeeManagementModule;
 import com.esl.internship.staffsync.leave.management.impl.LeaveManagementModule;
 import com.esl.internship.staffsync.authentication.impl.AuthenticationModule;
@@ -38,6 +39,8 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
         install(new EmployeeManagementModule());
 
         install(new AuthenticationModule());
+
+        install(new DocumentManagementModule());
 
     }
 }

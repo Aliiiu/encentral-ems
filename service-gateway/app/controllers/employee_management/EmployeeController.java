@@ -10,9 +10,17 @@ import com.esl.internship.staffsync.commons.service.response.Response;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
@@ -54,6 +62,58 @@ public class EmployeeController extends Controller {
             return badRequest(serviceResponse.getErrorsAsJsonString());
         return ok(objectMapper.toJsonString(serviceResponse.getValue()));
 
+    }
+
+    @ApiOperation(value = "Create Employee")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Employee Created", response = Employee.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "body",
+                    value = "Employee data to create",
+                    paramType = "body",
+                    required = true,
+                    dataType = "com.esl.internship.staffsync.employee.management.dto.CreateEmployeeDTO"
+            )
+    })
+    public Result addEmployeeWithProfilePicture() {
+        Http.MultipartFormData<File> formData = request().body().asMultipartFormData();
+        if (formData == null) {
+            System.out.println("Image Required");
+            System.out.println(request().body().asJson().toString());
+            return ok();
+        }
+        Http.MultipartFormData.FilePart<File> fp = formData.getFile("profilePicture");
+
+        if (fp != null) {
+            System.out.println("\n\nFile Upload succesfull");
+            File pp = fp.getFile();
+
+            String fileName = UUID.randomUUID().toString() + "_" + fp.getFilename();
+            String uploadFilePath = "scripts/";
+            Path destinationPath = Paths.get(uploadFilePath, fileName);
+
+            try {
+                Files.move(pp.toPath(), destinationPath);
+                System.out.println("\nFile Written successfully");
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("\nUnable to write file");
+            }
+        } else {
+            System.out.println("File upload failed");
+        }
+
+        System.out.println(request().body().asJson().toString());
+
+
+        return ok();
+    }
+
+    public Result setEmployeeProfilePicture(String employeeId) {
+        Http.MultipartFormData<File> formData = request().body().asMultipartFormData();
+        return ok();
     }
 
     @ApiOperation(value = "Get Employee by id")

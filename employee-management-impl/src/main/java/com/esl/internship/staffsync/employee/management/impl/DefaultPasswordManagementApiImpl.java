@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * @author WARITH
  * @dateCreated 09/08/2023
- * @description A password management implementation using SHA-236
+ * @description A password management implementation using SHA-256
  */
 public class DefaultPasswordManagementApiImpl implements IPasswordManagementApi {
 
