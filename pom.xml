@@ -175,6 +175,8 @@
         <module>event-management-impl</module>
         <module>authentication-api</module>
         <module>authentication-impl</module>
+        <module>attendance-tracking-api</module>
+        <module>attendance-tracking-imp</module>
 
     </modules>
 </project>
