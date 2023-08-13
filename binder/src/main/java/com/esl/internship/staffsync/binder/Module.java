@@ -34,5 +34,7 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
 
         install(new AuthenticationModule());
 
+        install(new AttendanceTrackingModule());
+
     }
 }
