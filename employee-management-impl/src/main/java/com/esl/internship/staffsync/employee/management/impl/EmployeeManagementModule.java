@@ -11,5 +11,7 @@ public class EmployeeManagementModule extends AbstractModule {
         bind(IDepartmentHeadApi.class).to(DefaultDepartmentHeadApiImpl.class);
         bind(IEmployeeEmergencyContactApi.class).to(DefaultEmployeeEmergencyContactApiImpl.class);
         bind(IPasswordManagementApi.class).to(PasswordManagementApiBcryptImpl.class);
+        bind(IEmployeeDocumentUploadApi.class).to(DefaultEmployeeDocumentUploadApiImpl.class);
     }
+
 }

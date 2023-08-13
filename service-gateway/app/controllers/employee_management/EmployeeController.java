@@ -4,23 +4,25 @@ package controllers.employee_management;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
+import com.esl.internship.staffsync.employee.management.api.IEmployeeDocumentUploadApi;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeStatusUpdateDTO;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Results;
 
 import javax.inject.Inject;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Optional;
 
 import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
@@ -31,6 +33,9 @@ public class EmployeeController extends Controller {
 
     @Inject
     IEmployeeApi iEmployeeApi;
+
+    @Inject
+    IEmployeeDocumentUploadApi iEmployeeDocumentUploadApi;
 
     @Inject
     MyObjectMapper objectMapper;
@@ -64,56 +69,114 @@ public class EmployeeController extends Controller {
 
     }
 
-    @ApiOperation(value = "Create Employee")
+    @ApiOperation(value = "Create Employee with profile picture")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Created", response = Employee.class)
     })
     @ApiImplicitParams({
             @ApiImplicitParam(
-                    name = "body",
+                    name = "employeeData",
                     value = "Employee data to create",
-                    paramType = "body",
+                    paramType = "formData",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.employee.management.dto.CreateEmployeeDTO"
+                    dataType = "com.esl.internship.staffsync.employee.management.dto.EmployeeDTO"
+            ),
+            @ApiImplicitParam(
+                    name = "profilePicture",
+                    value = "File to upload",
+                    required = true,
+                    dataType = "java.io.File",
+                    paramType = "formData"
             )
     })
     public Result addEmployeeWithProfilePicture() {
         Http.MultipartFormData<File> formData = request().body().asMultipartFormData();
-        if (formData == null) {
-            System.out.println("Image Required");
-            System.out.println(request().body().asJson().toString());
-            return ok();
-        }
-        Http.MultipartFormData.FilePart<File> fp = formData.getFile("profilePicture");
 
-        if (fp != null) {
-            System.out.println("\n\nFile Upload succesfull");
-            File pp = fp.getFile();
 
-            String fileName = UUID.randomUUID().toString() + "_" + fp.getFilename();
-            String uploadFilePath = "scripts/";
-            Path destinationPath = Paths.get(uploadFilePath, fileName);
+        String employeeData = formData.asFormUrlEncoded().get("employeeData")[0];
 
-            try {
-                Files.move(pp.toPath(), destinationPath);
-                System.out.println("\nFile Written successfully");
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("\nUnable to write file");
-            }
-        } else {
-            System.out.println("File upload failed");
+        final var employeeForm = validate(Json.parse(employeeData), EmployeeDTO.class);
+
+        if (employeeForm.hasError) {
+            return badRequest(employeeForm.error);
         }
 
-        System.out.println(request().body().asJson().toString());
+        Response<Employee> serviceResponse = iEmployeeApi
+                .addEmployee(employeeForm.value, getEmployee());
 
+        if (serviceResponse.requestHasErrors())
+            return badRequest(serviceResponse.getErrorsAsJsonString());
+        Employee newEmployee = serviceResponse.getValue();
 
-        return ok();
+        boolean ppUploadSuccess = false;
+        if (formData != null) {
+            Http.MultipartFormData.FilePart<File> filePart = formData.getFile("profilePicture");
+            if (filePart == null)
+                return badRequest("'profilePicture' key not found.");
+
+            ppUploadSuccess = iEmployeeApi.setEmployeeProfilePicture(
+                            newEmployee.getEmployeeId(), filePart.getFile(), filePart.getFilename(), getEmployee()
+                    );
+
+        }
+
+        String employeeJson = objectMapper.toJsonString(newEmployee);
+
+        return ok(
+                Json.newObject()
+                        .put("employee", employeeJson)
+                        .put("profilePictureUploadSuccess", ppUploadSuccess)
+                        .toString()
+        );
     }
 
+    @ApiOperation(
+            value = "Upload Employee Profile Picture",
+            httpMethod = "POST"
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "profilePicture",
+                    value = "File to upload",
+                    required = true,
+                    dataType = "java.io.File",
+                    paramType = "formData"
+            )
+    })
     public Result setEmployeeProfilePicture(String employeeId) {
         Http.MultipartFormData<File> formData = request().body().asMultipartFormData();
-        return ok();
+        if (formData != null) {
+            Http.MultipartFormData.FilePart<File> filePart = formData.getFile("profilePicture");
+            if (filePart == null)
+                return badRequest("'profilePicture' key not found.");
+
+            return ok(objectMapper.toJsonString(
+                    iEmployeeApi.setEmployeeProfilePicture(
+                        employeeId, filePart.getFile(), filePart.getFilename(), getEmployee()
+                    )
+            ));
+        }
+        return badRequest("Image Required");
+    }
+
+    @ApiOperation(
+            value = "Get Employee Profile Picture",
+            httpMethod = "GET",
+            produces = "*/*"
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Profile Picture"),
+            @ApiResponse(code = 404, message = "Image not found")
+    })
+    public Result getEmployeeProfilePicture(String employeeId) {
+
+        Optional<File> res = iEmployeeApi.getEmployeeProfilePicture(employeeId);
+
+        if (res.isPresent()) {
+            File file = res.get();
+            return ok(file);
+        }
+        return notFound("Employee does not exist or profile picture not set");
     }
 
     @ApiOperation(value = "Get Employee by id")
@@ -121,9 +184,8 @@ public class EmployeeController extends Controller {
             @ApiResponse(code = 200, message = "Employee", response = Employee.class)
     })
     public Result getEmployeeById(@ApiParam(value = "Employee ID", required = true) String employeeId) {
-        return ok(objectMapper.toJsonString(
-                iEmployeeApi.getEmployeeById(employeeId)
-        ));
+        return iEmployeeApi.getEmployeeById(employeeId)
+                .map(e -> ok(objectMapper.toJsonString(e))).orElseGet(Results::notFound);
     }
 
     @ApiOperation(value = "Get all Employees")

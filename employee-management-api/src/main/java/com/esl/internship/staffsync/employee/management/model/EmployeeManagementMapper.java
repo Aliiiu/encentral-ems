@@ -1,7 +1,10 @@
 package com.esl.internship.staffsync.employee.management.model;
 
-import com.esl.internship.staffsync.commons.model.Document;
 import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.document.management.dto.DocumentDTO;
+import com.esl.internship.staffsync.document.management.dto.DocumentUpdateDTO;
+import com.esl.internship.staffsync.document.management.model.Document;
+import com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO;
 import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmergencyContactDTO;
@@ -37,6 +40,7 @@ public interface EmployeeManagementMapper {
 
     @Mappings({
             @Mapping(target = "roleId", source = "role.roleId"),
+            @Mapping(target = "profilePictureId", source = "profilePictureUrl"),
             @Mapping(target = "departmentId", source = "department.departmentId"),
             @Mapping(target = "employeeGender", source = "employeeGender.optionValue"),
             @Mapping(target = "stateOfOrigin", source = "stateOfOrigin.optionValue"),
@@ -62,11 +66,15 @@ public interface EmployeeManagementMapper {
 
     @Mappings({
             @Mapping(target = "employeeId", source = "employee.employeeId"),
-            @Mapping(target = "documentType", source = "documentType.optionValue")
+            @Mapping(target = "documentType", source = "documentType.optionValue"),
+            @Mapping(target = "documentId", source = "document.documentId"),
+            @Mapping(target = "documentName", source = "document.documentName"),
+            @Mapping(target = "documentDescription", source = "document.documentDescription")
     })
     EmployeeDocument mapEmployeeDocument(JpaEmployeeHasDocument entity);
 
-    Document mapDocument(JpaDocument entity);
+    DocumentDTO mapDocumentDTO(EmployeeDocumentDTO modelDTO);
+    DocumentUpdateDTO mapDocumentUpdateDTO(EmployeeDocumentDTO modelDTO);
 
     @Mappings({
             @Mapping(target = "approverEmployeeId", source = "approver.employeeId"),

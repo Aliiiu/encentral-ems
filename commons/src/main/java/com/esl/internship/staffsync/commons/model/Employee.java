@@ -39,7 +39,9 @@ public class Employee {
 
     private String phoneNumber;
 
-    private String profilePictureUrl;
+//    private String profilePictureUrl;
+
+    private String profilePictureId;
 
     private String modifiedBy;
 
@@ -193,12 +195,13 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
+
+    public String getProfilePictureId() {
+        return profilePictureId;
     }
 
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
+    public void setProfilePictureId(String profilePictureId) {
+        this.profilePictureId = profilePictureId;
     }
 
     public String getModifiedBy() {

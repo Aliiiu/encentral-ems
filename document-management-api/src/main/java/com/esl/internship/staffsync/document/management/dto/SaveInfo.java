@@ -2,26 +2,38 @@ package com.esl.internship.staffsync.document.management.dto;
 
 public class SaveInfo {
 
-    private String saveDirectory;
+    private  String saveDirectory;
 
     private String fileName;
 
-    private boolean rename = false;
+    private String newFileName;
 
-    public SaveInfo(String saveDirectory, String fileName, boolean rename) {
-        this.saveDirectory = saveDirectory;
+    private boolean rename;
+
+    public SaveInfo(String fileName) {
+        this.saveDirectory = "";
         this.fileName = fileName;
-        this.rename = rename;
+        this.rename = false;
     }
 
     public SaveInfo(String saveDirectory, String fileName) {
         this.saveDirectory = saveDirectory;
         this.fileName = fileName;
+        this.rename = false;
+    }
+
+    public SaveInfo(String saveDirectory, String fileName, String newFileName) {
+        this.saveDirectory = saveDirectory;
+        this.fileName = fileName;
+        this.newFileName = newFileName;
         this.rename = true;
     }
 
-    public SaveInfo() {
-        this.fileName = "";
+    public SaveInfo(String saveDirectory, String fileName, String newFileName, boolean rename) {
+        this.saveDirectory = saveDirectory;
+        this.fileName = fileName;
+        this.newFileName = newFileName;
+        this.rename = rename;
     }
 
     public String getSaveDirectory() {
@@ -40,6 +52,14 @@ public class SaveInfo {
         this.fileName = fileName;
     }
 
+    public String getNewFileName() {
+        return newFileName;
+    }
+
+    public void setNewFileName(String newFileName) {
+        this.newFileName = newFileName;
+    }
+
     public boolean renameFile() {
         return rename;
     }
@@ -47,5 +67,4 @@ public class SaveInfo {
     public void setRename(boolean rename) {
         this.rename = rename;
     }
-
 }

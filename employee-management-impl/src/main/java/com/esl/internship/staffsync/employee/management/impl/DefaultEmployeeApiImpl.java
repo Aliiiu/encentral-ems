@@ -1,6 +1,13 @@
 package com.esl.internship.staffsync.employee.management.impl;
 
 import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.document.management.api.IDocumentManagementApi;
+import com.esl.internship.staffsync.document.management.dto.DocumentDTO;
+import com.esl.internship.staffsync.document.management.dto.SaveInfo;
+import com.esl.internship.staffsync.document.management.model.Document;
+import com.esl.internship.staffsync.employee.management.api.IEmployeeDocumentUploadApi;
+import com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO;
+import com.esl.internship.staffsync.employee.management.model.EmployeeDocument;
 import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 import com.esl.internship.staffsync.employee.management.api.IPasswordManagementApi;
@@ -11,6 +18,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -30,6 +39,12 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
 
     @Inject
     IPasswordManagementApi iPasswordManagementApi;
+
+    @Inject
+    IEmployeeDocumentUploadApi iEmployeeDocumentUploadApi;
+
+    @Inject
+    IDocumentManagementApi iDocumentManagementApi;
 
     private static final QJpaRole qJpaRole = QJpaRole.jpaRole;
     private static final QJpaDepartment qJpaDepartment = QJpaDepartment.jpaDepartment;
@@ -114,6 +129,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
         jpaEmployee.setEmployeeMaritalStatus(employeeMaritalStatus);
         jpaEmployee.setCreatedBy(stringifyEmployee(employee));
         jpaEmployee.setDateCreated(Timestamp.from(Instant.now()));
+        jpaEmployee.setLoginAttempts(3);
         setPassword(jpaEmployee, employeeDto.getPassword());
 
         jpaApi.em().persist(jpaEmployee);
@@ -328,6 +344,64 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
                 .execute() == 1;
     }
 
+    @Override
+    public boolean setEmployeeProfilePicture(String employeeId, File file, String filename, Employee employee) {
+
+        JpaEmployee jpaEmployee = getJpaEmployee(employeeId);
+
+        DocumentDTO documentDTO = new DocumentDTO() ;
+        documentDTO.setFile(file);
+        documentDTO.setDocumentName("Profile Picture");
+        documentDTO.setDocumentDescription("Profile Picture of employee: " + employeeId);
+        SaveInfo saveInfo = new SaveInfo(filename);
+        saveInfo.setSaveDirectory(resolveEmployeeDirectory(jpaEmployee));
+        saveInfo.setNewFileName(employeeId + "_ProfilePicture");
+        saveInfo.setRename(true);
+
+        if (jpaEmployee.getProfilePictureUrl() == null) {
+
+            Document document = iDocumentManagementApi.addDocument(documentDTO, saveInfo, employee).getValue();
+            if (document != null) {
+                jpaEmployee.setProfilePictureUrl(document.getDocumentId());
+                return true;
+            }
+        } else {
+            return iDocumentManagementApi.updateDocument(
+                    jpaEmployee.getProfilePictureUrl(),
+                    documentDTO,
+                    saveInfo,
+                    employee
+            );
+        }
+        return false;
+    }
+
+    private String resolveEmployeeDirectory(JpaEmployee employee) {
+        return Path.of(iEmployeeDocumentUploadApi.getEmployeeDocumentUploadRoot(),
+                String.format("%s(%s)", employee.getEmployeeId(), employee.getFirstName())
+        ).toString();
+    }
+
+    @Override
+    public Optional<File> getEmployeeProfilePicture(String employeeId) {
+        Optional<String> path = getEmployeeProfilePicturePath(employeeId);
+        File file = new File(path.get());
+        if (file.exists())
+            return Optional.of(file);
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> getEmployeeProfilePicturePath(String employeeId) {
+        JpaEmployee employee = getJpaEmployee(employeeId);
+        if (employee == null)
+            return Optional.empty();
+
+        Optional<Document> employeeDocument = iDocumentManagementApi.getDocumentById(employee.getProfilePictureUrl());
+
+        return employeeDocument.map(Document::getDocumentUploadPath);
+    }
+
     /**
      * @author WARITH
      * @dateCreated 09/08/2023
@@ -445,11 +519,12 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
         LocalDate dateHired = LocalDate.from(employeeDto.getDateHired().toInstant().atZone(ZoneId.systemDefault()));
 
         StringBuilder sb = new StringBuilder("ESL-");
-        sb.append(employeeDto.getFirstName().charAt(0));
-        sb.append(employeeDto.getLastName().charAt(0));
+        sb.append(Character.toUpperCase(employeeDto.getFirstName().charAt(0)));
+        sb.append(Character.toUpperCase(employeeDto.getLastName().charAt(0)));
         sb.append(dateHired.getDayOfMonth());
-        sb.append(dateHired.getMonth());
         sb.append(dateHired.getYear());
+        sb.append(dateHired.getMonthValue());
+        sb.append("-");
         sb.append(new Random().nextInt(900) + 100);
 
         return sb.toString();

@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.document.management.dto;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 
 public class DocumentDTO {
@@ -8,6 +9,7 @@ public class DocumentDTO {
 
     private String documentDescription;
 
+    @NotNull
     private String documentName;
 
     public File getFile() {

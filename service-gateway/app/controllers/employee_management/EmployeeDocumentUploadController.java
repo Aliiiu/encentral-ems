@@ -1,12 +1,12 @@
-package controllers.document_management;
+package controllers.employee_management;
 
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
-import com.esl.internship.staffsync.document.management.api.IDocumentManagementApi;
-import com.esl.internship.staffsync.document.management.dto.DocumentDTO;
 import com.esl.internship.staffsync.document.management.dto.SaveInfo;
-import com.esl.internship.staffsync.document.management.model.Document;
+import com.esl.internship.staffsync.employee.management.api.IEmployeeDocumentUploadApi;
+import com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO;
+import com.esl.internship.staffsync.employee.management.model.EmployeeDocument;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -20,28 +20,27 @@ import java.util.Optional;
 
 import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
 
-@Api("Document Management")
+@Api("Employee Management - Document Upload")
 @Transactional
-public class DocumentController extends Controller {
+public class EmployeeDocumentUploadController extends Controller {
 
     @Inject
-    IDocumentManagementApi iDocumentManagementApi;
+    IEmployeeDocumentUploadApi iEmployeeDocumentUploadApi;
 
     @Inject
     MyObjectMapper objectMapper;
 
-
     @ApiOperation(value = "Upload a Document")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Document Added", response = Document.class)
+            @ApiResponse(code = 200, message = "Document Uploaded", response = EmployeeDocument.class)
     })
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "documentInfo",
-                    value = "Document Information",
+                    value = "Document Information (as Json String)",
                     paramType = "formData",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.document.management.dto.DocumentDTO"
+                    dataType = "com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO"
             ),
             @ApiImplicitParam(
                     name = "file",
@@ -51,13 +50,13 @@ public class DocumentController extends Controller {
                     paramType = "formData"
             )
     })
-    public Result uploadADocument() {;
+    public Result uploadDocument(String employeeId) {
         Http.MultipartFormData<File> formData = request().body().asMultipartFormData();
 
         String documentInfo = formData.asFormUrlEncoded().get("documentInfo")[0];
         Http.MultipartFormData.FilePart<File> filePart = formData.getFile("file");
 
-        final var documentForm = validate(Json.parse(documentInfo), DocumentDTO.class);
+        final var documentForm = validate(Json.parse(documentInfo), EmployeeDocumentDTO.class);
 
         if (documentForm.hasError) {
             return badRequest(documentForm.error);
@@ -65,15 +64,22 @@ public class DocumentController extends Controller {
 
         documentForm.value.setFile(filePart.getFile());
         SaveInfo saveInfo = new SaveInfo(filePart.getFilename());
-        saveInfo.setSaveDirectory("admin");
 
-        Response<Document> serviceResponse = iDocumentManagementApi
-                .addDocument(documentForm.value, saveInfo, getEmployee());
+        Response<EmployeeDocument> serviceResponse = iEmployeeDocumentUploadApi
+                .addEmployeeDocument(employeeId, documentForm.value, saveInfo, getEmployee());
 
         if (serviceResponse.requestHasErrors())
             return badRequest(serviceResponse.getErrorsAsJsonString());
 
         return ok(objectMapper.toJsonString(serviceResponse.getValue()));
+    }
+
+    @ApiOperation(value = "Get all Documents uploaded by employee")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Documents", response = EmployeeDocument.class, responseContainer = "List")
+    })
+    public Result retrieveAllEmployeeDocuments(String employeeId) {
+        return ok(objectMapper.toJsonString(iEmployeeDocumentUploadApi.getDocumentsOwnedByEmployee(employeeId)));
     }
 
     @ApiOperation(
@@ -85,26 +91,25 @@ public class DocumentController extends Controller {
             @ApiResponse(code = 200, message = "Document"),
             @ApiResponse(code = 404, message = "File not found")
     })
-    public Result retrieveDocument(String documentId) {
-        Optional<Document> res = iDocumentManagementApi.getDocumentById(documentId);
+    public Result getDocumentFile(String employeeDocumentId) {
+        Optional<EmployeeDocument> document = iEmployeeDocumentUploadApi.getEmployeeDocument(employeeDocumentId);
 
-        if (res.isPresent()) {
-            String path = res.get().getDocumentUploadPath();
-
-            File file = new File(path);
-            if (file.exists())
+        if (document.isPresent()) {
+            File file = new File(document.get().getDocumentUploadPath());
+            if (file.exists()) {
                 return ok(file);
-        }
-        return notFound("File not found");
+            }
+        }        
+        return notFound("Document not found");
     }
 
     @ApiOperation(value = "Delete Document")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Deleted", response = boolean.class)
     })
-    public Result deleteADocument(String documentId) {
+    public Result deleteADocument(String employeeDocumentId) {
         return ok(
-                objectMapper.toJsonString(iDocumentManagementApi.deleteDocument(documentId))
+                objectMapper.toJsonString(iEmployeeDocumentUploadApi.deleteEmployeeDocument(employeeDocumentId))
         );
     }
 
@@ -116,6 +121,6 @@ public class DocumentController extends Controller {
      * @return Employee
      */
     Employee getEmployee() {
-        return new Employee("system", "system");
+        return new Employee();
     }
 }

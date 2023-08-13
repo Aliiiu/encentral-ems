@@ -4,11 +4,13 @@ import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.document.management.api.IDocumentManagementApi;
 import com.esl.internship.staffsync.document.management.dto.DocumentDTO;
+import com.esl.internship.staffsync.document.management.dto.DocumentUpdateDTO;
 import com.esl.internship.staffsync.document.management.dto.SaveInfo;
 import com.esl.internship.staffsync.document.management.model.Document;
 import com.esl.internship.staffsync.entities.JpaDocument;
 import com.esl.internship.staffsync.entities.QJpaDocument;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.apache.commons.io.FileUtils;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -31,7 +33,7 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
     @Inject
     JPAApi jpaApi;
 
-    private static final QJpaDocument qJpaDocumment = QJpaDocument.jpaDocument;
+    private static final QJpaDocument qJpaDocument = QJpaDocument.jpaDocument;
 
     public DefaultDocumentManagementImpl() {
         createDirectory(documentRoot);
@@ -55,6 +57,9 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         jpaDocument.setCreatedBy(stringifyEmployee(employee));
         jpaDocument.setDateCreated(Timestamp.from(Instant.now()));
 
+        System.out.println("\n\t" + jpaDocument);
+        System.out.println("\tDocument " + jpaDocument.getDocumentId());
+
         jpaApi.em().persist(jpaDocument);
 
         response.setValue(INSTANCE.mapDocument(jpaDocument));
@@ -65,6 +70,32 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
     @Override
     public Optional<Document> getDocumentById(String documentId) {
         return Optional.ofNullable(INSTANCE.mapDocument(getJpaDocumentById(documentId)));
+    }
+
+    @Override
+    public boolean updateDocument(String documentId, DocumentDTO documentDTO, SaveInfo saveInfo, Employee employee) {
+        JpaDocument document = getJpaDocumentById(documentId);
+        if (document == null)
+            return false;
+
+        File file = documentDTO.getFile();
+
+        if (file != null) {
+            String path = tempWriteToDisk(saveInfo, file);
+            if (path == null)
+                return false;
+            File oldFile = new File(document.getDocumentUploadPath());
+            oldFile.delete();
+            path = moveToLocation(path, saveInfo);
+            document.setDocumentUploadPath(path);
+        }
+
+        document.setDocumentDescription(documentDTO.getDocumentDescription());
+        document.setDocumentName(documentDTO.getDocumentName());
+        document.setDateModified(Timestamp.from(Instant.now()));
+        document.setModifiedBy(stringifyEmployee(employee, "Updated Document"));
+
+        return true;
     }
 
     @Override
@@ -121,23 +152,54 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         return true;
     }
 
-    private String writeToDisk(SaveInfo saveInfo, File file) {
+    private String tempWriteToDisk(SaveInfo saveInfo, File file) {
+        SaveInfo tempCopy = new SaveInfo(UUID.randomUUID() + saveInfo.getFileName());
+        tempCopy.setRename(saveInfo.renameFile());
+        tempCopy.setSaveDirectory(saveInfo.getSaveDirectory());
+        tempCopy.setNewFileName(UUID.randomUUID() + saveInfo.getNewFileName());
+
+        return writeToDisk(tempCopy, file);
+    }
+
+    private Path resolveDestinationFilename(SaveInfo saveInfo) {
         Path parent = Paths.get(documentRoot).resolve(saveInfo.getSaveDirectory());
-        Path destinationPath;
+        createDirectory(parent);
+        String destinationFilename;
 
         if (saveInfo.renameFile()) {
             String extension = "";
-            int dotIndex = file.getName().lastIndexOf(".");
+            int dotIndex = saveInfo.getFileName().lastIndexOf(".");
             if (dotIndex >= 0) {
-                extension = file.getName().substring(dotIndex);
+                extension = saveInfo.getFileName().substring(dotIndex);
             }
-            destinationPath = parent.resolve(saveInfo.getFileName() + extension);
+            destinationFilename = saveInfo.getNewFileName() + extension;
         } else {
-            destinationPath = parent.resolve(file.getName());
+            destinationFilename = saveInfo.getFileName();
         }
 
+        return parent.resolve(destinationFilename);
+    }
+
+    private String writeToDisk(SaveInfo saveInfo, File file) {
+
+        Path parent = Paths.get(documentRoot).resolve(saveInfo.getSaveDirectory());
+
+        Path destinationPath = resolveDestinationFilename(saveInfo);
+
         try {
-            Files.copy(file.toPath(), destinationPath);
+            FileUtils.copyFile(file, destinationPath.toFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return destinationPath.normalize().toString();
+    }
+
+    private String moveToLocation(String source, SaveInfo target) {
+        Path destinationPath = resolveDestinationFilename(target);
+
+        try {
+            FileUtils.moveFile(new File(source), destinationPath.toFile());
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -151,8 +213,8 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
 
     private JpaDocument getJpaDocumentById(String documentId) {
         return  new JPAQueryFactory(jpaApi.em())
-                .selectFrom(qJpaDocumment)
-                .where(qJpaDocumment.documentId.eq(documentId))
+                .selectFrom(qJpaDocument)
+                .where(qJpaDocument.documentId.eq(documentId))
                 .fetchOne();
     }
 }

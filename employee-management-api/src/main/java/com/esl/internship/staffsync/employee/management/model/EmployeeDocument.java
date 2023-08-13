@@ -1,18 +1,12 @@
 package com.esl.internship.staffsync.employee.management.model;
 
-import com.esl.internship.staffsync.commons.model.Document;
+import com.esl.internship.staffsync.document.management.model.Document;
 
 import java.sql.Timestamp;
 
-public class EmployeeDocument {
+public class EmployeeDocument extends Document {
 
     private String employeeHasDocumentId;
-
-    private String createdBy;
-
-    private Timestamp dateCreated;
-
-    private Document document;
 
     private String employeeId;
 
@@ -24,30 +18,6 @@ public class EmployeeDocument {
 
     public void setEmployeeHasDocumentId(String employeeHasDocumentId) {
         this.employeeHasDocumentId = employeeHasDocumentId;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Timestamp getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Timestamp dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public Document getDocument() {
-        return document;
-    }
-
-    public void setDocument(Document document) {
-        this.document = document;
     }
 
     public String getEmployeeId() {
@@ -72,6 +42,7 @@ public class EmployeeDocument {
                 "employeeHasDocumentId='" + employeeHasDocumentId + '\'' +
                 ", employeeId='" + employeeId + '\'' +
                 ", documentType='" + documentType + '\'' +
+                ", dateCreated" + getDateCreated() + '\'' +
                 '}';
     }
 

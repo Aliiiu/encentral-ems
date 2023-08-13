@@ -117,16 +117,26 @@ GET            /emergency-contact/employee/:employeeId/                        c
 ###### Employee Endpoints ######
 GET            /employee/                                                      controllers.employee_management.EmployeeController.getAllEmployee()
 POST           /employee/                                                      controllers.employee_management.EmployeeController.addEmployee()
+POST           /employee/pp/                                                   controllers.employee_management.EmployeeController.addEmployeeWithProfilePicture()
 GET            /employee/:employeeId/                                          controllers.employee_management.EmployeeController.getEmployeeById(employeeId: String)
 DELETE         /employee/:employeeId/                                          controllers.employee_management.EmployeeController.deleteEmployee(employeeId: String)
 GET            /employee/set-active/:employeeId/                               controllers.employee_management.EmployeeController.markEmployeeActive(employeeId: String)
 GET            /employee/set-inactive/:employeeId/                             controllers.employee_management.EmployeeController.markEmployeeInactive(employeeId: String)
 POST           /employee/set-status/:employeeId/                               controllers.employee_management.EmployeeController.setEmployeeStatus(employeeId: String)
 GET            /employee/set-role/:employeeId/:roleId/                         controllers.employee_management.EmployeeController.setEmployeeRole(employeeId: String, roleId: String)
-PUT            /employe/fileupload/                                            controllers.employee_management.EmployeeController.addEmployeeWithProfilePicture()
+POST           /employee/profile-picture/:employeeId/                          controllers.employee_management.EmployeeController.setEmployeeProfilePicture(employeeId: String)
+GET            /employee/profile-picture/:employeeId/                          controllers.employee_management.EmployeeController.getEmployeeProfilePicture(employeeId: String)
 
-PUT            /document/fileupload/                                           controllers.document_management.DocumentController.uploadADocument()
+##### Employee Document #####
+POST           /employee/document/:employeeId                                  controllers.employee_management.EmployeeDocumentUploadController.uploadDocument(employeeId: String)
+GET            /employee/document/:employeeId                                  controllers.employee_management.EmployeeDocumentUploadController.retrieveAllEmployeeDocuments(employeeId: String)
+GET            /employee/get-document/:employeeDocumentId                      controllers.employee_management.EmployeeDocumentUploadController.getDocumentFile(employeeDocumentId: String)
+DELETE         /employee/document/:employeeDocumentId                          controllers.employee_management.EmployeeDocumentUploadController.deleteADocument(employeeDocumentId: String)
 
+##### Document Management #####
+POST           /document/                                                      controllers.document_management.DocumentController.uploadADocument()
+GET            /document/:documentId/                                          controllers.document_management.DocumentController.retrieveDocument(documentId: String)
+DELETE         /document/:documentId/                                          controllers.document_management.DocumentController.deleteADocument(documentId: String)
 
 ###### Options Management ######
 GET            /option/                                                        controllers.system_configuration.OptionsAndTypesController.getOptions()
