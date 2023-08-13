@@ -5,9 +5,17 @@
     <persistence-unit name="portalpu" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <non-jta-data-source>DefaultDS</non-jta-data-source>
+
+        <!-- Converters -->
+        <class>com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.ActionConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.LeaveRequestStatusConverter</class>
         <class>com.esl.internship.staffsync.entities.attribute.converter.NotificationPriorityConverter</class>
         <class>com.esl.internship.staffsync.entities.attribute.converter.NotificationStatusConverter</class>
+        <class>com.esl.internship.staffsync.entities.attribute.converter.EmployeeRequestStatusConverter</class>
         <class>com.esl.internship.staffsync.entities.attribute.converter.EmployeeStatusConverter</class>
+
+        <!-- Entities -->
         <class>com.esl.internship.staffsync.entities.JpaAnnouncement</class>
         <class>com.esl.internship.staffsync.entities.JpaAnnouncementRecipient</class>
         <class>com.esl.internship.staffsync.entities.JpaAppConfig</class>
@@ -30,9 +38,6 @@
         <class>com.esl.internship.staffsync.entities.JpaRole</class>
         <class>com.esl.internship.staffsync.entities.JpaRoleHasPermission</class>
 
-        <class>com.esl.internship.staffsync.entities.JsonStringConverter</class>
-        <class>com.esl.internship.staffsync.entities.attribute.converter.ActionConverter</class>
-        <class>com.esl.internship.staffsync.entities.attribute.converter.LeaveRequestStatusConverter</class>
 
         <properties>
             <property name="eclipselink.weaving" value="static"/>
