@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.entities;
 
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -22,6 +23,7 @@ public class JpaDepartment implements Serializable {
 	@Column(name="department_id", unique=true, nullable=false, length=64)
 	private String departmentId;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -37,6 +39,7 @@ public class JpaDepartment implements Serializable {
 	@Column(name="description", length=2147483647)
 	private String description;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
@@ -44,11 +47,11 @@ public class JpaDepartment implements Serializable {
 	private Integer workingHours;
 
 	//bidirectional many-to-one association to JpaDepartmentHead
-	@OneToOne(mappedBy="department")
+	@OneToOne(mappedBy="department", fetch = FetchType.LAZY)
 	private JpaDepartmentHead departmentHead;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@OneToMany(mappedBy="department")
+	@OneToMany(mappedBy="department", fetch = FetchType.LAZY)
 	private Set<JpaEmployee> employees;
 
 	public JpaDepartment() {

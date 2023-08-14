@@ -1,6 +1,8 @@
 package com.esl.internship.staffsync.entities;
 
+
 import com.esl.internship.staffsync.entities.attribute.converter.ActionConverter;
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.esl.internship.staffsync.entities.enums.Action;
 import com.google.common.base.MoreObjects;
 
@@ -49,11 +51,11 @@ public class JpaPermission implements Serializable {
 	private String permissionName;
 
 	//bidirectional many-to-one association to JpaRoleHasPermission
-	@OneToMany(mappedBy="permission")
+	@OneToMany(mappedBy="permission", fetch = FetchType.LAZY)
 	private Set<JpaRoleHasPermission> roleHasPermissions;
 
 	//bidirectional many-to-many association to JpaRole
-	@ManyToMany(mappedBy="permissions")
+	@ManyToMany(mappedBy="permissions", fetch = FetchType.LAZY)
 	private Set<JpaRole> roles;
 
 	public JpaPermission() {

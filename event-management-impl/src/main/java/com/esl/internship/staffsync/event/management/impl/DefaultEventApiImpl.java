@@ -35,7 +35,7 @@ public class DefaultEventApiImpl implements IEventApi {
      * @dateCreated 03/08/2023
      * @description Adds a new Event
      *
-     * @param event event data to be added
+     * @param eventDto event data to be added
      * @param employee The employee adding this record
      *
      * @return Event
@@ -130,7 +130,7 @@ public class DefaultEventApiImpl implements IEventApi {
      * @description Updates an  event
      *
      * @param eventId Id of the event
-     * @param event Event data to update
+     * @param eventDto Event data to update
      * @param employee Employee updating the record
      *
      * @return boolean

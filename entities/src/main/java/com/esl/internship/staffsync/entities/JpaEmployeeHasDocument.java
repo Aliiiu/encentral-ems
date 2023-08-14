@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.entities;
 
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -15,20 +16,19 @@ import java.util.Objects;
 @Entity
 @Table(name="employee_has_document")
 public class JpaEmployeeHasDocument implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="document_id", unique=true, nullable=false, length=64)
-	private String documentId;
+	@Column(name="employee_has_document_id", nullable=false, length=64)
+	private String employeeHasDocumentId;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
 	@Column(name="date_created", nullable=false)
 	private Timestamp dateCreated;
-
-	@Column(name="employee_has_document_id", nullable=false, length=64)
-	private String employeeHasDocumentId;
 
 	//bidirectional one-to-one association to JpaDocument
 	@OneToOne
@@ -36,24 +36,16 @@ public class JpaEmployeeHasDocument implements Serializable {
 	private JpaDocument document;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
-	@JoinColumn(name="option_value", nullable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="document_type", referencedColumnName = "option_id",  nullable=false)
 	private JpaOption documentType;
 
 	public JpaEmployeeHasDocument() {
-	}
-
-	public String getDocumentId() {
-		return this.documentId;
-	}
-
-	public void setDocumentId(String documentId) {
-		this.documentId = documentId;
 	}
 
 	public String getCreatedBy() {

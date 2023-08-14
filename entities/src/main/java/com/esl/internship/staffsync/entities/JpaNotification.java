@@ -1,10 +1,13 @@
 package com.esl.internship.staffsync.entities;
 
+
 import com.esl.internship.staffsync.entities.enums.NotificationPriority;
 import com.esl.internship.staffsync.entities.enums.NotificationStatus;
 import com.esl.internship.staffsync.entities.attribute.converter.NotificationPriorityConverter;
 import com.esl.internship.staffsync.entities.attribute.converter.NotificationStatusConverter;
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.google.common.base.MoreObjects;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.sql.Timestamp;

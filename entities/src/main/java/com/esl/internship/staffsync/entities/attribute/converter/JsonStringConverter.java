@@ -1,4 +1,4 @@
-package com.esl.internship.staffsync.entities;
+package com.esl.internship.staffsync.entities.attribute.converter;
 
 import org.postgresql.util.PGobject;
 

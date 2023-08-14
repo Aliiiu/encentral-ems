@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.entities;
 
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ public class JpaEmergencyContact implements Serializable {
 	@Column(nullable=false, length=64)
 	private String address;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -42,6 +44,7 @@ public class JpaEmergencyContact implements Serializable {
 	@Column(name="last_name", nullable=false, length=64)
 	private String lastName;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
@@ -52,13 +55,13 @@ public class JpaEmergencyContact implements Serializable {
 	private String relationship;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 
 	//bidirectional many-to-one association to JpaOption
-	@ManyToOne
-	@JoinColumn(name="option_value")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="contact_gender", referencedColumnName = "option_id")
 	private JpaOption contactGender;
 
 	public JpaEmergencyContact() {
