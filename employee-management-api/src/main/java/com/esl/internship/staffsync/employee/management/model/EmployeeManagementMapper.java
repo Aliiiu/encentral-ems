@@ -4,11 +4,8 @@ import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.document.management.dto.DocumentDTO;
 import com.esl.internship.staffsync.document.management.dto.DocumentUpdateDTO;
 import com.esl.internship.staffsync.document.management.model.Document;
-import com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO;
+import com.esl.internship.staffsync.employee.management.dto.*;
 import com.esl.internship.staffsync.entities.*;
-import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
-import com.esl.internship.staffsync.employee.management.dto.EmergencyContactDTO;
-import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -81,5 +78,7 @@ public interface EmployeeManagementMapper {
             @Mapping(target = "employeeId", source = "employee.employeeId")
     })
     EmployeeUpdateRequest mapEmployeeUpdateRequest(JpaEmployeeUpdateRequest entity);
+
+    JpaEmployeeUpdateRequest mapEmployeeUpdateRequestDTO(EmployeeUpdateRequestDTO modelDTO);
 
 }

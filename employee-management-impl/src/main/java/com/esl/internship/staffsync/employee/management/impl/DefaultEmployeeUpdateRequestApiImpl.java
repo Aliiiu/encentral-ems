@@ -15,8 +15,16 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
+import java.lang.reflect.Field;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static com.esl.internship.staffsync.commons.util.Utility.stringifyEmployee;
+import static com.esl.internship.staffsync.employee.management.model.EmployeeManagementMapper.INSTANCE;
 
 public class DefaultEmployeeUpdateRequestApiImpl implements IEmployeeUpdateRequestApi {
 
@@ -33,21 +41,51 @@ public class DefaultEmployeeUpdateRequestApiImpl implements IEmployeeUpdateReque
 
         JpaEmployee jpaEmployee = getJpaEmployee(employeeId);
 
+
         if (jpaEmployee == null)
             return res.putError("employeeId", "Employee Does not exist");
 
+        Field field;
 
-        return null;
+        try {
+            field = JpaEmployee.class.getDeclaredField(employeeUpdateRequestDTO.getUpdateFieldName());
+        } catch (NoSuchFieldException e) {
+            return res.putError("updateFieldName", "Unknown employee Field");
+        }
+
+        JpaEmployeeUpdateRequest jpaEmployeeUpdateRequest = INSTANCE.mapEmployeeUpdateRequestDTO(employeeUpdateRequestDTO);
+        jpaEmployeeUpdateRequest.setEmployee(jpaEmployee);
+        jpaEmployeeUpdateRequest.setDateCreated(Timestamp.from(Instant.now()));
+        jpaEmployeeUpdateRequest.setEmployeeUpdateRequestId(UUID.randomUUID().toString());
+
+
+        try {
+            field.setAccessible(true);
+            jpaEmployeeUpdateRequest.setOldValue(field.get(jpaEmployee).toString());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        jpaApi.em().persist(jpaEmployeeUpdateRequest);
+
+        return res.setValue(INSTANCE.mapEmployeeUpdateRequest(jpaEmployeeUpdateRequest));
+
     }
 
     @Override
     public Optional<EmployeeUpdateRequest> getEmployeeUpdateRequest(String employeeRequestUpdateId) {
-        return Optional.empty();
+        return Optional.ofNullable(INSTANCE.mapEmployeeUpdateRequest(getJpaEmployeeUpdateRequest(employeeRequestUpdateId)));
     }
 
     @Override
     public List<EmployeeUpdateRequest> getUpdateRequestsOfEmployee(String employeeId) {
-        return null;
+        return new JPAQueryFactory(jpaApi.em())
+                .selectFrom(qJpaEmployeeUpdateRequest)
+                .where(qJpaEmployeeUpdateRequest.employee.employeeId.eq(employeeId))
+                .fetch()
+                .stream()
+                .map(INSTANCE::mapEmployeeUpdateRequest)
+                .collect(Collectors.toList());
     }
 
     @Override
