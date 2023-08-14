@@ -7,8 +7,10 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.sql.SQLException;
 
+
 @Converter
 public class EmployeeStatusConverter implements AttributeConverter<EmployeeStatus, Object> {
+
     @Override
     public Object convertToDatabaseColumn(EmployeeStatus leaveRequest) {
         try {
@@ -16,6 +18,7 @@ public class EmployeeStatusConverter implements AttributeConverter<EmployeeStatu
             pgObject.setType("employee_status");
             pgObject.setValue(leaveRequest.name());
             return pgObject;
+
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

@@ -1,6 +1,8 @@
 package com.esl.internship.staffsync.entities;
 
+
 import com.esl.internship.staffsync.entities.attribute.converter.EmployeeStatusConverter;
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 import com.google.common.base.MoreObjects;
 
@@ -32,8 +34,8 @@ public class JpaEmployee implements Serializable {
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
-	@Column(name="current_status", nullable=false, length=2147483647)
 	@Convert(converter = EmployeeStatusConverter.class)
+	@Column(name="current_status", nullable=false, length=2147483647)
 	private EmployeeStatus currentStatus;
 
 	@Column(name="date_created", nullable=false)
@@ -89,27 +91,27 @@ public class JpaEmployee implements Serializable {
 	private String profilePictureUrl;
 
 	//bidirectional many-to-one association to JpaAnnouncement
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaAnnouncement> announcements;
 
 	//bidirectional many-to-one association to JpaAnnouncementRecipient
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaAnnouncementRecipient> announcementsReceived;
 
 	//bidirectional many-to-one association to JpaAttendance
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaAttendance> attendances;
 
 	//bidirectional many-to-one association to JpaAuditLog
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaAuditLog> auditLogs;
 
 	//bidirectional many-to-one association to JpaDepartmentHead
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaDepartmentHead> departmentHeads;
 
 	//bidirectional many-to-one association to JpaEmergencyContact
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaEmergencyContact> emergencyContacts;
 
 	//bidirectional many-to-one association to JpaDepartment
@@ -148,31 +150,31 @@ public class JpaEmployee implements Serializable {
 	private JpaRole role;
 
 	//bidirectional many-to-one association to JpaEmployeeHasDocument
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaEmployeeHasDocument> employeeHasDocuments;
 
 	//bidirectional many-to-one association to JpaEmployeeUpdateRequest
-	@OneToMany(mappedBy="approver")
+	@OneToMany(mappedBy="approver", fetch = FetchType.LAZY)
 	private Set<JpaEmployeeUpdateRequest> employeeUpdateRequestsApprovedByMe;
 
 	//bidirectional many-to-one association to JpaEmployeeUpdateRequest
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaEmployeeUpdateRequest> employeeUpdateRequests;
 
 	//bidirectional many-to-one association to JpaLeaveRequest
-	@OneToMany(mappedBy="employee")
+	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
 	private Set<JpaLeaveRequest> leaveRequests;
 
 	//bidirectional many-to-one association to JpaLeaveRequest
-	@OneToMany(mappedBy="approver")
+	@OneToMany(mappedBy="approver", fetch = FetchType.LAZY)
 	private Set<JpaLeaveRequest> leaveRequestsApprovedByMe;
 
 	//bidirectional many-to-one association to JpaNotification
-	@OneToMany(mappedBy="receiver")
+	@OneToMany(mappedBy="receiver", fetch = FetchType.LAZY)
 	private Set<JpaNotification> receivedNotifications;
 
 	//bidirectional many-to-one association to JpaNotification
-	@OneToMany(mappedBy="sender")
+	@OneToMany(mappedBy="sender", fetch = FetchType.LAZY)
 	private Set<JpaNotification> sentNotifications;
 
 	public JpaEmployee() {

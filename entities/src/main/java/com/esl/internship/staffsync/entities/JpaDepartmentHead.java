@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.entities;
 
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -14,7 +15,6 @@ import java.util.Objects;
  */
 @Entity
 @Table(name="department_head")
-@NamedQuery(name="JpaDepartmentHead.findAll", query="SELECT j FROM JpaDepartmentHead j")
 public class JpaDepartmentHead implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -22,6 +22,7 @@ public class JpaDepartmentHead implements Serializable {
 	@Column(name="department_head_id", unique=true, nullable=false, length=64)
 	private String departmentHeadId;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -31,16 +32,17 @@ public class JpaDepartmentHead implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
 	//bidirectional many-to-one association to JpaDepartment
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="department_id", nullable=false)
 	private JpaDepartment department;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 

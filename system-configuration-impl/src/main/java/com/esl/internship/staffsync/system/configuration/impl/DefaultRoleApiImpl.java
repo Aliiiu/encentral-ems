@@ -2,9 +2,7 @@ package com.esl.internship.staffsync.system.configuration.impl;
 
 
 import com.esl.internship.staffsync.commons.model.Employee;
-import com.esl.internship.staffsync.entities.JpaPermission;
 import com.esl.internship.staffsync.entities.JpaRole;
-import com.esl.internship.staffsync.entities.QJpaPermission;
 import com.esl.internship.staffsync.entities.QJpaRole;
 import com.esl.internship.staffsync.system.configuration.api.IRoleApi;
 import com.esl.internship.staffsync.system.configuration.dto.RoleDTO;

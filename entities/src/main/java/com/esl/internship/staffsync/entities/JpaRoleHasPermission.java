@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.entities;
 
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -29,12 +30,12 @@ public class JpaRoleHasPermission implements Serializable {
 	private Timestamp dateCreated;
 
 	//bidirectional many-to-one association to JpaPermission
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="permission_id", nullable=false)
 	private JpaPermission permission;
 
 	//bidirectional many-to-one association to JpaRole
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="role_id", nullable=false)
 	private JpaRole role;
 

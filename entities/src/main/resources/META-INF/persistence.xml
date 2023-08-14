@@ -2,9 +2,17 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="ENTITY_PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+    <!-- Converters -->
+    <class>com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter</class>
+    <class>com.esl.internship.staffsync.entities.attribute.converter.ActionConverter</class>
+    <class>com.esl.internship.staffsync.entities.attribute.converter.LeaveRequestStatusConverter</class>
     <class>com.esl.internship.staffsync.entities.attribute.converter.NotificationPriorityConverter</class>
     <class>com.esl.internship.staffsync.entities.attribute.converter.NotificationStatusConverter</class>
     <class>com.esl.internship.staffsync.entities.attribute.converter.EmployeeStatusConverter</class>
+    <class>com.esl.internship.staffsync.entities.attribute.converter.EmployeeRequestStatusConverter</class>
+
+    <!-- Entities -->
     <class>com.esl.internship.staffsync.entities.JpaAnnouncement</class>
     <class>com.esl.internship.staffsync.entities.JpaAnnouncementRecipient</class>
     <class>com.esl.internship.staffsync.entities.JpaAppConfig</class>
@@ -27,9 +35,7 @@
     <class>com.esl.internship.staffsync.entities.JpaRole</class>
     <class>com.esl.internship.staffsync.entities.JpaRoleHasPermission</class>
 
-    <class>com.esl.internship.staffsync.entities.JsonStringConverter</class>
-    <class>com.esl.internship.staffsync.entities.attribute.converter.ActionConverter</class>
-    <class>com.esl.internship.staffsync.entities.attribute.converter.LeaveRequestStatusConverter</class>
+
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/staffsync"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>

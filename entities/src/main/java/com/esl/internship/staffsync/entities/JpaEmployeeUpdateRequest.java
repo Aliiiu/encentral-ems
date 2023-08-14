@@ -1,5 +1,7 @@
 package com.esl.internship.staffsync.entities;
 
+
+import com.esl.internship.staffsync.entities.attribute.converter.EmployeeRequestStatusConverter;
 import com.esl.internship.staffsync.entities.enums.EmployeeRequestStatus;
 import com.google.common.base.MoreObjects;
 
@@ -22,8 +24,8 @@ public class JpaEmployeeUpdateRequest implements Serializable {
 	@Column(name="employee_update_request_id", unique=true, nullable=false, length=64)
 	private String employeeUpdateRequestId;
 
+	@Convert(converter = EmployeeRequestStatusConverter.class)
 	@Column(name="approval_status", nullable=false, length=2147483647)
-	@Enumerated(EnumType.STRING)
 	private EmployeeRequestStatus approvalStatus;
 
 	@Column(name="date_created", nullable=false)
@@ -48,12 +50,12 @@ public class JpaEmployeeUpdateRequest implements Serializable {
 	private String updateNewValue;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="approver_id")
 	private JpaEmployee approver;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 

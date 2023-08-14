@@ -173,11 +173,10 @@
         <module>leave-management-impl</module>
         <module>event-management-api</module>
         <module>event-management-impl</module>
+        <module>employee-management-api</module>
+        <module>employee-management-impl</module>
         <module>authentication-api</module>
         <module>authentication-impl</module>
-        <module>authorization-api</module>
-        <module>authorization-impl</module>
-
     </modules>
 </project>
 
