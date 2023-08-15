@@ -195,7 +195,6 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
-
     public String getProfilePictureId() {
         return profilePictureId;
     }

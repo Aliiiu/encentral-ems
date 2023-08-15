@@ -89,17 +89,13 @@ public class EmployeeDocumentUploadController extends Controller {
     )
     @ApiResponses({
             @ApiResponse(code = 200, message = "Document"),
-            @ApiResponse(code = 404, message = "File not found")
+            @ApiResponse(code = 404, message = "Document not found")
     })
     public Result getDocumentFile(String employeeDocumentId) {
-        Optional<EmployeeDocument> document = iEmployeeDocumentUploadApi.getEmployeeDocument(employeeDocumentId);
+        Optional<File> document = iEmployeeDocumentUploadApi.getEmployeeActualDocument(employeeDocumentId);
 
-        if (document.isPresent()) {
-            File file = new File(document.get().getDocumentUploadPath());
-            if (file.exists()) {
-                return ok(file);
-            }
-        }        
+        if (document.isPresent())
+            return ok(document.get());
         return notFound("Document not found");
     }
 

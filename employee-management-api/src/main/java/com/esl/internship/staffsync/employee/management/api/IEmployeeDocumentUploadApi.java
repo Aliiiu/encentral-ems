@@ -8,6 +8,7 @@ import com.esl.internship.staffsync.document.management.model.Document;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO;
 import com.esl.internship.staffsync.employee.management.model.EmployeeDocument;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public interface IEmployeeDocumentUploadApi {
 
     Optional<EmployeeDocument> getEmployeeDocument(String employeeDocumentId);
 
-    Optional<Document> getEmployeeActualDocument(String employeeDocumentId);
+    Optional<File> getEmployeeActualDocument(String employeeDocumentId);
 
     List<EmployeeDocument> getDocumentsOwnedByEmployee(String employeeId);
 

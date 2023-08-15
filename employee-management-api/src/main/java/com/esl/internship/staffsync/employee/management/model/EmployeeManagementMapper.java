@@ -64,7 +64,6 @@ public interface EmployeeManagementMapper {
     @Mappings({
             @Mapping(target = "employeeId", source = "employee.employeeId"),
             @Mapping(target = "documentType", source = "documentType.optionValue"),
-            @Mapping(target = "documentId", source = "document.documentId"),
             @Mapping(target = "documentName", source = "document.documentName"),
             @Mapping(target = "documentDescription", source = "document.documentDescription")
     })
@@ -75,10 +74,22 @@ public interface EmployeeManagementMapper {
 
     @Mappings({
             @Mapping(target = "approverEmployeeId", source = "approver.employeeId"),
-            @Mapping(target = "employeeId", source = "employee.employeeId")
+            @Mapping(target = "employeeId", source = "employee.employeeId"),
+            @Mapping(target = "employeeGender", source = "employeeGender.optionValue"),
+            @Mapping(target = "stateOfOrigin", source = "stateOfOrigin.optionValue"),
+            @Mapping(target = "countryOfOrigin", source = "countryOfOrigin.optionValue"),
+            @Mapping(target = "highestCertification", source = "highestCertification.optionValue"),
+            @Mapping(target = "employeeMaritalStatus", source = "employeeMaritalStatus.optionValue")
     })
     EmployeeUpdateRequest mapEmployeeUpdateRequest(JpaEmployeeUpdateRequest entity);
 
+    @Mappings({
+            @Mapping(source = "employeeGenderOptionId", target = "employeeGender.optionValue"),
+            @Mapping(source = "stateOfOriginOptionId", target = "stateOfOrigin.optionValue"),
+            @Mapping(source = "countryOfOriginOptionId", target = "countryOfOrigin.optionValue"),
+            @Mapping(source = "highestCertificationOptionId", target = "highestCertification.optionValue"),
+            @Mapping(source = "stateOfOriginOptionId", target = "employeeMaritalStatus.optionValue"),
+    })
     JpaEmployeeUpdateRequest mapEmployeeUpdateRequestDTO(EmployeeUpdateRequestDTO modelDTO);
 
 }

@@ -127,6 +127,21 @@ GET            /employee/set-role/:employeeId/:roleId/                         c
 POST           /employee/profile-picture/:employeeId/                          controllers.employee_management.EmployeeController.setEmployeeProfilePicture(employeeId: String)
 GET            /employee/profile-picture/:employeeId/                          controllers.employee_management.EmployeeController.getEmployeeProfilePicture(employeeId: String)
 
+###### Employee Update Request ######
+POST           /employee-update/:employeeId/                                   controllers.employee_management.EmployeeUpdateRequestController.submitUpdateRequest(employeeId: String)
+GET            /employee-update/cancel/:employeeUpdateRequestId/:employeeId/   controllers.employee_management.EmployeeUpdateRequestController.cancelUpdateRequest(employeeUpdateRequestId: String, employeeId: String)
+GET            /employee-update/all/                                           controllers.employee_management.EmployeeUpdateRequestController.getAllEmployeeUpdateRequest()
+GET            /employee-update/pending/                                       controllers.employee_management.EmployeeUpdateRequestController.getAllPendingUpdateRequest()
+GET            /employee-update/approved/                                      controllers.employee_management.EmployeeUpdateRequestController.getAllApprovedUpdateRequest()
+GET            /employee-update/completed/                                     controllers.employee_management.EmployeeUpdateRequestController.getAllCompletedUpdateRequest()
+GET            /employee-update/all/:employeeId/                               controllers.employee_management.EmployeeUpdateRequestController.getUpdateRequestsOfEmployee(employeeId: String)
+GET            /employee-update/pending/:employeeId/                           controllers.employee_management.EmployeeUpdateRequestController.getPendingUpdateRequestsOfEmployee(employeeId: String)
+GET            /employee-update/approved/:approverEmployeeId/                  controllers.employee_management.EmployeeUpdateRequestController.getAllApprovedUpdateRequestByEmployee(approverEmployeeId: String)
+GET            /employee-update/completed/:employeeId/                         controllers.employee_management.EmployeeUpdateRequestController.getCompletedUpdateRequestsOfEmployee(employeeId: String)
+POST           /employee-update/review/:employeeUpdateRequestId/:approverEmployeeId         controllers.employee_management.EmployeeUpdateRequestController.reviewUpdateRequest(employeeUpdateRequestId: String, approverEmployeeId: String)
+DELETE         /employee-update/:employeeUpdateRequestId/                      controllers.employee_management.EmployeeUpdateRequestController.deleteUpdateRequest(employeeUpdateRequestId: String)
+GET            /employee-update/:employeeUpdateRequestId/                      controllers.employee_management.EmployeeUpdateRequestController.getUpdateRequest(employeeUpdateRequestId: String)
+
 ##### Employee Document #####
 POST           /employee/document/:employeeId                                  controllers.employee_management.EmployeeDocumentUploadController.uploadDocument(employeeId: String)
 GET            /employee/document/:employeeId                                  controllers.employee_management.EmployeeDocumentUploadController.retrieveAllEmployeeDocuments(employeeId: String)

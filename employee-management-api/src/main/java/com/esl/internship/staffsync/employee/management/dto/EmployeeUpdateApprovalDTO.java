@@ -12,7 +12,6 @@ public class EmployeeUpdateApprovalDTO {
     @NotNull
     private EmployeeRequestStatus approvalStatus;
 
-    @NotNull
     private String approverEmployeeId;
 
     private String remarks;

@@ -39,6 +39,17 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         createDirectory(documentRoot);
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Add a new document
+     *
+     * @param documentDTO Document Data
+     * @param saveInfo Saving information
+     * @param employee Employee saving the document
+     *
+     * @return Response<Document>
+     */
     @Override
     public Response<Document> addDocument(DocumentDTO documentDTO, SaveInfo saveInfo, Employee employee) {
         JpaDocument jpaDocument = INSTANCE.mapDocumentDTO(documentDTO);
@@ -54,11 +65,9 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
 
         jpaDocument.setDocumentId(UUID.randomUUID().toString());
         jpaDocument.setDocumentUploadPath(path);
+        jpaDocument.setDocumentName(saveInfo.getResolvedName());
         jpaDocument.setCreatedBy(stringifyEmployee(employee));
         jpaDocument.setDateCreated(Timestamp.from(Instant.now()));
-
-        System.out.println("\n\t" + jpaDocument);
-        System.out.println("\tDocument " + jpaDocument.getDocumentId());
 
         jpaApi.em().persist(jpaDocument);
 
@@ -67,11 +76,31 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         return response;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Get an uploaded document by ID
+     *
+     * @param documentId ID of the document
+     *
+     * @return Optional<Document>
+     */
     @Override
     public Optional<Document> getDocumentById(String documentId) {
         return Optional.ofNullable(INSTANCE.mapDocument(getJpaDocumentById(documentId)));
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Update a Document
+     *
+     * @param documentDTO Document Data
+     * @param saveInfo Saving information
+     * @param employee Employee saving the document
+     *
+     * @return boolean
+     */
     @Override
     public boolean updateDocument(String documentId, DocumentDTO documentDTO, SaveInfo saveInfo, Employee employee) {
         JpaDocument document = getJpaDocumentById(documentId);
@@ -91,24 +120,46 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         }
 
         document.setDocumentDescription(documentDTO.getDocumentDescription());
-        document.setDocumentName(documentDTO.getDocumentName());
+        document.setDocumentName(saveInfo.getResolvedName());
         document.setDateModified(Timestamp.from(Instant.now()));
         document.setModifiedBy(stringifyEmployee(employee, "Updated Document"));
 
         return true;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Get the actual document file
+     *
+     * @param documentId Document ID
+     *
+     * @return Response<DocumentDTO>
+     */
     @Override
     public Optional<DocumentDTO> getFileById(String documentId) {
         JpaDocument document = getJpaDocumentById(documentId);
         if (document == null)
             return Optional.empty();
 
-        DocumentDTO documentDTO = INSTANCE.mapDocumentDTO(document);
-        documentDTO.setFile(openFile(document.getDocumentUploadPath()));
-        return Optional.of(documentDTO);
+        File file = new File(document.getDocumentUploadPath());
+        if (file.exists()){
+            DocumentDTO documentDTO = INSTANCE.mapDocumentDTO(document);
+            documentDTO.setFile(file);
+            return Optional.of(documentDTO);
+        }
+        return Optional.empty();
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Delete a Document
+     *
+     * @param documentId ID of document to delete
+     *
+     * @return boolean
+     */
     @Override
     public boolean deleteDocument(String documentId) {
         JpaDocument document = getJpaDocumentById(documentId);
@@ -124,22 +175,54 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         return false;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Get the upload root path
+     *
+     * @return String
+     */
     @Override
     public String documentUploadRootPath() {
         return documentRoot;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Set the upload root path
+     *
+     * @param pathName Path
+     */
     @Override
     public void setDocumentUploadRootPath(String pathName) {
         documentRoot = pathName;
         createDirectory(documentRoot);
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Helper function to create directories
+     *
+     * @param folderPath Folder path
+     *
+     * @return boolean (True on successful creation)
+     */
     private boolean createDirectory(String folderPath) {
         Path path = Path.of(folderPath);
         return createDirectory(path);
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Helper function to create directories
+     *
+     * @param folderPath Folder path
+     *
+     * @return boolean (True on successful creation)
+     */
     private boolean createDirectory(Path path) {
         if (!Files.exists(path)) {
             try {
@@ -152,6 +235,16 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         return true;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Temporarily write file to disk by appending a UUID to file to be deleted
+     *
+     * @param saveInfo Saving information
+     * @param file File to write to disk
+     *
+     * @return String Full path of the file written to disk
+     */
     private String tempWriteToDisk(SaveInfo saveInfo, File file) {
         SaveInfo tempCopy = new SaveInfo(UUID.randomUUID() + saveInfo.getFileName());
         tempCopy.setRename(saveInfo.renameFile());
@@ -161,28 +254,36 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         return writeToDisk(tempCopy, file);
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Resolve destination file name
+     *
+     * @param saveInfo Saving information
+     *
+     * @return String Full destination path of the file
+     */
     private Path resolveDestinationFilename(SaveInfo saveInfo) {
         Path parent = Paths.get(documentRoot).resolve(saveInfo.getSaveDirectory());
         createDirectory(parent);
         String destinationFilename;
 
-        if (saveInfo.renameFile()) {
-            String extension = "";
-            int dotIndex = saveInfo.getFileName().lastIndexOf(".");
-            if (dotIndex >= 0) {
-                extension = saveInfo.getFileName().substring(dotIndex);
-            }
-            destinationFilename = saveInfo.getNewFileName() + extension;
-        } else {
-            destinationFilename = saveInfo.getFileName();
-        }
+        destinationFilename = saveInfo.getResolvedName();
 
         return parent.resolve(destinationFilename);
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Write file to disk
+     *
+     * @param saveInfo Saving information
+     * @param file File to write to disk
+     *
+     * @return String Full path of the file written to disk
+     */
     private String writeToDisk(SaveInfo saveInfo, File file) {
-
-        Path parent = Paths.get(documentRoot).resolve(saveInfo.getSaveDirectory());
 
         Path destinationPath = resolveDestinationFilename(saveInfo);
 
@@ -195,6 +296,16 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         return destinationPath.normalize().toString();
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Helper function to move file to another location
+     *
+     * @param source Source file path
+     * @param target Target Saving information
+     *
+     * @return String Full path of the file moved
+     */
     private String moveToLocation(String source, SaveInfo target) {
         Path destinationPath = resolveDestinationFilename(target);
 
@@ -211,7 +322,18 @@ public class DefaultDocumentManagementImpl implements IDocumentManagementApi {
         return new File(fileName);
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 12/08/2023
+     * @description Helper function to get JpaDocument by ID
+     *
+     * @param documentId ID of the document to fetch
+     *
+     * @return JpaDocument
+     */
     private JpaDocument getJpaDocumentById(String documentId) {
+        if (documentId == null)
+            return null;
         return  new JPAQueryFactory(jpaApi.em())
                 .selectFrom(qJpaDocument)
                 .where(qJpaDocument.documentId.eq(documentId))

@@ -17,9 +17,23 @@ public interface IEmployeeUpdateRequestApi {
 
     List<EmployeeUpdateRequest> getUpdateRequestsOfEmployee(String employeeId);
 
+    List<EmployeeUpdateRequest> getPendingUpdateRequestsOfEmployee(String employeeId);
+
+    List<EmployeeUpdateRequest> getCompletedUpdateRequestsOfEmployee(String employeeId);
+
     List<EmployeeUpdateRequest> getAllEmployeeUpdateRequests();
 
-    boolean reviewEmployeeUpdateRequest(String employeeUpdateRequestId, String approverEmployeeId, EmployeeUpdateApprovalDTO employeeUpdateApprovalDTO);
+    List<EmployeeUpdateRequest> getAllApprovedUpdateRequests();
+
+    List<EmployeeUpdateRequest> getAllApprovedUpdateRequestsByEmployee(String approverEmployeeId);
+
+    List<EmployeeUpdateRequest> getAllPendingUpdateRequests();
+
+    List<EmployeeUpdateRequest> getAllCompletedUpdateRequests();
+
+    Response<Boolean> reviewEmployeeUpdateRequest(String employeeUpdateRequestId, String approverEmployeeId, EmployeeUpdateApprovalDTO employeeUpdateApprovalDTO);
+
+    Response<Boolean> cancelEmployeeUpdateRequest(String employeeUpdateRequestId, String employeeId);
 
     boolean deleteEmployeeUpdateRequest(String employeeUpdateRequestId);
 

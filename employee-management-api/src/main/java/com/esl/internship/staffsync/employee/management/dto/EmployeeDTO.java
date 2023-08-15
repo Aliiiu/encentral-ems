@@ -33,10 +33,6 @@ public class EmployeeDTO {
 
     @NotNull
     private String lastName;
-
-    @NotNull
-    private Integer leaveDays;
-
     @NotNull
     private String password;
 
@@ -130,14 +126,6 @@ public class EmployeeDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public Integer getLeaveDays() {
-        return leaveDays;
-    }
-
-    public void setLeaveDays(Integer leaveDays) {
-        this.leaveDays = leaveDays;
     }
 
     public String getPassword() {

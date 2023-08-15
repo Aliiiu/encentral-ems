@@ -6,8 +6,6 @@ import com.esl.internship.staffsync.document.management.dto.DocumentDTO;
 import com.esl.internship.staffsync.document.management.dto.SaveInfo;
 import com.esl.internship.staffsync.document.management.model.Document;
 import com.esl.internship.staffsync.employee.management.api.IEmployeeDocumentUploadApi;
-import com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO;
-import com.esl.internship.staffsync.employee.management.model.EmployeeDocument;
 import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 import com.esl.internship.staffsync.employee.management.api.IPasswordManagementApi;
@@ -129,7 +127,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
         jpaEmployee.setEmployeeMaritalStatus(employeeMaritalStatus);
         jpaEmployee.setCreatedBy(stringifyEmployee(employee));
         jpaEmployee.setDateCreated(Timestamp.from(Instant.now()));
-        jpaEmployee.setLoginAttempts(3);
+        jpaEmployee.setLoginAttempts(0);
         setPassword(jpaEmployee, employeeDto.getPassword());
 
         jpaApi.em().persist(jpaEmployee);
@@ -344,6 +342,18 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
                 .execute() == 1;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 09/08/2023
+     * @description Set the profile Picture of an employee
+     *
+     * @param employeeId ID of the employee
+     * @param file  The image file
+     * @param filename  Name of the file (as uploaded by the user)
+     * @param employee Employee making the change
+     *
+     * @return boolean
+     */
     @Override
     public boolean setEmployeeProfilePicture(String employeeId, File file, String filename, Employee employee) {
 
@@ -351,12 +361,12 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
 
         DocumentDTO documentDTO = new DocumentDTO() ;
         documentDTO.setFile(file);
-        documentDTO.setDocumentName("Profile Picture");
         documentDTO.setDocumentDescription("Profile Picture of employee: " + employeeId);
         SaveInfo saveInfo = new SaveInfo(filename);
         saveInfo.setSaveDirectory(resolveEmployeeDirectory(jpaEmployee));
         saveInfo.setNewFileName(employeeId + "_ProfilePicture");
         saveInfo.setRename(true);
+        saveInfo.resolveExtension();
 
         if (jpaEmployee.getProfilePictureUrl() == null) {
 
@@ -376,12 +386,30 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
         return false;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 09/08/2023
+     * @description Resolve the directory to store employee files
+     *
+     * @param employee Employee object
+     *
+     * @return String
+     */
     private String resolveEmployeeDirectory(JpaEmployee employee) {
         return Path.of(iEmployeeDocumentUploadApi.getEmployeeDocumentUploadRoot(),
-                String.format("%s(%s)", employee.getEmployeeId(), employee.getFirstName())
+                String.format("%s(%s)", employee.getEmployeeId(), employee.getEmployeeEmail())
         ).toString();
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 09/08/2023
+     * @description Get the profile Picture of an employee
+     *
+     * @param employeeId ID of the employee
+     *
+     * @return Optional<File>
+     */
     @Override
     public Optional<File> getEmployeeProfilePicture(String employeeId) {
         Optional<String> path = getEmployeeProfilePicturePath(employeeId);
@@ -391,6 +419,15 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
         return Optional.empty();
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 09/08/2023
+     * @description Get the actual disk path of employee profile picture
+     *
+     * @param employeeId ID of the employee
+     *
+     * @return Optional<String>
+     */
     @Override
     public Optional<String> getEmployeeProfilePicturePath(String employeeId) {
         JpaEmployee employee = getJpaEmployee(employeeId);
@@ -555,6 +592,8 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return JpaEmployee An employee record or null if not found
      */
     private JpaEmployee getJpaEmployeeByEmail(String email) {
+        if (email == null)
+            return null;
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaEmployee)
                 .where(qJpaEmployee.employeeEmail.eq(email))
                 .fetchOne();
@@ -570,6 +609,8 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return JpaRole A role record or null if not found
      */
     private JpaRole getJpaRole(String roleId) {
+        if (roleId == null)
+            return null;
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaRole)
                 .where(qJpaRole.roleId.eq(roleId))
                 .fetchOne();
@@ -585,6 +626,8 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return JpaOption An option record or null if not found
      */
     private JpaOption getJpaOption(String optionId) {
+        if (optionId == null)
+            return null;
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaOption)
                 .where(qJpaOption.optionId.eq(optionId))
                 .fetchOne();
@@ -600,6 +643,8 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
      * @return JpaDepartment An employee record or null if not found
      */
     private JpaDepartment getJpaDepartment(String departmentId) {
+        if (departmentId == null)
+            return null;
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaDepartment)
                 .where(qJpaDepartment.departmentId.eq(departmentId))
                 .fetchOne();

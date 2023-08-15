@@ -22,7 +22,7 @@ public class JpaEmergencyContact implements Serializable {
 	@Column(name="emergency_contact_id", unique=true, nullable=false, length=64)
 	private String emergencyContactId;
 
-	@Column(nullable=false, length=64)
+	@Column(length=64)
 	private String address;
 
 	@Convert(converter = JsonStringConverter.class)
@@ -35,14 +35,11 @@ public class JpaEmergencyContact implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
-	@Column(nullable=false, length=64)
+	@Column(length=64)
 	private String email;
 
-	@Column(name="first_name", nullable=false, length=64)
-	private String firstName;
-
-	@Column(name="last_name", nullable=false, length=64)
-	private String lastName;
+	@Column(name="full_name", nullable=false, length=64)
+	private String fullName;
 
 	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
@@ -115,20 +112,12 @@ public class JpaEmergencyContact implements Serializable {
 		this.email = email;
 	}
 
-	public String getFirstName() {
-		return this.firstName;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return this.lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	public String getModifiedBy() {
@@ -189,7 +178,7 @@ public class JpaEmergencyContact implements Serializable {
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this.getClass())
-				.add("FirstName", this.getFirstName())
+				.add("FullName", this.getFullName())
 				.add("Email", this.getEmail())
 				.add("Relationship", this.getRelationship())
 				.toString();

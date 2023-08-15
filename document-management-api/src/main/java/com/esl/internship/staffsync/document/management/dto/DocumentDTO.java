@@ -9,9 +9,6 @@ public class DocumentDTO {
 
     private String documentDescription;
 
-    @NotNull
-    private String documentName;
-
     public File getFile() {
         return file;
     }
@@ -28,11 +25,4 @@ public class DocumentDTO {
         this.documentDescription = documentDescription;
     }
 
-    public String getDocumentName() {
-        return documentName;
-    }
-
-    public void setDocumentName(String documentName) {
-        this.documentName = documentName;
-    }
 }
