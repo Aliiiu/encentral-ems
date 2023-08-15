@@ -32,7 +32,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     JPAApi jpaApi;
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to check a user in
      *
@@ -60,7 +60,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to check a user out
      *
@@ -78,7 +78,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch a single attendance record
      *
@@ -95,7 +95,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch attendance objects for an employee within a time range
      *
@@ -116,7 +116,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch all attendance objects created by a user
      *
@@ -135,7 +135,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch attendance report objects for an employee within a time range
      *
@@ -150,7 +150,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch aggregated attendance report objects for an employee within a time range
      *
@@ -165,7 +165,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch aggregated attendance report objects for a department within a time range
      *
@@ -180,7 +180,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch aggregated attendance report objects for all employees within a time range
      *
@@ -195,7 +195,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch attendance objects for a department within a time range
      *
@@ -216,7 +216,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch all attendance objects for a department
      *
@@ -235,7 +235,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch attendance report objects for a department within a time range
      *
@@ -250,7 +250,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch attendance objects within a time range
      *
@@ -270,7 +270,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch all attendance objects
      *
@@ -286,7 +286,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to fetch attendance report objects within a time range
      *
@@ -301,7 +301,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 11/08/2023
      * @description Method to delete an attendance record by id
      *
@@ -317,7 +317,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 11/08/2023
      * @description Method to delete all an employee's attendance record
      *
@@ -333,7 +333,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 11/08/2023
      * @description Method to check if employee has signed in
      *
@@ -350,7 +350,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 11/08/2023
      * @description Method to check if employee's account is active
      *
@@ -367,7 +367,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 11/08/2023
      * @description Method to check if employee's account exists
      *
@@ -383,7 +383,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 11/08/2023
      * @description Method to check if department exists
      *
@@ -399,7 +399,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to aggregate a list of attendance records based on date and employee id
      *
@@ -437,7 +437,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     }
 
     /**
-     * @author DEMILADE
+     * @author ALIU
      * @dateCreated 10/08/2023
      * @description Method to aggregate a list of attendance records based on employee id
      *
