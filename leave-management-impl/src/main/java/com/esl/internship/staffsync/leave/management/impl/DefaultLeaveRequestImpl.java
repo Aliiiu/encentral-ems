@@ -1,6 +1,7 @@
 package com.esl.internship.staffsync.leave.management.impl;
 
 import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.commons.util.DateUtility;
 import com.esl.internship.staffsync.entities.JpaEmployee;
 import com.esl.internship.staffsync.entities.JpaLeaveRequest;
 import com.esl.internship.staffsync.entities.QJpaEmployee;
@@ -11,6 +12,7 @@ import com.esl.internship.staffsync.leave.management.api.ILeaveRequest;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.model.LeaveRequest;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 
@@ -43,6 +45,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
 
     @Inject
     JPAApi jpaApi;
+
+    //TODO: Check if leave type option is of option type leave type
 
 
     /**
@@ -393,14 +397,14 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
     public boolean markLeaveRequestAsComplete(int days, String employeeId, Employee employee) {
         AtomicBoolean isTransactionSuccessful = new AtomicBoolean(false);
 
-        Date endDate = convertToDate(LocalDate.now());
+        Date endDate = DateUtility.convertToDate(LocalDate.now());
         int daysUsed = getNumberOfLeaveDays(employeeId) + days;
         jpaApi.withTransaction(em -> {
             boolean updatedRequest = new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                     .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.COMPLETED)
                     .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
                     .set(qJpaLeaveRequest.duration, daysUsed)
-                    //.set(qJpaLeaveRequest.endDate, endDate)
+                    .set(qJpaLeaveRequest.endDate, endDate)
                     .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
                     .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
                     .execute() == 1;
@@ -490,35 +494,21 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
     @Override
     public long getActualLeaveDuration(Date date) {
         LocalDate currDate = LocalDate.now();
-        LocalDate startDate = convertToLocalDate(date);
+        LocalDate startDate = DateUtility.convertToLocalDate(date);
         return ChronoUnit.DAYS.between(startDate, currDate);
     }
 
-    /**
-     * @author DEMILADE
-     * dateCreated 06/08/2023
-     * @description Method to convert a LocalDate object to a Date object
-     *
-     * @param localDate Local date object
-     *
-     * @return Date object
-     */
-    private  Date convertToDate(LocalDate localDate){
-        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    }
+    @Override
+    public boolean closeCompletedLeave() {
+        Date endDate = DateUtility.convertToDate(LocalDate.now());
+        return new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
+                .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.COMPLETED)
+                .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
+                //.set(qJpaLeaveRequest.duration, daysUsed)
+                .where(qJpaLeaveRequest.endDate.eq(endDate))
+                .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
+                .execute() >= 0;
 
-
-    /**
-     * @author DEMILADE
-     * @dateCreated 06/08/2023
-     * @description Helper method to convert Date to LocalDate
-     *
-     * @param date Date object
-     *
-     * @return LocalDate object
-     */
-    private LocalDate convertToLocalDate(Date date) {
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     /**
@@ -549,7 +539,7 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
      */
     private boolean updateEmployeeCurrentStatus(EmployeeStatus employeeStatus, String employeeId, Employee employee) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaEmployee)
-                //.set(qJpaEmployee.currentStatus, employeeStatus)
+                .set(qJpaEmployee.currentStatus, employeeStatus)
                 .set(qJpaEmployee.modifiedBy, stringifyEmployee(employee, "Updated employee current status"))
                 .set(qJpaEmployee.dateModified, Timestamp.from(Instant.now()))
                 .where(qJpaEmployee.employeeId.eq(employeeId))

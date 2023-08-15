@@ -2,7 +2,8 @@ package security;
 
 
 import actions.AuthAction;
-import com.esl.internship.staffsync.authentication.model.permissions.RequiredPermissions;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import play.mvc.With;
 
 import java.lang.annotation.ElementType;
@@ -15,7 +16,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebAuth {
 
-    RequiredPermissions[] permissions();
+    RoutePermissions[] permissions();
 
-    boolean requireEmployeeId() default false;
+    RouteRole[] roles();
+
 }
