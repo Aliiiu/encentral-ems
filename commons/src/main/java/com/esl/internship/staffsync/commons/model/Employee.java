@@ -267,6 +267,10 @@ public class Employee {
         this.roleId = roleId;
     }
 
+    public String getFullName() {
+        return this.getFirstName() + " " + this.getLastName();
+    }
+
     @Override
     public String toString() {
         return "Employee{" +

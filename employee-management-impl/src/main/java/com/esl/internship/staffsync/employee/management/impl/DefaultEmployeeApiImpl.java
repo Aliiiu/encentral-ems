@@ -14,6 +14,7 @@ import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
+import play.mvc.Http;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -123,6 +124,7 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
         jpaEmployee.setEmployeeGender(employeeGender);
         jpaEmployee.setStateOfOrigin(stateOfOrigin);
         jpaEmployee.setCountryOfOrigin(countryOfOrigin);
+        jpaEmployee.setLoginAttempts(0);
         jpaEmployee.setHighestCertification(highestCertification);
         jpaEmployee.setEmployeeMaritalStatus(employeeMaritalStatus);
         jpaEmployee.setCreatedBy(stringifyEmployee(employee));
@@ -474,6 +476,8 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
     public boolean employeeExists(String employeeId) {
         return getJpaEmployee(employeeId) != null;
     }
+
+
 
     /**
      * @author WARITH

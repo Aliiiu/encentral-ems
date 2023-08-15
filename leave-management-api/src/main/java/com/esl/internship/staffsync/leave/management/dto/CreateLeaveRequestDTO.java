@@ -1,22 +1,18 @@
 package com.esl.internship.staffsync.leave.management.dto;
 
+import com.esl.internship.staffsync.commons.util.DateRangeDTO;
+
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.Optional;
 
-public class CreateLeaveRequestDTO {
+public class CreateLeaveRequestDTO extends DateRangeDTO {
     @NotNull(message = "Employee id field cannot be null")
     private String employeeId;
 
     @NotNull(message = "Leave type id field cannot be null ")
     private String leaveTypeId;
 
-    @NotNull(message = "Start date cannot be null")
-    private Date startDate;
-
-    @Future(message = "Leave date must be greater than current date")
-    private Date endDate;
 
     private String reason = "";
 
@@ -45,21 +41,5 @@ public class CreateLeaveRequestDTO {
 
     public void setLeaveTypeId(String leaveTypeId) {
         this.leaveTypeId = leaveTypeId;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Optional<Date> getEndDate() {
-        return Optional.ofNullable(endDate);
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 }

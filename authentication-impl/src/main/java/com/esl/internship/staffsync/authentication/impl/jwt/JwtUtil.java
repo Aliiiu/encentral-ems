@@ -15,7 +15,6 @@ import java.util.Date;
  */
 public class JwtUtil {
 
-    //TODO: Change to a more secure key
     private final String secret = ConfigFactory.load().getString("play.crypto.secret");
 
     private final Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -38,9 +37,6 @@ public class JwtUtil {
 
         return JWT.create()
                 .withClaim("employeeId", employeeAuthInfo.getEmployeeId())
-                .withClaim("roleId", employeeAuthInfo.getRoleId())
-                .withClaim("firstName", employeeAuthInfo.getFirstName())
-                .withClaim("lastName", employeeAuthInfo.getLastName())
                 .withClaim("employeeEmail", employeeAuthInfo.getEmployeeEmail())
                 .withExpiresAt(expiration)
                 .sign(algorithm);
@@ -56,6 +52,22 @@ public class JwtUtil {
      * @return DecodedJWT object containing payload
      */
     public DecodedJWT verifyToken(String token) {
-        return JWT.require(algorithm).build().verify(token);
+        return JWT.require(algorithm).build().verify(trimToken(token));
+    }
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 15/08/2023
+     * @description Method to conditionally strip 'Bearer '  from token
+     *
+     * @param input Token
+     *
+     * @return Trimmed token
+     */
+    private String trimToken(String input) {
+        if (input != null && input.startsWith("Bearer ")) {
+            return input.substring(7);
+        }
+        return input;
     }
 }

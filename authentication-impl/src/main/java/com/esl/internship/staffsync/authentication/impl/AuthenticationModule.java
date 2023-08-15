@@ -8,5 +8,6 @@ public class AuthenticationModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(IAuthentication.class).to(DefaultAuthenticationImpl.class);
+        bind(AuthJobActor.class).asEagerSingleton();
     }
 }
