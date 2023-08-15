@@ -2,9 +2,7 @@ package com.esl.internship.staffsync.employee.management.api;
 
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.service.response.Response;
-import com.esl.internship.staffsync.document.management.dto.DocumentDTO;
 import com.esl.internship.staffsync.document.management.dto.SaveInfo;
-import com.esl.internship.staffsync.document.management.model.Document;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO;
 import com.esl.internship.staffsync.employee.management.model.EmployeeDocument;
 

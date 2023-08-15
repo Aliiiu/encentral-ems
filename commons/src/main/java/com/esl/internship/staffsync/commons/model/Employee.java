@@ -39,8 +39,6 @@ public class Employee {
 
     private String phoneNumber;
 
-//    private String profilePictureUrl;
-
     private String profilePictureId;
 
     private String modifiedBy;

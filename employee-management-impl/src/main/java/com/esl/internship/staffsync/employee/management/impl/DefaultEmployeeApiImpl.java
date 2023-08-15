@@ -14,7 +14,6 @@ import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
-import play.mvc.Http;
 
 import javax.inject.Inject;
 import java.io.File;

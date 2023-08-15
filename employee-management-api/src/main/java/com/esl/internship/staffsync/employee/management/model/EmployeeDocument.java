@@ -1,7 +1,5 @@
 package com.esl.internship.staffsync.employee.management.model;
 
-import com.esl.internship.staffsync.document.management.model.Document;
-
 import java.sql.Timestamp;
 
 public class EmployeeDocument {

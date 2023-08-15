@@ -1,6 +1,5 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
