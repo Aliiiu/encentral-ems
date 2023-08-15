@@ -50,4 +50,6 @@ public interface ILeaveRequest {
     Optional<LeaveRequest> getOngoingLeaveRequestByEmployeeId(String employeeId);
 
     long getActualLeaveDuration(Date date);
+
+    boolean closeCompletedLeave();
 }

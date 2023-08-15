@@ -1,7 +1,9 @@
 package controllers.system_configuration;
 
 
-import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.INotification;
 import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
@@ -12,6 +14,7 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import security.WebAuth;
 
 import javax.inject.Inject;
 
@@ -28,6 +31,9 @@ public class NotificationController extends Controller {
     INotificationTemplate iNotificationTemplate;
 
     @Inject
+    IAuthentication iAuthentication;
+
+    @Inject
     MyObjectMapper myObjectMapper;
 
     @ApiOperation("Get single Notification by id")
@@ -38,12 +44,22 @@ public class NotificationController extends Controller {
                     @ApiResponse(code = 404, response = String.class, message = "Notification not found")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_notification}, roles = {RouteRole.admin, RouteRole.user})
     public Result getNotification(@ApiParam(value = "Notification Id", required = true) String notificationId) {
 
         if (notificationId.length() == 0) {
             return Results.badRequest("Invalid notification id");
         }
-        //TODO: Check if AppUser ID matches receiver id or is Admin
         return iNotification.getNotification(notificationId)
                 .map(e -> Results.ok(myObjectMapper.toJsonString(e)))
                 .orElseGet(Results::notFound);
@@ -54,16 +70,28 @@ public class NotificationController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Notification.class, responseContainer = "List", message = "Notification retrieved"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid Employee id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource"),
                     @ApiResponse(code = 404, response = String.class, message = "Employee Notification not found")
             }
     )
-
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_notification}, roles = {RouteRole.admin, RouteRole.user})
     public Result getEmployeeNotifications(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid Employee id");
         }
-        //TODO: Check if AppUser ID matches receiver id or is admin
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         return Results.ok(myObjectMapper.toJsonString(
                 iNotification.getEmployeeReceivedNotifications(employeeId)
         ));
@@ -73,11 +101,22 @@ public class NotificationController extends Controller {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, response = Notification.class, responseContainer = "List", message = "Notifications retrieved"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource"),
                     @ApiResponse(code = 404, response = String.class, message = "Employee Notification not found")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_leave_request}, roles = {RouteRole.admin})
     public Result getSystemNotifications() {
-        //TODO : Check if Admin
         return Results.ok(myObjectMapper.toJsonString(
                 iNotification.getSystemNotifications()
         ));
@@ -88,16 +127,28 @@ public class NotificationController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Notification.class, responseContainer = "List", message = "Notification retrieved"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid Employee id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource"),
                     @ApiResponse(code = 404, response = String.class, message = "Employee Notifications not found")
             }
     )
-
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_notification}, roles={RouteRole.admin, RouteRole.user})
     public Result getEmployeeSentNotifications(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid Employee id");
         }
-        //TODO: Check if AppUser ID matches receiver id or is admin
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         return Results.ok(myObjectMapper.toJsonString(
                 iNotification.getEmployeeSentNotifications(employeeId)
         ));
@@ -108,11 +159,25 @@ public class NotificationController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Notification.class, responseContainer = "List", message = "Notifications retrieved"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid Employee id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource"),
                     @ApiResponse(code = 404, response = String.class, message = "Employee Notification not found")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_notification }, roles ={RouteRole.admin, RouteRole.user})
     public Result getEmployeeUnReadNotifications(@ApiParam(value = "Employee Id", required = true) String employeeId) {
-        //TODO: Check if AppUser ID matches receiver id or if Admin
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
@@ -128,13 +193,23 @@ public class NotificationController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid notification id"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.update_notification }, roles ={RouteRole.admin, RouteRole.user})
     public Result markNotificationAsRead(@ApiParam(value = "Notification Id", required = true) String notificationId) {
         if (notificationId.length() == 0) {
             return Results.badRequest("Invalid notification id");
         }
-        //TODO: Check if receiver id matches user id
         return ok(myObjectMapper.toJsonString(
-                iNotification.markNotificationAsRead(notificationId, getTestEmployee())
+                iNotification.markNotificationAsRead(notificationId, iAuthentication.getContextCurrentEmployee().orElseThrow())
         ));
     }
 
@@ -145,12 +220,23 @@ public class NotificationController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid notification id"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.update_notification }, roles ={ RouteRole.admin, RouteRole.user})
     public Result markNotificationAsDeleted(@ApiParam(value = "Notification Id", required = true) String notificationId) {
         if (notificationId.length() == 0) {
             return Results.badRequest("Invalid notification id");
         }
         return ok(myObjectMapper.toJsonString(
-                iNotification.markNotificationAsDeleted(notificationId, getTestEmployee())
+                iNotification.markNotificationAsDeleted(notificationId, iAuthentication.getContextCurrentEmployee().orElseThrow())
         ));
     }
 
@@ -162,6 +248,17 @@ public class NotificationController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid notification id"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.delete_notification }, roles ={RouteRole.admin})
     public Result deleteNotification(@ApiParam(value = "Notification Id", required = true) String notificationId) {
         if (notificationId.length() == 0) {
             return Results.badRequest("Invalid notification id");
@@ -178,6 +275,17 @@ public class NotificationController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.delete_notification }, roles ={RouteRole.admin})
     public Result deleteAllEmployeeNotifications(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
@@ -192,14 +300,29 @@ public class NotificationController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Boolean.class, message = "Notifications marked as deleted"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.update_notification }, roles ={RouteRole.admin, RouteRole.user})
     public Result markAllEmployeeNotificationsAsDeleted(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         return ok(myObjectMapper.toJsonString(
-                iNotification.markAllEmployeeNotificationAsDeleted(employeeId, getTestEmployee())
+                iNotification.markAllEmployeeNotificationAsDeleted(employeeId, iAuthentication.getContextCurrentEmployee().orElseThrow())
         ));
     }
 
@@ -208,14 +331,29 @@ public class NotificationController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Boolean.class, message = "Notifications marked as reed"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.update_notification }, roles ={RouteRole.admin, RouteRole.user})
     public Result markAllEmployeeNotificationsAsRead(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         return ok(myObjectMapper.toJsonString(
-                iNotification.markAllEmployeeNotificationAsRead(employeeId, getTestEmployee())
+                iNotification.markAllEmployeeNotificationAsRead(employeeId, iAuthentication.getContextCurrentEmployee().orElseThrow())
         ));
     }
 
@@ -237,26 +375,22 @@ public class NotificationController extends Controller {
                     dataTypeClass = CreateNotificationDTO.class
             )
     })
+    @WebAuth(permissions= {RoutePermissions.create_notification }, roles ={RouteRole.admin})
     public Result createNotification() {
         final var notificationCreationForm = validate(request().body().asJson(), CreateNotificationDTO.class);
         if (notificationCreationForm.hasError) {
             return Results.badRequest(notificationCreationForm.error);
         }
-        //TODO: Check if user is admin
         CreateNotificationDTO notificationDTO = notificationCreationForm.value;
-        boolean res =  iNotificationTemplate.checkIfNotificationTemplateExists(
+        boolean res = iNotificationTemplate.checkIfNotificationTemplateExists(
                 notificationDTO.getNotificationTemplateBeanId()
         );
         if (!res) return Results.notFound("Notification template not found");
         return ok(myObjectMapper.toJsonString(iNotification.createNotification(
                 notificationDTO,
-                getTestEmployee()
+                iAuthentication.getContextCurrentEmployee().orElseThrow()
         )));
     }
 
-
-    private Employee getTestEmployee() {
-        return new Employee("12345", "employee");
-    }
 }
 

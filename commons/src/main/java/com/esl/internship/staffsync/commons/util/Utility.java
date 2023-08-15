@@ -20,7 +20,8 @@ public class Utility {
     private static ObjectNode stringifyEmployeeMaker(Employee employee) {
         return Json.newObject()
                 .put("employeeId", employee.getEmployeeId())
-                .put("name", employee.getFirstName());
+                .put("name", employee.getFullName())
+                .put("email", employee.getEmployeeEmail());
     }
 
 }

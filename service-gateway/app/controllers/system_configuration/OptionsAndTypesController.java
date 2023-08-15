@@ -1,6 +1,8 @@
 package controllers.system_configuration;
 
-import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.IOption;
 import com.esl.internship.staffsync.system.configuration.api.IOptionType;
@@ -11,6 +13,7 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import security.WebAuth;
 
 import javax.inject.Inject;
 
@@ -28,6 +31,9 @@ public class OptionsAndTypesController extends Controller {
     IOption iOption;
 
     @Inject
+    IAuthentication iAuthentication;
+
+    @Inject
     MyObjectMapper myObjectMapper;
 
     @ApiOperation(value = "Add option")
@@ -42,14 +48,23 @@ public class OptionsAndTypesController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.system.configuration.model.AppConfig"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions = {RoutePermissions.create_option}, roles = {RouteRole.admin})
     public Result addOption() {
         final var optionForm = validate(request().body().asJson(), Option.class);
         if (optionForm.hasError) {
             return badRequest(optionForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iOption.addOption(optionForm.value, getTestEmployee())));
+        return ok(myObjectMapper.toJsonString(iOption.addOption(optionForm.value, iAuthentication.getContextCurrentEmployee().orElseThrow())));
     }
 
     @ApiOperation(value = "Update option type")
@@ -64,14 +79,23 @@ public class OptionsAndTypesController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.system.configuration.model.AppConfig"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions = {RoutePermissions.update_option_type}, roles = {RouteRole.admin})
     public Result editOptionType(String optionTypeId) {
         final var optionTypeForm = validate(request().body().asJson(), OptionType.class);
         if (optionTypeForm.hasError) {
             return badRequest(optionTypeForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iOptionType.editOptionType(optionTypeId, optionTypeForm.value, getTestEmployee())));
+        return ok(myObjectMapper.toJsonString(iOptionType.editOptionType(optionTypeId, optionTypeForm.value, iAuthentication.getContextCurrentEmployee().orElseThrow())));
     }
 
     @ApiOperation(value = "Update option value")
@@ -79,8 +103,19 @@ public class OptionsAndTypesController extends Controller {
             value = {
                     @ApiResponse(code = 200, message = "Updated", response = boolean.class)}
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.update_option}, roles = {RouteRole.admin})
     public Result editOption(String optionId, String value) {
-        return ok(myObjectMapper.toJsonString(iOption.editOption(optionId, value, getTestEmployee())));
+        return ok(myObjectMapper.toJsonString(iOption.editOption(optionId, value, iAuthentication.getContextCurrentEmployee().orElseThrow())));
     }
 
     @ApiOperation(value = "Get option type by id")
@@ -88,6 +123,17 @@ public class OptionsAndTypesController extends Controller {
             value = {
                     @ApiResponse(code = 200, message = "OptionType", response = OptionType.class)}
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_option_type}, roles = {RouteRole.admin, RouteRole.user})
     public Result getOptionType(String optionTypeId) {
         return iOptionType.getOptionType(optionTypeId)
                 .map(e -> ok(myObjectMapper.toJsonString(e))).orElseGet(Results::notFound);
@@ -98,6 +144,17 @@ public class OptionsAndTypesController extends Controller {
             value = {
                     @ApiResponse(code = 200, message = "Option", response = Option.class)}
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_option}, roles = {RouteRole.admin, RouteRole.user})
     public Result getOption(String optionId) {
         return iOption.getOption(optionId)
                 .map(e -> ok(myObjectMapper.toJsonString(e))).orElseGet(Results::notFound);
@@ -108,6 +165,17 @@ public class OptionsAndTypesController extends Controller {
             value = {
                     @ApiResponse(code = 200, message = "OptionType", response = OptionType.class, responseContainer = "List")}
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_option_type}, roles = {RouteRole.admin, RouteRole.user})
     public Result getOptionTypes() {
         return ok(myObjectMapper.toJsonString(iOptionType.getOptionTypes()));
     }
@@ -117,6 +185,17 @@ public class OptionsAndTypesController extends Controller {
             value = {
                     @ApiResponse(code = 200, message = "Option", response = Option.class, responseContainer = "List")}
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_option}, roles = {RouteRole.admin, RouteRole.user})
     public Result getOptions() {
         return ok(myObjectMapper.toJsonString(iOption.getOptions()));
     }
@@ -127,12 +206,19 @@ public class OptionsAndTypesController extends Controller {
             value = {
                     @ApiResponse(code = 200, message = "OptionType", response = Option.class, responseContainer = "List")}
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_option_type, RoutePermissions.read_option}, roles = {RouteRole.admin, RouteRole.user})
     public Result getOptionsForType(String optionTypeId) {
         return ok(myObjectMapper.toJsonString(iOptionType.getOptionsForType(optionTypeId)));
-    }
-
-    private Employee getTestEmployee() {
-        return new Employee("12345", "employee");
     }
 
 }

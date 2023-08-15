@@ -1,5 +1,8 @@
 package controllers.system_configuration;
 
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
@@ -12,6 +15,7 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import security.WebAuth;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -26,6 +30,9 @@ public class NotificationTemplateController extends Controller {
     INotificationTemplate iNotificationTemplate;
 
     @Inject
+    IAuthentication iAuthentication;
+
+    @Inject
     MyObjectMapper myObjectMapper;
 
     @ApiOperation("Get Notification template by id")
@@ -36,6 +43,17 @@ public class NotificationTemplateController extends Controller {
                     @ApiResponse(code = 404, response = String.class, message = "Notification template not found"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_notification_template }, roles ={RouteRole.admin, RouteRole.user})
     public Result getNotificationTemplate(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId) {
 
         if (notificationTemplateId.length() == 0) {
@@ -52,6 +70,17 @@ public class NotificationTemplateController extends Controller {
                     @ApiResponse(code = 200, response = NotificationTemplate.class, responseContainer = "List", message = "NotificationTemplates"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_notification_template }, roles ={RouteRole.admin, RouteRole.user})
     public Result getAllNotificationTemplates() {
         return Results.ok(myObjectMapper.toJsonString(
                 iNotificationTemplate.getAllNotificationTemplates()
@@ -65,6 +94,17 @@ public class NotificationTemplateController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid notification template id"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_notification_template }, roles ={RouteRole.admin, RouteRole.user})
     public Result getTemplateNotifications(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId) {
 
         if (notificationTemplateId.length() == 0) {
@@ -91,15 +131,23 @@ public class NotificationTemplateController extends Controller {
                     required = true,
                     dataType = "com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO",
                     dataTypeClass = CreateNotificationTemplateDTO.class
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions= {RoutePermissions.create_notification_template }, roles ={RouteRole.admin})
     public Result createNotificationTemplate() {
 
         final var notificationTemplateCreationForm = validate(request().body().asJson(), CreateNotificationTemplateDTO.class);
         if (notificationTemplateCreationForm.hasError) {
             return Results.badRequest(notificationTemplateCreationForm.error);
         }
-        //TODO: Check if user is admin
         CreateNotificationTemplateDTO notificationTemplateDTO = notificationTemplateCreationForm.value;
 
         if (iNotificationTemplate.checkIfNotificationTemplateNameInUse(notificationTemplateDTO.getNotificationTemplateName())) {
@@ -109,7 +157,7 @@ public class NotificationTemplateController extends Controller {
         try {
             return ok(myObjectMapper.toJsonString(iNotificationTemplate.createNotificationTemplate(
                     notificationTemplateDTO,
-                    getTestEmployee()
+                    iAuthentication.getContextCurrentEmployee().orElseThrow()
             )));
         } catch (Exception e) {
             return Results.badRequest("Invalid data");
@@ -129,11 +177,19 @@ public class NotificationTemplateController extends Controller {
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "body",
-                    value = "Notification template DTO",
+                    value = "Notification template creation DTO",
                     paramType = "body",
                     required = true,
-                    dataType = "com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO",
-                    dataTypeClass = EditNotificationTemplateDTO.class
+                    dataType = "com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO",
+                    dataTypeClass = CreateNotificationTemplateDTO.class
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
     public Result editNotificationTemplate() {
@@ -143,8 +199,6 @@ public class NotificationTemplateController extends Controller {
             return Results.badRequest(notificationTemplateEditForm.error);
         }
         EditNotificationTemplateDTO notificationTemplateDTO = notificationTemplateEditForm.value;
-
-        //TODO: Check if user is admin
 
         Optional<NotificationTemplate> nt = iNotificationTemplate.getNotificationTemplate(
                 notificationTemplateDTO.getNotificationTemplateId()
@@ -161,34 +215,10 @@ public class NotificationTemplateController extends Controller {
             return Results.ok(myObjectMapper.toJsonString(
                     iNotificationTemplate.editNotificationTemplate(
                             notificationTemplateDTO,
-                            getTestEmployee()
+                            iAuthentication.getContextCurrentEmployee().orElseThrow()
                     ))
             );
         }
         return Results.notFound("Notification template not found");
-
     }
-
-//    @ApiOperation("Delete Notification template by id")
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(code = 200, response = Boolean.class, message = "Notification template deleted"),
-//                    @ApiResponse(code = 400, response = String.class, message = "Invalid notification template id"),
-//            }
-//    )
-//    public Result deleteNotificationTemplate(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId) {
-//
-//        if (notificationTemplateId.length() == 0) {
-//            return Results.badRequest("Invalid notification template id");
-//        }
-//        return ok(myObjectMapper.toJsonString(
-//                iNotificationTemplate.deleteNotificationTemplate(notificationTemplateId)
-//        ));
-//    }
-
-    private Employee getTestEmployee() {
-        return new Employee("92f6fac6-f49b-448f-9c33-f0d50608bc83", "employee");
-    }
-
-    private Employee getDummyEmployee() {return  new Employee("f04b5314-9f26-43a0-b129-3e149165253e", "Name");}
 }

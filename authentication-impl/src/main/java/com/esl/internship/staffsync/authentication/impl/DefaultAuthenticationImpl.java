@@ -5,18 +5,28 @@ import com.esl.internship.staffsync.authentication.dto.LoginDTO;
 import com.esl.internship.staffsync.authentication.impl.jwt.JwtUtil;
 import com.esl.internship.staffsync.authentication.model.AuthEmployeeSlice;
 import com.esl.internship.staffsync.authentication.model.EmployeeAuthInfo;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
 import com.esl.internship.staffsync.commons.exceptions.InvalidCredentialsException;
 import com.esl.internship.staffsync.commons.exceptions.LoginAttemptExceededException;
+import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
+import com.esl.internship.staffsync.employee.management.api.IPasswordManagementApi;
 import com.esl.internship.staffsync.entities.JpaEmployee;
 import com.esl.internship.staffsync.entities.QJpaEmployee;
+import com.esl.internship.staffsync.system.configuration.api.IRoleHasPermissionApi;
+import com.esl.internship.staffsync.system.configuration.model.Permission;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
+import play.mvc.Http;
 
 import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.esl.internship.staffsync.authentication.model.AuthenticationMapper.INSTANCE;
 
@@ -31,6 +41,15 @@ public class DefaultAuthenticationImpl implements IAuthentication {
 
     @Inject
     JPAApi jpaApi;
+
+    @Inject
+    IPasswordManagementApi iPasswordManagementApi;
+
+    @Inject
+    IRoleHasPermissionApi iRoleHasPermissionApi;
+
+    @Inject
+    IEmployeeApi iEmployeeApi;
 
     @Inject
     JwtUtil jwtUtil;
@@ -82,7 +101,7 @@ public class DefaultAuthenticationImpl implements IAuthentication {
      */
     @Override
     public void verifyEmployeeLogin(AuthEmployeeSlice employeeSlice, LoginDTO loginDTO) throws InvalidCredentialsException, LoginAttemptExceededException {
-        if (!employeeSlice.getPassword().equals(loginDTO.getPassword())) {
+        if (!iPasswordManagementApi.verifyPassword(employeeSlice.getPassword(),loginDTO.getPassword())) {
             int loginAttempts = employeeSlice.getLoginAttempts();
             if (loginAttempts >= 5) {
                 restrictAccount(loginDTO.getEmployeeEmail());
@@ -92,6 +111,100 @@ public class DefaultAuthenticationImpl implements IAuthentication {
             String response = generateInvalidPasswordMessage(loginAttempts);
             throw new InvalidCredentialsException(response);
         }
+    }
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 13/08/2023
+     * @description Method to get the currently logged-in user
+     *
+     * @return Optional containing current user
+     */
+    @Override
+    public Optional<Employee> getContextCurrentEmployee() {
+        Employee currentEmployee = null;
+
+        try {
+            if (Http.Context.current() != null ) {
+                currentEmployee = (Employee) Http.Context.current().args.get("currentEmployee");
+            }
+        } catch (Exception var1 ) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(currentEmployee);
+    }
+
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 14/08/2023
+     * @description Method to get the list of permissions for a user
+     *
+     * @param employeeId Employee id
+     *
+     * @return List of RoutePermissions
+     */
+    @Override
+    public List<RoutePermissions> getCurrentEmployeePermissions(String employeeId) {
+        List<RoutePermissions> routePermissions;
+        try{
+            Employee employee = iEmployeeApi.getEmployeeById(employeeId).orElseThrow();
+            String roleId = employee.getRoleId();
+            List<Permission> permissionList = iRoleHasPermissionApi.getPermissionForRole(roleId);
+            routePermissions = permissionList.stream().map(Permission::getPermissionId)
+                    .map(RoutePermissions::valueOf).collect(Collectors.toList());
+        }
+        catch (Exception e){
+            return new ArrayList<>();
+        }
+        return routePermissions;
+    }
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 15/08/2023
+     * @description Checks if the currently signed in employee matches the employee id or is an admin
+     *
+     * @param employeeId Employee id
+     *
+     * @return Boolean indicating if user is current employee or admin
+     */
+    @Override
+    public boolean checkIfUserIsCurrentEmployeeOrAdmin(String employeeId) {
+        Employee employee = getContextCurrentEmployee().orElseThrow();
+        return employee.getEmployeeId().equals(employeeId) || employee.getRoleId().equals("admin");
+    }
+
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 15/08/2023
+     * @description Checks if the currently signed in employee matches the employee id
+     *
+     * @param employeeId Employee id
+     *
+     * @return Boolean indicating if user is current employee
+     */
+    @Override
+    public boolean checkIfUserIsCurrentEmployee(String employeeId) {
+        Employee employee = getContextCurrentEmployee().orElseThrow();
+        return employee.getEmployeeId().equals(employeeId);
+    }
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 15/08/2023
+     * @description Method to reset periodically  the number of log in attempts for all employees
+     *
+     * @return boolean indicating success
+     */
+    @Override
+    public boolean resetLogInAttempts() {
+        return new JPAQueryFactory(jpaApi.em()).update(qJpaEmployee)
+                .set(qJpaEmployee.loginAttempts, 0)
+                .where(qJpaEmployee.loginAttempts.gt(0))
+                .execute() >= 1;
     }
 
     /**
@@ -158,6 +271,4 @@ public class DefaultAuthenticationImpl implements IAuthentication {
         return String.format("Invalid details. You have %d attempt(s) left", attemptsLeft);
     }
 
-
-    //TODO: Implement code to reset log in attempts on a periodic basis
 }
