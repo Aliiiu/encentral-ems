@@ -78,14 +78,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>authentication-impl</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
+
         <dependency>
-            <groupId>com.esl.internship.staffsync.attendance.tracking.impl</groupId>
-            <artifactId>attendance-tracking-imp</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>attendance-tracking-impl</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 
 </project>
