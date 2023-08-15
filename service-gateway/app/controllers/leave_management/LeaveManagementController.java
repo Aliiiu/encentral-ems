@@ -1,5 +1,8 @@
 package controllers.leave_management;
 
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.leave.management.api.ILeaveRequest;
@@ -11,6 +14,7 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import security.WebAuth;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -25,6 +29,9 @@ public class LeaveManagementController extends Controller {
     ILeaveRequest iLeaveRequest;
 
     @Inject
+    IAuthentication iAuthentication;
+
+    @Inject
     MyObjectMapper myObjectMapper;
 
     @ApiOperation("Get single leave request by id")
@@ -35,11 +42,21 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 404, response = String.class, message = "leave request not found")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_leave_request }, roles = {RouteRole.user,RouteRole.admin})
     public Result getLeaveRequest(@ApiParam(value = "Leave request Id", required = true) String leaveRequestId) {
         if (leaveRequestId.length() == 0) {
             return Results.badRequest("Invalid leave request id");
         }
-        //TODO: Check if AppUser ID matches employee id or is Admin
         return iLeaveRequest.getLeaveRequest(leaveRequestId)
                 .map(e -> Results.ok(myObjectMapper.toJsonString(e)))
                 .orElseGet(Results::notFound);
@@ -51,8 +68,18 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_leave_request }, roles = {RouteRole.admin})
     public Result getAllLeaveRequests() {
-        //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getAllLeaveRequests()
         ));
@@ -63,6 +90,7 @@ public class LeaveManagementController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = LeaveRequest.class, message = "Leave request created"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid data"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource"),
                     @ApiResponse(code = 409, response = String.class, message = "Employee already has a request pending")
             }
     )
@@ -74,16 +102,26 @@ public class LeaveManagementController extends Controller {
                     required = true,
                     dataType = "com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO",
                     dataTypeClass = CreateLeaveRequestDTO.class
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions= {RoutePermissions.create_leave_request }, roles={RouteRole.admin, RouteRole.user})
     public Result createLeaveRequest() {
         final var leaveRequestCreationForm = validate(request().body().asJson(), CreateLeaveRequestDTO.class);
         if (leaveRequestCreationForm.hasError) {
             return Results.badRequest(leaveRequestCreationForm.error);
         }
-        //TODO: Check if user is admin or active user matches employeeID
         CreateLeaveRequestDTO createLeaveRequestDTO = leaveRequestCreationForm.value;
-
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(createLeaveRequestDTO.getEmployeeId())) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         if (iLeaveRequest.checkIfEmployeeHasOpenLeaveRequest(createLeaveRequestDTO.getEmployeeId()))
             return Results.status(409, "Employee already has a request pending ");
         return Results.ok(myObjectMapper.toJsonString(iLeaveRequest.addLeaveRequest(
@@ -96,13 +134,27 @@ public class LeaveManagementController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_leave_request }, roles = {RouteRole.admin, RouteRole.user})
     public Result getEmployeeLeaveRequests(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
-        //TODO: Check if user is admin
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getEmployeeLeaveRequests(employeeId)
         ));
@@ -115,11 +167,21 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_leave_request }, roles = {RouteRole.admin})
     public Result getEmployeeApprovedLeaveRequests(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
-        //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getEmployeeApprovedLeaveRequests(employeeId)
         ));
@@ -132,8 +194,18 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_leave_request }, roles = {RouteRole.admin})
     public Result getAllPendingRequests() {
-        //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getAllPendingRequests()
         ));
@@ -144,13 +216,28 @@ public class LeaveManagementController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource"),
+
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_leave_request }, roles = {RouteRole.admin, RouteRole.user})
     public Result getEmployeeLeaveHistory(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
-        //TODO: Check if user is admin
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getEmployeeLeaveHistory(employeeId)
         ));
@@ -160,11 +247,21 @@ public class LeaveManagementController extends Controller {
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_leave_request }, roles = {RouteRole.admin})
     public Result getAllCompletedLeave() {
-
-        //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getAllCompletedLeave()
         ));
@@ -176,9 +273,18 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 200, response = LeaveRequest.class, responseContainer = "List", message = "Leave requests retrieved"),
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_leave_request }, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllOngoingLeave() {
-
-        //TODO: Check if user is admin
         return Results.ok(myObjectMapper.toJsonString(
                 iLeaveRequest.getAllOngoingLeave()
         ));
@@ -201,18 +307,27 @@ public class LeaveManagementController extends Controller {
                     dataType = "com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO",
                     dataTypeClass = EditLeaveRequestDTO.class
             )
+            ,
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
     })
+    @WebAuth(permissions = {RoutePermissions.update_leave_request}, roles={RouteRole.admin})
     public Result approveLeaveRequest() {
         final var leaveRequestEditForm = validate(request().body().asJson(), EditLeaveRequestDTO.class);
         if (leaveRequestEditForm.hasError) {
             return Results.badRequest(leaveRequestEditForm.error);
         }
-        //TODO: Check if user is admin
         EditLeaveRequestDTO editLeaveRequestDTO = leaveRequestEditForm.value;
         Optional<LeaveRequest> lr = iLeaveRequest.getLeaveRequest(editLeaveRequestDTO.getLeaveRequestId());
         if (lr.isPresent()) {
             return Results.ok(myObjectMapper.toJsonString(
-                    iLeaveRequest.approveLeaveRequest(editLeaveRequestDTO, getTestEmployee())
+                    iLeaveRequest.approveLeaveRequest(editLeaveRequestDTO, iAuthentication.getContextCurrentEmployee().orElseThrow())
             ));
         }
         return Results.notFound("Leave request not found");
@@ -223,15 +338,18 @@ public class LeaveManagementController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = String.class, message = "Leave request successfully cancelled"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
-                    @ApiResponse(code = 404, response = String.class, message = "No open leave request found for user")
-
+                    @ApiResponse(code = 404, response = String.class, message = "No open leave request found for user"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource")
             }
     )
+    @WebAuth(permissions= {RoutePermissions.update_leave_request }, roles = {RouteRole.admin, RouteRole.user})
     public Result cancelLeaveRequest(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
-        //TODO: Check if user is the employee with id employeeid or admin
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         boolean resp = iLeaveRequest.cancelLeaveRequest(employeeId);
         if (resp) {
             return Results.ok("Leave request successfully cancelled");
@@ -256,16 +374,24 @@ public class LeaveManagementController extends Controller {
                     required = true,
                     dataType = "com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO",
                     dataTypeClass = EditLeaveRequestDTO.class
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions= {RoutePermissions.update_leave_request }, roles ={RouteRole.admin})
     public Result rejectLeaveRequest() {
         final var leaveRequestEditForm = validate(request().body().asJson(), EditLeaveRequestDTO.class);
         if (leaveRequestEditForm.hasError) {
             return Results.badRequest(leaveRequestEditForm.error);
         }
-        //TODO: Check if user is admin
         EditLeaveRequestDTO editLeaveRequestDTO = leaveRequestEditForm.value;
-        boolean resp = iLeaveRequest.rejectLeaveRequest(editLeaveRequestDTO, getDummyEmployee());
+        boolean resp = iLeaveRequest.rejectLeaveRequest(editLeaveRequestDTO, iAuthentication.getContextCurrentEmployee().orElseThrow());
         if (resp) {
             return Results.ok("Leave request successfully rejected");
         }
@@ -279,9 +405,19 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 404, response = String.class, message = "No approved leave request found for user")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.update_leave_request }, roles = {RouteRole.admin, RouteRole.user})
     public Result acceptLeaveRequest() {
-        //TODO: Check if user is the employee with id employeeid
-        boolean resp = iLeaveRequest.acceptLeaveRequest(getDummyEmployee());
+        boolean resp = iLeaveRequest.acceptLeaveRequest(iAuthentication.getContextCurrentEmployee().orElseThrow());
         if (resp) {
             return Results.ok("Leave request accepted");
         }
@@ -293,19 +429,23 @@ public class LeaveManagementController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Boolean.class, message = "Leave request marked as completed"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid employee id"),
+                    @ApiResponse(code = 401, response = String.class, message = "User is not authorized to access this resource"),
                     @ApiResponse(code = 404, response = String.class, message = "No on-going leave request found"),
             }
     )
+    @WebAuth(permissions= {RoutePermissions.update_leave_request }, roles = {RouteRole.admin, RouteRole.user})
     public Result markLeaveRequestAsComplete(@ApiParam(value = "Employee Id", required = true) String employeeId) {
         if (employeeId.length() == 0) {
             return Results.badRequest("Invalid employee id");
         }
-        //TODO: Check if user is the employee with id employeeId or admin
+        if (!iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
         Optional<LeaveRequest> lr = iLeaveRequest.getOngoingLeaveRequestByEmployeeId(employeeId);
 
         if (lr.isPresent()) {
             int leaveDuration = (int) iLeaveRequest.getActualLeaveDuration(lr.get().getStartDate());
-            boolean result = iLeaveRequest.markLeaveRequestAsComplete(leaveDuration, employeeId, getTestEmployee());
+            boolean result = iLeaveRequest.markLeaveRequestAsComplete(leaveDuration, employeeId, iAuthentication.getContextCurrentEmployee().orElseThrow());
             return Results.ok(myObjectMapper.toJsonString(result));
         }
 
@@ -319,6 +459,7 @@ public class LeaveManagementController extends Controller {
                     @ApiResponse(code = 400, response = String.class, message = "Invalid leave request id"),
             }
     )
+    @WebAuth(permissions= {RoutePermissions.delete_leave_request }, roles = {RouteRole.admin})
     public Result deleteLeaveRequest(@ApiParam(value = "Leave request Id", required = true) String leaveRequestId) {
         if (leaveRequestId.length() == 0) {
             return Results.badRequest("Invalid leave request id");
@@ -328,12 +469,4 @@ public class LeaveManagementController extends Controller {
         ));
     }
 
-    private Employee getDummyEmployee() {
-        return new Employee("92f6fac6-f49b-448f-9c33-f0d50608bc83", "employee");
-    }
-
-    private Employee getTestEmployee() {
-        return new Employee("f04b5314-9f26-43a0-b129-3e149165253e", "Name");
-    }
-
-}
+  }

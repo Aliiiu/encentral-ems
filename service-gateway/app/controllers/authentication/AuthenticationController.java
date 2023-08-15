@@ -8,6 +8,7 @@ import com.esl.internship.staffsync.authentication.model.AuthToken;
 import com.esl.internship.staffsync.commons.exceptions.LoginAttemptExceededException;
 import com.esl.internship.staffsync.commons.exceptions.InvalidCredentialsException;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -66,7 +67,6 @@ public class AuthenticationController extends Controller {
             return Results.status(423, "Account has been restricted");
         }
 
-        //TODO: UNSALT PASSWORD
         try {
             iAuthentication.verifyEmployeeLogin(employeeSlice, loginDTO);
         } catch (LoginAttemptExceededException e) {
