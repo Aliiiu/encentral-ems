@@ -72,7 +72,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     public boolean checkOut(String employeeId) {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaAttendance)
                 .where(qJpaAttendance.employee.employeeId.eq(employeeId))
-                .where(qJpaAttendance.checkOutTime.eq((Time) null))
+                .where(qJpaAttendance.checkOutTime.isNull())
                 .set(qJpaAttendance.checkOutTime, new Time(new Date().getTime()))
                 .execute() == 1;
     }
@@ -345,7 +345,7 @@ public class DefaultAttendanceTrackingImpl implements IAttendanceTracking {
     public boolean checkIfOpenAttendanceExists(String employeeId) {
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaAttendance)
                 .where(qJpaAttendance.employee.employeeId.eq(employeeId))
-                .where(qJpaAttendance.checkOutTime.eq((Time) null))
+                .where(qJpaAttendance.checkOutTime.isNull())
                 .fetch().size() != 0;
     }
 
