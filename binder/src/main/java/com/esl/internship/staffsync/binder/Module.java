@@ -6,11 +6,8 @@
 package com.esl.internship.staffsync.binder;
 
 
-<<<<<<< HEAD
 import com.esl.internship.staffsync.document.management.impl.DocumentManagementModule;
-=======
 import com.esl.internship.staffsync.attendance.tracking.impl.AttendanceTrackingModule;
->>>>>>> main
 import com.esl.internship.staffsync.employee.management.impl.EmployeeManagementModule;
 import com.esl.internship.staffsync.leave.management.impl.LeaveManagementModule;
 import com.esl.internship.staffsync.authentication.impl.AuthenticationModule;
