@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.entities;
 
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ public class JpaDocument implements Serializable {
 	@Column(name="document_id", unique=true, nullable=false, length=64)
 	private String documentId;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -39,6 +41,7 @@ public class JpaDocument implements Serializable {
 	@Column(name="document_upload_path", nullable=false, length=2147483647)
 	private String documentUploadPath;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 

@@ -1,6 +1,5 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class DepartmentDTO {

@@ -3,9 +3,12 @@ package com.esl.internship.staffsync.employee.management.api;
 
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.service.response.Response;
+import com.esl.internship.staffsync.document.management.dto.DocumentDTO;
+import com.esl.internship.staffsync.document.management.dto.SaveInfo;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDTO;
 import com.esl.internship.staffsync.entities.enums.EmployeeStatus;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +39,12 @@ public interface IEmployeeApi {
     boolean setEmployeeRole(String employeeId, String roleId, Employee employee);
 
     boolean setEmployeeProfilePictureUrl(String employeeId, String url, Employee employee);
+
+    boolean setEmployeeProfilePicture(String employeeId, File file, String filename, Employee employee);
+
+    Optional<File> getEmployeeProfilePicture(String employeeId);
+
+    Optional<String> getEmployeeProfilePicturePath(String employeeId);
 
     boolean setEmployeeLeaveDays(String employeeId, int leaveDays, Employee employee);
 

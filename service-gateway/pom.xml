@@ -145,12 +145,22 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>leave-management-api</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>event-management-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>attendance-tracking-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>document-management-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
