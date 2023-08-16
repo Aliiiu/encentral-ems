@@ -179,6 +179,8 @@
         <module>authentication-impl</module>
         <module>document-management-api</module>
         <module>document-management-impl</module>
+        <module>attendance-tracking-api</module>
+        <module>attendance-tracking-impl</module>
     </modules>
 </project>
 

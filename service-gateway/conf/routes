@@ -167,3 +167,29 @@ PATCH          /option-type/:optionTypeId                                      c
 
 ###### Authentication ######
 POST           /auth/signin/                                                   controllers.authentication.AuthenticationController.signEmployeeIn()
+
+###### Attendance Tracking ######
+GET            /attendance/check-in/:employeeId/                               controllers.attendance_management.AttendanceController.clockIn(employeeId: String)
+GET            /attendance/check-out/:employeeId/                              controllers.attendance_management.AttendanceController.clockOut(employeeId: String)
+GET            /attendance/:attendanceId/                                      controllers.attendance_management.AttendanceController.getAttendance(attendanceId: String)
+
+POST           /attendance/employee/                                           controllers.attendance_management.AttendanceController.getEmployeeAttendanceRecords()
+GET            /attendance/employee/:employeeId/                               controllers.attendance_management.AttendanceController.getAllAttendanceRecordForEmployee(employeeId: String)
+POST           /attendance/employee/report/                                    controllers.attendance_management.AttendanceController.getEmployeeAttendanceReport()
+
+POST           /attendance/department/                                         controllers.attendance_management.AttendanceController.getDepartmentAttendance()
+GET            /attendance/department/:departmentId                            controllers.attendance_management.AttendanceController.getAllDepartmentAttendance(departmentId: String)
+POST           /attendance/department/report/                                  controllers.attendance_management.AttendanceController.getDepartmentAttendanceReport()
+
+POST           /attendance/system/                                             controllers.attendance_management.AttendanceController.getSystemAttendance()
+GET            /attendance/system/                                             controllers.attendance_management.AttendanceController.getAllSystemAttendance()
+POST           /attendance/system/report/                                      controllers.attendance_management.AttendanceController.getSystemAttendanceReport()
+
+POST           /attendance/working-hours/employee                              controllers.attendance_management.AttendanceController.getEmployeeWorkingHours()
+POST           /attendance/working-hours/department                            controllers.attendance_management.AttendanceController.getDepartmentWorkingHours()
+POST           /attendance/working-hours/system                                controllers.attendance_management.AttendanceController.getSystemWorkingHours()
+
+DELETE         /attendance/:attendanceId/                                      controllers.attendance_management.AttendanceController.deleteAttendanceRecord(attendanceId: String)
+DELETE         /attendance/employee/:attendanceId/                             controllers.attendance_management.AttendanceController.deleteEmployeeAttendanceRecord(attendanceId: String)
+
+GET            /attendance/open/:employeeId/                                   controllers.attendance_management.AttendanceController.employeeHasOpenAttendance(employeeId: String)
