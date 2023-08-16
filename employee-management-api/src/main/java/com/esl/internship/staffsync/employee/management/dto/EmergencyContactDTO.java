@@ -4,17 +4,12 @@ import javax.validation.constraints.NotNull;
 
 public class EmergencyContactDTO {
 
-    @NotNull
     private String address;
 
-    @NotNull
     private String email;
 
     @NotNull
-    private String firstName;
-
-    @NotNull
-    private String lastName;
+    private String fullName;
 
     @NotNull
     private String phoneNumber;
@@ -22,7 +17,6 @@ public class EmergencyContactDTO {
     @NotNull
     private String relationship;
 
-    @NotNull
     private String employeeId;
 
     private String contactGenderOptionId;
@@ -43,20 +37,12 @@ public class EmergencyContactDTO {
         this.email = email;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getPhoneNumber() {
@@ -90,5 +76,4 @@ public class EmergencyContactDTO {
     public void setContactGenderOptionId(String contactGenderOptionId) {
         this.contactGenderOptionId = contactGenderOptionId;
     }
-
 }

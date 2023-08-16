@@ -1,5 +1,7 @@
 package com.esl.internship.staffsync.employee.management.model;
 
+import com.google.common.base.MoreObjects;
+
 import java.sql.Timestamp;
 
 public class EmergencyContact {
@@ -16,9 +18,7 @@ public class EmergencyContact {
 
     private String email;
 
-    private String firstName;
-
-    private String lastName;
+    private String fullName;
 
     private String modifiedBy;
 
@@ -78,20 +78,12 @@ public class EmergencyContact {
         this.email = email;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getModifiedBy() {
@@ -136,12 +128,11 @@ public class EmergencyContact {
 
     @Override
     public String toString() {
-        return "EmergencyContact{" +
-                "emergencyContactId='" + emergencyContactId + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", relationship='" + relationship + '\'' +
-                ", employeeId='" + employeeId + '\'' +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("emergencyContactId", emergencyContactId)
+                .add("fullName", fullName)
+                .add("relationship", relationship)
+                .add("employeeId", employeeId)
+                .toString();
     }
-
 }
