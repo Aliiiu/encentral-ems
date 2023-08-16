@@ -177,6 +177,8 @@
         <module>employee-management-impl</module>
         <module>authentication-api</module>
         <module>authentication-impl</module>
+        <module>attendance-tracking-api</module>
+        <module>attendance-tracking-impl</module>
     </modules>
 </project>
 
