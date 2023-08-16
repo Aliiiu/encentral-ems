@@ -1,5 +1,6 @@
 package com.esl.internship.staffsync.entities;
 
+import com.esl.internship.staffsync.entities.attribute.converter.NotificationStatusConverter;
 import com.esl.internship.staffsync.entities.enums.NotificationStatus;
 import com.google.common.base.MoreObjects;
 
@@ -31,9 +32,9 @@ public class JpaAnnouncementRecipient implements Serializable {
 	@Column(name="date_read")
 	private Timestamp dateRead;
 
-	@Column(name="delivery_status", nullable=false)
-	@Enumerated(EnumType.STRING)
-	private NotificationStatus deliveryStatus;
+	@Convert(converter = NotificationStatusConverter.class)
+	@Column(name="status", nullable=false)
+	private NotificationStatus status;
 
 	//bidirectional many-to-one association to JpaAnnouncement
 	@ManyToOne
@@ -80,12 +81,12 @@ public class JpaAnnouncementRecipient implements Serializable {
 		this.dateRead = dateRead;
 	}
 
-	public NotificationStatus getDeliveryStatus() {
-		return this.deliveryStatus;
+	public NotificationStatus getStatus() {
+		return this.status;
 	}
 
-	public void setDeliveryStatus(NotificationStatus deliveryStatus) {
-		this.deliveryStatus = deliveryStatus;
+	public void setStatus(NotificationStatus status) {
+		this.status = status;
 	}
 
 	public JpaAnnouncement getAnnouncement() {
@@ -124,7 +125,7 @@ public class JpaAnnouncementRecipient implements Serializable {
 		return MoreObjects.toStringHelper(this.getClass())
 				.add("Announcement", this.getAnnouncement())
 				.add("Recipient", this.getEmployee().getEmployeeEmail())
-				.add("Delivery Status", this.getDeliveryStatus())
+				.add("Status", this.getStatus())
 				.toString();
 	}
 
