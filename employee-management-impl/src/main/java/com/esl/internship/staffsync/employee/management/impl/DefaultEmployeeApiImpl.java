@@ -123,7 +123,6 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
         jpaEmployee.setEmployeeGender(employeeGender);
         jpaEmployee.setStateOfOrigin(stateOfOrigin);
         jpaEmployee.setCountryOfOrigin(countryOfOrigin);
-        jpaEmployee.setLoginAttempts(0);
         jpaEmployee.setHighestCertification(highestCertification);
         jpaEmployee.setEmployeeMaritalStatus(employeeMaritalStatus);
         jpaEmployee.setCreatedBy(stringifyEmployee(employee));
