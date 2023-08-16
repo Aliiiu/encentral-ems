@@ -1,6 +1,7 @@
 package com.esl.internship.staffsync.entities;
 
 import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
+import com.esl.internship.staffsync.entities.attribute.converter.NotificationPriorityConverter;
 import com.esl.internship.staffsync.entities.enums.NotificationPriority;
 import com.google.common.base.MoreObjects;
 
@@ -52,7 +53,7 @@ public class JpaAnnouncement implements Serializable {
 	@Column(name="modified_by")
 	private String modifiedBy;
 
-	@Convert(converter = NotificationPriority.class)
+	@Convert(converter = NotificationPriorityConverter.class)
 	@Column(nullable=false)
 	private NotificationPriority priority;
 

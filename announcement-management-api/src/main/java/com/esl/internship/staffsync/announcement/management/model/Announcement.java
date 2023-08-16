@@ -25,10 +25,6 @@ public class Announcement {
 
     private String modifiedBy;
 
-    private NotificationPriority priority;
-
     private String senderEmployeeId;
-
-
 
 }

@@ -91,7 +91,7 @@ public class JpaEmployee implements Serializable {
 	private String profilePictureUrl;
 
 	//bidirectional many-to-one association to JpaAnnouncement
-	@OneToMany(mappedBy="employee", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy="sender", fetch = FetchType.LAZY)
 	private Set<JpaAnnouncement> announcements;
 
 	//bidirectional many-to-one association to JpaAnnouncementRecipient
@@ -350,14 +350,14 @@ public class JpaEmployee implements Serializable {
 
 	public JpaAnnouncement addAnnouncement(JpaAnnouncement announcement) {
 		getAnnouncements().add(announcement);
-		announcement.setEmployee(this);
+		announcement.setSender(this);
 
 		return announcement;
 	}
 
 	public JpaAnnouncement removeAnnouncement(JpaAnnouncement announcement) {
 		getAnnouncements().remove(announcement);
-		announcement.setEmployee(null);
+		announcement.setSender(null);
 
 		return announcement;
 	}
