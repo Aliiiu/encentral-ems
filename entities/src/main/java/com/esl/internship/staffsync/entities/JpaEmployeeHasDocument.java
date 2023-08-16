@@ -32,7 +32,7 @@ public class JpaEmployeeHasDocument implements Serializable {
 
 	//bidirectional one-to-one association to JpaDocument
 	@OneToOne
-	@JoinColumn(name="document_id", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name="document_id", nullable=false, updatable=false)
 	private JpaDocument document;
 
 	//bidirectional many-to-one association to JpaEmployee

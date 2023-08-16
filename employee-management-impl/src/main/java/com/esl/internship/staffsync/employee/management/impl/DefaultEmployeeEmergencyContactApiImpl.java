@@ -50,9 +50,12 @@ public class DefaultEmployeeEmergencyContactApiImpl implements IEmployeeEmergenc
         if (jpaEmployee == null)
             response.putError("employeeId", "Employee does not exist");
 
-        JpaOption contactGender = getJpaOption(emergencyContactDTO.getContactGenderOptionId());
-        if(contactGender == null)
-            response.putError("contactGenderOptionId", "Option does not exist");
+        JpaOption contactGender = null;
+        if (emergencyContactDTO.getContactGenderOptionId() != null) {
+            contactGender = getJpaOption(emergencyContactDTO.getContactGenderOptionId());
+            if (contactGender == null)
+                response.putError("contactGenderOptionId", "Option does not exist");
+        }
 
         if (response.requestHasErrors())
             return response;
@@ -139,8 +142,7 @@ public class DefaultEmployeeEmergencyContactApiImpl implements IEmployeeEmergenc
                 .set(qJpaEmergencyContact.address, emergencyContactDTO.getAddress())
                 .set(qJpaEmergencyContact.contactGender.optionId, emergencyContactDTO.getContactGenderOptionId())
                 .set(qJpaEmergencyContact.email, emergencyContactDTO.getEmail())
-                .set(qJpaEmergencyContact.firstName, emergencyContactDTO.getFirstName())
-                .set(qJpaEmergencyContact.lastName, emergencyContactDTO.getLastName())
+                .set(qJpaEmergencyContact.fullName, emergencyContactDTO.getFullName())
                 .set(qJpaEmergencyContact.relationship, emergencyContactDTO.getRelationship())
                 .set(qJpaEmergencyContact.phoneNumber, emergencyContactDTO.getPhoneNumber())
                 .set(qJpaEmergencyContact.modifiedBy, stringifyEmployee(employee))
@@ -190,6 +192,8 @@ public class DefaultEmployeeEmergencyContactApiImpl implements IEmployeeEmergenc
      * @return JpaEmployee An employee record or null if not found
      */
     private JpaEmployee getJpaEmployee(String employeeId) {
+        if (employeeId == null)
+            return null;
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaEmployee)
                 .where(qJpaEmployee.employeeId.eq(employeeId))
                 .fetchOne();
@@ -205,6 +209,8 @@ public class DefaultEmployeeEmergencyContactApiImpl implements IEmployeeEmergenc
      * @return JpaOption An option record or null if not found
      */
     private JpaOption getJpaOption(String optionId) {
+        if (optionId == null)
+            return null;
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaOption)
                 .where(qJpaOption.optionId.eq(optionId))
                 .fetchOne();

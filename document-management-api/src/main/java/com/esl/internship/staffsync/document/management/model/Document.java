@@ -1,4 +1,4 @@
-package com.esl.internship.staffsync.commons.model;
+package com.esl.internship.staffsync.document.management.model;
 
 import java.sql.Timestamp;
 
@@ -82,5 +82,17 @@ public class Document {
 
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
+    }
+
+    @Override
+    public String toString() {
+        return "Document{" +
+                "documentId='" + documentId + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", dateCreated=" + dateCreated +
+                ", documentDescription='" + documentDescription + '\'' +
+                ", documentName='" + documentName + '\'' +
+                ", documentUploadPath='" + documentUploadPath + '\'' +
+                '}';
     }
 }

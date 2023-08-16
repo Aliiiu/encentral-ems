@@ -1,11 +1,16 @@
 package com.esl.internship.staffsync.employee.management.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class UpdateDepartmentDTO {
 
+    @NotNull
     private String departmentName;
 
+    @NotNull
     private String description;
 
+    @NotNull
     private Integer workingHours;
 
     public String getDepartmentName() {

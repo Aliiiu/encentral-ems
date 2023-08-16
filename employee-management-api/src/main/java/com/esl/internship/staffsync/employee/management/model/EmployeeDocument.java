@@ -1,22 +1,26 @@
 package com.esl.internship.staffsync.employee.management.model;
 
-import com.esl.internship.staffsync.commons.model.Document;
-
 import java.sql.Timestamp;
 
 public class EmployeeDocument {
 
     private String employeeHasDocumentId;
 
+    private String employeeId;
+
+    private String documentType;
+
     private String createdBy;
 
     private Timestamp dateCreated;
 
-    private Document document;
+    private Timestamp dateModified;
 
-    private String employeeId;
+    private String documentDescription;
 
-    private String documentType;
+    private String documentName;
+
+    private String modifiedBy;
 
     public String getEmployeeHasDocumentId() {
         return employeeHasDocumentId;
@@ -24,30 +28,6 @@ public class EmployeeDocument {
 
     public void setEmployeeHasDocumentId(String employeeHasDocumentId) {
         this.employeeHasDocumentId = employeeHasDocumentId;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Timestamp getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(Timestamp dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public Document getDocument() {
-        return document;
-    }
-
-    public void setDocument(Document document) {
-        this.document = document;
     }
 
     public String getEmployeeId() {
@@ -66,12 +46,61 @@ public class EmployeeDocument {
         this.documentType = documentType;
     }
 
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Timestamp getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Timestamp dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Timestamp getDateModified() {
+        return dateModified;
+    }
+
+    public void setDateModified(Timestamp dateModified) {
+        this.dateModified = dateModified;
+    }
+
+    public String getDocumentDescription() {
+        return documentDescription;
+    }
+
+    public void setDocumentDescription(String documentDescription) {
+        this.documentDescription = documentDescription;
+    }
+
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
     @Override
     public String toString() {
         return "EmployeeDocument{" +
                 "employeeHasDocumentId='" + employeeHasDocumentId + '\'' +
                 ", employeeId='" + employeeId + '\'' +
                 ", documentType='" + documentType + '\'' +
+                ", dateCreated" + getDateCreated() + '\'' +
                 '}';
     }
 
