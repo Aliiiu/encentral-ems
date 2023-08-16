@@ -7,6 +7,9 @@ import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Mapper
 public interface LeaveManagementMapper {
 
@@ -46,5 +49,11 @@ public interface LeaveManagementMapper {
         });
 
         return leaveRequest;
+    }
+
+    default Map<String, Integer> getDurationAndEmployeeId(JpaLeaveRequest jpaLeaveRequest){
+        Map<String, Integer> durationIdMap = new HashMap<>();
+        durationIdMap.putIfAbsent(jpaLeaveRequest.getEmployee().getEmployeeId(), jpaLeaveRequest.getDuration());
+        return durationIdMap;
     }
 }
