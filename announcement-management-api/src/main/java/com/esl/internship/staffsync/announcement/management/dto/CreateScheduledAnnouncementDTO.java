@@ -2,6 +2,7 @@ package com.esl.internship.staffsync.announcement.management.dto;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 public class CreateScheduledAnnouncementDTO {
 
@@ -15,7 +16,7 @@ public class CreateScheduledAnnouncementDTO {
 
     @NotNull(message = "Schedule Date must not be null")
     @Future(message = "Date must be in the future")
-    private String deliveryDate;
+    private Date deliveryDate;
 
     public String getAnnouncementMessage() {
         return announcementMessage;
@@ -33,11 +34,11 @@ public class CreateScheduledAnnouncementDTO {
         this.announcementTitle = announcementTitle;
     }
 
-    public String getDeliveryDate() {
+    public Date getDeliveryDate() {
         return deliveryDate;
     }
 
-    public void setDeliveryDate(String deliveryDate) {
+    public void setDeliveryDate(Date deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 
