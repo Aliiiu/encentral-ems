@@ -14,7 +14,7 @@ public interface IAuthentication {
 
     Optional<String> signInEmployee(AuthEmployeeSlice authEmployeeSlice);
 
-    void verifyEmployeeLogin(AuthEmployeeSlice employeeSlice, LoginDTO loginDTO) throws InvalidCredentialsException, LoginAttemptExceededException;
+    boolean verifyEmployeeLogin(AuthEmployeeSlice employeeSlice, LoginDTO loginDTO) throws InvalidCredentialsException, LoginAttemptExceededException;
 
     Optional<AuthEmployeeSlice> getEmployeeSliceByEmail(String email);
 

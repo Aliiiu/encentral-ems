@@ -1,7 +1,7 @@
-package com.esl.internship.staffsync.authentication.impl;
+package com.esl.internship.staffsync.leave.management.impl;
 
 import akka.actor.ActorSystem;
-import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.leave.management.api.ILeaveRequest;
 import play.db.jpa.JPAApi;
 import scala.concurrent.ExecutionContext;
 import scala.concurrent.duration.Duration;
@@ -9,20 +9,20 @@ import scala.concurrent.duration.Duration;
 import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
 
-public class AuthJobActor {
+public class LeaveManagementJobActor {
 
     private final ActorSystem actorSystem;
 
     private final ExecutionContext executionContext;
 
     @Inject
-    IAuthentication iAuthentication;
+    ILeaveRequest iLeaveRequest;
 
     @Inject
     JPAApi jpaApi;
 
     @Inject
-    public AuthJobActor(ActorSystem actorSystem, ExecutionContext executionContext) {
+    public LeaveManagementJobActor(ActorSystem actorSystem, ExecutionContext executionContext) {
         this.actorSystem = actorSystem;
         this.executionContext = executionContext;
 
@@ -41,7 +41,7 @@ public class AuthJobActor {
 
     private void callMethod() {
         jpaApi.withTransaction(()->{
-            iAuthentication.resetLogInAttempts();
+            iLeaveRequest.closeCompletedLeave();
         });
     }
 }

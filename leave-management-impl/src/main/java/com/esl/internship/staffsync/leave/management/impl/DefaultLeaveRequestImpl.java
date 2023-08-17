@@ -12,8 +12,10 @@ import com.esl.internship.staffsync.leave.management.api.ILeaveRequest;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.model.LeaveRequest;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -22,10 +24,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -168,8 +167,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
         };
 
         return queryFactory.selectFrom(qJpaLeaveRequest)
-                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
-                .where(qJpaLeaveRequest.approvalStatus.in(requestStatusesToCheck))
+                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId)
+                        .and(qJpaLeaveRequest.approvalStatus.in(requestStatusesToCheck)))
                 .orderBy(qJpaLeaveRequest.dateCreated.desc())
                 .fetch().size() !=0;
     }
@@ -188,8 +187,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
         JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
 
         return queryFactory.selectFrom(qJpaLeaveRequest)
-                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId.toString()))
-                .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
+                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId.toString())
+                        .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS)))
                 .orderBy(qJpaLeaveRequest.dateCreated.desc())
                 .fetch() != null;
     }
@@ -253,8 +252,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
         JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
 
         return queryFactory.selectFrom(qJpaLeaveRequest)
-                .where(qJpaLeaveRequest.approvalStatus.in(requestStatusesToCheck))
-                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
+                .where(qJpaLeaveRequest.approvalStatus.in(requestStatusesToCheck)
+                        .and(qJpaLeaveRequest.employee.employeeId.eq(employeeId)))
                 .orderBy(qJpaLeaveRequest.dateCreated.asc())
                 .fetch()
                 .stream()
@@ -301,8 +300,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
                 .set(qJpaLeaveRequest.approver, approver)
                 .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
                 .set(qJpaLeaveRequest.remarks, editLeaveRequestDTO.getRemarks())
-                .where(qJpaLeaveRequest.leaveRequestId.eq(editLeaveRequestDTO.getLeaveRequestId()))
-                .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.PENDING))
+                .where(qJpaLeaveRequest.leaveRequestId.eq(editLeaveRequestDTO.getLeaveRequestId())
+                        .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.PENDING)))
                 .execute() == 1;
     }
 
@@ -325,8 +324,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                 .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.CANCELED)
                 .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
-                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
-                .where(qJpaLeaveRequest.approvalStatus.in(requestStatusesToCheck))
+                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId)
+                        .and(qJpaLeaveRequest.approvalStatus.in(requestStatusesToCheck)))
                 .execute() == 1;
     }
 
@@ -349,8 +348,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
                 .set(qJpaLeaveRequest.approver, approver)
                 .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
                 .set(qJpaLeaveRequest.remarks, editLeaveRequestDTO.getRemarks())
-                .where(qJpaLeaveRequest.leaveRequestId.eq(editLeaveRequestDTO.getLeaveRequestId()))
-                .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.PENDING))
+                .where(qJpaLeaveRequest.leaveRequestId.eq(editLeaveRequestDTO.getLeaveRequestId())
+                        .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.PENDING)))
                 .execute() == 1;
     }
 
@@ -371,8 +370,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
             boolean updatedRequest = new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                     .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.IN_PROGRESS)
                     .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
-                    .where(qJpaLeaveRequest.employee.employeeId.eq(employee.getEmployeeId()))
-                    .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.APPROVED))
+                    .where(qJpaLeaveRequest.employee.employeeId.eq(employee.getEmployeeId())
+                            .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.APPROVED)))
                     .execute() == 1;
             if (!updatedRequest) return false;
             boolean updatedEmployee = updateEmployeeCurrentStatus(EmployeeStatus.ON_LEAVE, employee.getEmployeeId(), employee);
@@ -405,8 +404,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
                     .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
                     .set(qJpaLeaveRequest.duration, daysUsed)
                     .set(qJpaLeaveRequest.endDate, endDate)
-                    .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
-                    .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
+                    .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId)
+                            .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS)))
                     .execute() == 1;
             if (!updatedRequest) return false;
             boolean updatedEmployee = updateEmployeeLeaveDays(daysUsed, employeeId, employee);
@@ -436,8 +435,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
         };
 
         return new JPAQueryFactory(jpaApi.em()).delete(qJpaLeaveRequest)
-                .where(qJpaLeaveRequest.leaveRequestId.eq(leaveRequestId))
-                .where(qJpaLeaveRequest.approvalStatus.notIn(requestStatusesToCheck))
+                .where(qJpaLeaveRequest.leaveRequestId.eq(leaveRequestId)
+                        .and(qJpaLeaveRequest.approvalStatus.notIn(requestStatusesToCheck)))
                 .execute() == 1;
     }
 
@@ -476,8 +475,8 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
     @Override
     public Optional<LeaveRequest> getOngoingLeaveRequestByEmployeeId(String employeeId) {
         JpaLeaveRequest j = new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaLeaveRequest)
-                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId))
-                .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
+                .where(qJpaLeaveRequest.employee.employeeId.eq(employeeId)
+                        .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS)))
                 .fetchOne();
         return Optional.ofNullable(INSTANCE.jpaLeaveRequestToLeaveRequest(j));
     }
@@ -498,17 +497,70 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
         return ChronoUnit.DAYS.between(startDate, currDate);
     }
 
+    /**
+     * @author DEMILADE
+     * @dateCreated 15/08/2023
+     * @description Method to close all on going leave requests when they hit their due date
+     *
+     * @return boolean indicating success
+     */
     @Override
     public boolean closeCompletedLeave() {
         Date endDate = DateUtility.convertToDate(LocalDate.now());
+        Map<String, Integer> employeeList = getEmployeesOnLeave(endDate);
+        updateEmployees(employeeList);
         return new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
                 .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.COMPLETED)
                 .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
-                //.set(qJpaLeaveRequest.duration, daysUsed)
-                .where(qJpaLeaveRequest.endDate.eq(endDate))
-                .where(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS))
+                .set(qJpaLeaveRequest.duration, qJpaLeaveRequest.endDate.dayOfMonth().subtract(qJpaLeaveRequest.startDate.dayOfMonth()).intValue())
+                .where(qJpaLeaveRequest.endDate.eq(endDate)
+                        .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS)))
                 .execute() >= 0;
+    }
 
+    /**
+     * @author DEMILADE
+     * @dateCreated 16/08/2023
+     * @description Method to get the IDs of all employees whose leaves are to be completed and the leave duratioh
+     *
+     * @param endDate Date of leave end
+     *
+     * @return Map with employee ids as keys and leave duration as values
+     */
+    private Map<String, Integer> getEmployeesOnLeave(Date endDate) {
+        return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaLeaveRequest)
+                .where(qJpaLeaveRequest.endDate.eq(endDate)
+                        .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS)))
+                .fetch()
+                .stream()
+                .map(INSTANCE::getDurationAndEmployeeId)
+                .flatMap(m -> m.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+
+    /**
+     * @author DEMILADE
+     * @dateCreated 16/08/2023
+     * @description Method to batch update all employees with expired leaves
+     *
+     * @param employeeMap Map containing employee id and their leave duration
+     *
+     * @return Boolean indicating success
+     */
+    private boolean updateEmployees(Map<String, Integer> employeeMap) {
+        if (employeeMap.size() == 0) return false;
+
+        JPAUpdateClause updateClause = new JPAUpdateClause(jpaApi.em(), qJpaEmployee);
+        for (Map.Entry<String, Integer> entry : employeeMap.entrySet()) {
+            String employeeId = entry.getKey();
+            Integer leaveDuration = entry.getValue();
+
+            updateClause.where(qJpaEmployee.employeeId.eq(employeeId))
+                    .set(qJpaEmployee.currentStatus, EmployeeStatus.ACTIVE)
+                    .set(qJpaEmployee.leaveDays, qJpaEmployee.leaveDays.add(leaveDuration));
+        }
+        return updateClause.execute() > 0;
     }
 
     /**
@@ -565,5 +617,4 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
                 .where(qJpaEmployee.employeeId.eq(employeeId))
                 .execute() == 1;
     }
-
 }

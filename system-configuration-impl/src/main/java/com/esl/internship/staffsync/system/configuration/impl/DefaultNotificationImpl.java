@@ -98,8 +98,8 @@ public class DefaultNotificationImpl implements INotification {
         JPAQueryFactory queryFactory = new JPAQueryFactory(jpaApi.em());
 
         return queryFactory.selectFrom(qJpaNotification)
-                .where(qJpaNotification.receiver.employeeId.eq(employeeId))
-                .where(qJpaNotification.deliveryStatus.eq(NotificationStatus.UNREAD))
+                .where(qJpaNotification.receiver.employeeId.eq(employeeId)
+                        .and(qJpaNotification.deliveryStatus.eq(NotificationStatus.UNREAD)))
                 .orderBy(qJpaNotification.dateCreated.desc())
                 .fetch()
                 .stream()
@@ -265,6 +265,7 @@ public class DefaultNotificationImpl implements INotification {
     public boolean verifyEmployee(String employeeId, String notificationId) {
         return getJpaNotificationById(notificationId).getReceiver().getEmployeeId().equals(employeeId);
     }
+
 
     /**
      * @param notificationId JpaNotification id
