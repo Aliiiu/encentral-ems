@@ -193,3 +193,14 @@ DELETE         /attendance/:attendanceId/                                      c
 DELETE         /attendance/employee/:attendanceId/                             controllers.attendance_management.AttendanceController.deleteEmployeeAttendanceRecord(attendanceId: String)
 
 GET            /attendance/open/:employeeId/                                   controllers.attendance_management.AttendanceController.employeeHasOpenAttendance(employeeId: String)
+
+##### Announcement Management #####
+POST           /announcement/:announcerId/                                     controllers.announcement_management.AnnouncementController.createAnnouncement(announcerId: String)
+GET            /announcement/                                                  controllers.announcement_management.AnnouncementController.getAllAnnouncementRecords()
+GET            /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.getAnnouncementRecordById(announcementId: String)
+PATCH          /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.updateAnnouncementRecord(announcementId: String)
+DELETE         /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.deleteAnnouncementRecord(announcementId: String)
+
+GET            /announcement/all/:employeeId/                                  controllers.announcement_management.AnnouncementController.getAllEmployeeAnnouncements(employeeId: String)
+GET            /announcement/unread/:employeeId/                               controllers.announcement_management.AnnouncementController.getAllUnreadEmployeeAnnouncements(employeeId: String)
+GET            /announcement/received/:announcementRecipientId/                controllers.announcement_management.AnnouncementController.markEmployeeAnnouncementAsRead(announcementRecipientId: String)

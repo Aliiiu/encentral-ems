@@ -37,4 +37,11 @@ public class AnnouncementProjection {
 
         return employeeAnnouncement;
     }
+
+    public static EmployeeAnnouncement mapEmployeeAnnouncement(JpaAnnouncementRecipient announcementRecipient) {
+        AnnouncementProjection p = new AnnouncementProjection();
+        p.setAnnouncement(announcementRecipient.getAnnouncement());
+        p.setAnnouncementRecipient(announcementRecipient);
+        return p.mapEmployeeAnnouncement();
+    }
 }

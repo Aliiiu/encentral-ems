@@ -2,6 +2,7 @@ package com.esl.internship.staffsync.announcement.management.dto;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class AnnouncementDTO {
@@ -15,7 +16,7 @@ public class AnnouncementDTO {
     private String announcementFor;
 
     @Future(message = "Date must be in the future")
-    private Date deliveryDate;
+    private Timestamp deliveryDate;
 
     public String getAnnouncementMessage() {
         return announcementMessage;
@@ -41,11 +42,11 @@ public class AnnouncementDTO {
         this.announcementFor = announcementFor;
     }
 
-    public Date getDeliveryDate() {
+    public Timestamp getDeliveryDate() {
         return deliveryDate;
     }
 
-    public void setDeliveryDate(Date deliveryDate) {
+    public void setDeliveryDate(Timestamp deliveryDate) {
         this.deliveryDate = deliveryDate;
     }
 }

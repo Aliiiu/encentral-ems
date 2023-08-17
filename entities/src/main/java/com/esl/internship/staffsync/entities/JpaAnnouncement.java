@@ -45,9 +45,8 @@ public class JpaAnnouncement implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
-	@Temporal(TemporalType.DATE)
 	@Column(name="delivery_date")
-	private Date deliveryDate;
+	private Timestamp deliveryDate;
 
 	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
@@ -117,11 +116,11 @@ public class JpaAnnouncement implements Serializable {
 		this.dateModified = dateModified;
 	}
 
-	public Date getDeliveryDate() {
+	public Timestamp getDeliveryDate() {
 		return this.deliveryDate;
 	}
 
-	public void setDeliveryDate(Date deliveryDate) {
+	public void setDeliveryDate(Timestamp deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
 

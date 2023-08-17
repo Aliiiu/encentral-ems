@@ -1,16 +1,14 @@
 package com.esl.internship.staffsync.announcement.management.impl;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import com.esl.internship.staffsync.announcement.management.api.IAnnouncementManagementApi;
 import com.esl.internship.staffsync.announcement.management.dto.AnnouncementDTO;
-import com.esl.internship.staffsync.announcement.management.impl.actor.AnnouncementDispatchActor;
 import com.esl.internship.staffsync.announcement.management.model.Announcement;
 import com.esl.internship.staffsync.announcement.management.model.EmployeeAnnouncement;
 import com.esl.internship.staffsync.announcement.management.query.projection.AnnouncementProjection;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.entities.*;
+import com.esl.internship.staffsync.entities.enums.NotificationPriority;
 import com.esl.internship.staffsync.entities.enums.NotificationStatus;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -19,10 +17,7 @@ import play.db.jpa.JPAApi;
 import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.esl.internship.staffsync.announcement.management.model.AnnouncementManagementMapper.INSTANCE;
@@ -41,7 +36,17 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
 
     private static final QJpaAnnouncementRecipient qJpaAnnouncementRecipient = QJpaAnnouncementRecipient.jpaAnnouncementRecipient;
 
-
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Create a new Announcement
+     *
+     * @param senderEmployeeId ID of the employee creating the Announcement
+     * @param announcementDTO The Announcement information
+     * @param employee The Employee object creating the record
+     *
+     * @return Response<Announcement>
+     */
     @Override
     public Response<Announcement> createAnnouncement(String senderEmployeeId, AnnouncementDTO announcementDTO, Employee employee) {
 
@@ -65,7 +70,7 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
             return response;
         }
 
-        Date deliveryDate = announcementDTO.getDeliveryDate();
+        Timestamp deliveryDate = announcementDTO.getDeliveryDate();
 
         if (deliveryDate == null)
             deliveryDate = Timestamp.from(Instant.now());
@@ -76,6 +81,7 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
         jpaAnnouncement.setDateCreated(Timestamp.from(Instant.now()));
         jpaAnnouncement.setDeliveryDate(deliveryDate);
         jpaAnnouncement.setSender(jpaEmployee);
+        jpaAnnouncement.setPriority(NotificationPriority.NORMAL);
 
         jpaApi.em().persist(jpaAnnouncement);
 
@@ -84,11 +90,27 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
         return response.setValue(INSTANCE.mapAnnouncement(jpaAnnouncement));
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Get an Announcement record by ID
+     *
+     * @param announcementId ID of the Announcement record to fetch
+     *
+     * @return Optional<Announcement>
+     */
     @Override
     public Optional<Announcement> getAnnouncementRecordById(String announcementId) {
         return Optional.of(INSTANCE.mapAnnouncement(getJpaAnnouncement(announcementId)));
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Get all Announcement record
+     *
+     * @return List<Announcement>
+     */
     @Override
     public List<Announcement> getAllAnnouncementRecords() {
         return new JPAQueryFactory(jpaApi.em())
@@ -99,9 +121,20 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Update an Announcement Record
+     *
+     * @param announcementId ID of the Announcement record to update
+     * @param announcementDTO The Announcement information
+     * @param employee The Employee object making the update
+     *
+     * @return boolean
+     */
     @Override
     public boolean updateAnAnnouncement(String announcementId, AnnouncementDTO announcementDTO, Employee employee) {
-        Date deliveryDate = announcementDTO.getDeliveryDate();
+        Timestamp deliveryDate = announcementDTO.getDeliveryDate();
         if (deliveryDate == null)
             deliveryDate = Timestamp.from(Instant.now());
 
@@ -130,6 +163,15 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
         return false;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Delete an Announcement Record
+     *
+     * @param announcementId ID of the Announcement record to delete
+     *
+     * @return boolean
+     */
     @Override
     public boolean deleteAnAnnouncementRecord(String announcementId) {
         return new JPAQueryFactory(jpaApi.em())
@@ -138,78 +180,111 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
                 .execute() == 1;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Get all announcements for an employee
+     *
+     * @param employeeId ID of the employee to fetch announcments for
+     *
+     * @return List<EmployeeAnnouncement>
+     */
     @Override
     public List<EmployeeAnnouncement> getAllEmployeeAnnouncementsOrderedByDate(String employeeId) {
         return new JPAQueryFactory(jpaApi.em())
                 .selectFrom(qJpaAnnouncementRecipient)
                 .where(qJpaAnnouncementRecipient.employee.employeeId.eq(employeeId))
-                .where(qJpaAnnouncementRecipient.announcement.deliveryDate.before(Timestamp.from(Instant.now())))
-                .select(
-                        Projections.bean(
-                                AnnouncementProjection.class,
-                                qJpaAnnouncement,
-                                qJpaAnnouncementRecipient
-                        )
-                )
-                .leftJoin(qJpaAnnouncementRecipient.announcement, qJpaAnnouncement)
-                .orderBy(qJpaAnnouncement.deliveryDate.desc())
+                .where(qJpaAnnouncementRecipient.announcement.deliveryDate.loe(Timestamp.from(Instant.now())))
+                .orderBy(qJpaAnnouncementRecipient.announcement.deliveryDate.desc())
                 .fetch()
                 .stream()
                 .map(AnnouncementProjection::mapEmployeeAnnouncement)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Get all announcements for an employee that are UNREAD
+     *
+     * @param employeeId ID of the employee to fetch announcments for
+     *
+     * @return List<EmployeeAnnouncement>
+     */
     @Override
     public List<EmployeeAnnouncement> getAllUnreadEmployeeAnnouncementsOrderedByDate(String employeeId) {
         return new JPAQueryFactory(jpaApi.em())
                 .selectFrom(qJpaAnnouncementRecipient)
                 .where(qJpaAnnouncementRecipient.employee.employeeId.eq(employeeId))
                 .where(qJpaAnnouncementRecipient.status.eq(NotificationStatus.UNREAD))
-                .where(qJpaAnnouncementRecipient.announcement.deliveryDate.before(Timestamp.from(Instant.now())))
-                .select(
-                        Projections.bean(
-                                AnnouncementProjection.class,
-                                qJpaAnnouncement,
-                                qJpaAnnouncementRecipient
-                        )
-                )
-                .leftJoin(qJpaAnnouncementRecipient.announcement, qJpaAnnouncement)
-                .orderBy(qJpaAnnouncement.deliveryDate.desc())
+                .where(qJpaAnnouncementRecipient.announcement.deliveryDate.loe(Timestamp.from(Instant.now())))
+                .orderBy(qJpaAnnouncementRecipient.announcement.deliveryDate.desc())
                 .fetch()
                 .stream()
                 .map(AnnouncementProjection::mapEmployeeAnnouncement)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Mark an employee announcement record READ
+     *
+     * @param announcementRecipientId ID of the employee announcement to mark READ;
+     *
+     * @return boolean
+     */
     @Override
     public boolean markAnnouncementAsRead(String announcementRecipientId) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaAnnouncementRecipient)
                 .where(qJpaAnnouncementRecipient.announcementRecipientId.eq(announcementRecipientId))
                 .set(qJpaAnnouncementRecipient.status, NotificationStatus.READ)
+                .set(qJpaAnnouncementRecipient.dateRead, Timestamp.from(Instant.now()))
+                .set(qJpaAnnouncementRecipient.dateModified, Timestamp.from(Instant.now()))
                 .execute() == 1;
     }
 
+    /**
+     * @author WARITH
+     * @dateCreated 16/08/2023
+     * @description Mark an employee announcement record UNREAD (I'm not sure why we'd ever need this, lol)
+     *
+     * @param announcementRecipientId ID of the employee announcement to mark UNREAD;
+     *
+     * @return boolean
+     */
     @Override
     public boolean markAnnouncementAsUnRead(String announcementRecipientId) {
         return new JPAQueryFactory(jpaApi.em())
                 .update(qJpaAnnouncementRecipient)
                 .where(qJpaAnnouncementRecipient.announcementRecipientId.eq(announcementRecipientId))
                 .set(qJpaAnnouncementRecipient.status, NotificationStatus.UNREAD)
+                .setNull(qJpaAnnouncementRecipient.dateRead)
+                .set(qJpaAnnouncementRecipient.dateModified, Timestamp.from(Instant.now()))
                 .execute() == 1;
     }
 
     private void dispatchAnnouncementToRecipients(JpaAnnouncement announcement, JpaDepartment department) {
 
-        ActorSystem akkaSystem = ActorSystem.create("system");
-        ActorRef announcementDispatchActor = akkaSystem.actorOf(AnnouncementDispatchActor.create(), "AnnouncementDispatchActor");
+        Collection<JpaEmployee> recipients;
+        if (department == null)
+            recipients = new JPAQueryFactory(jpaApi.em())
+                    .selectFrom(qJpaEmployee)
+                    .fetch();
+        else
+            recipients = department.getEmployees();
 
-        announcementDispatchActor.tell(
-                new AnnouncementDispatchActor.AnnouncementDispatchData(
-                        announcement, department, jpaApi
-                ),
-                ActorRef.noSender()
-        );
+        for (JpaEmployee employee : recipients) {
+            JpaAnnouncementRecipient recipient = new JpaAnnouncementRecipient();
+            recipient.setAnnouncementRecipientId(UUID.randomUUID().toString());
+            recipient.setAnnouncement(announcement);
+            recipient.setEmployee(employee);
+            recipient.setStatus(NotificationStatus.UNREAD);
+            recipient.setDateCreated(Timestamp.from(Instant.now()));
+
+            jpaApi.em().persist(recipient);
+        }
     }
 
     /**
