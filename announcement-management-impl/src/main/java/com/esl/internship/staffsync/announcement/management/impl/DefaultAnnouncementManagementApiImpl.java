@@ -247,6 +247,26 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
 
     /**
      * @author WARITH
+     * @dateCreated 17/08/2023
+     * @description Mark all employee's announcements record READ
+     *
+     * @param employeeId ID of the employee to mark all their announcements READ;
+     *
+     * @return boolean
+     */
+    @Override
+    public boolean markAllAnnouncementsForEmployeeAsRead(String employeeId) {
+        return new JPAQueryFactory(jpaApi.em())
+                .update(qJpaAnnouncementRecipient)
+                .where(qJpaAnnouncementRecipient.employee.employeeId.eq(employeeId))
+                .set(qJpaAnnouncementRecipient.status, NotificationStatus.READ)
+                .set(qJpaAnnouncementRecipient.dateRead, Timestamp.from(Instant.now()))
+                .set(qJpaAnnouncementRecipient.dateModified, Timestamp.from(Instant.now()))
+                .execute() == 1;
+    }
+
+    /**
+     * @author WARITH
      * @dateCreated 16/08/2023
      * @description Mark an employee announcement record UNREAD (I'm not sure why we'd ever need this, lol)
      *

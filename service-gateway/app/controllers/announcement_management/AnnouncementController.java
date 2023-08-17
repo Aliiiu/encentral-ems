@@ -4,6 +4,9 @@ import com.esl.internship.staffsync.announcement.management.api.IAnnouncementMan
 import com.esl.internship.staffsync.announcement.management.dto.AnnouncementDTO;
 import com.esl.internship.staffsync.announcement.management.model.Announcement;
 import com.esl.internship.staffsync.announcement.management.model.EmployeeAnnouncement;
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
@@ -11,6 +14,7 @@ import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import security.WebAuth;
 
 import javax.inject.Inject;
 
@@ -28,6 +32,9 @@ public class AnnouncementController extends Controller {
     @Inject
     MyObjectMapper objectMapper;
 
+    @Inject
+    IAuthentication iAuthentication;
+
     @ApiOperation(value = "Create an Announcement")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Announcement Created", response = Announcement.class)
@@ -39,16 +46,31 @@ public class AnnouncementController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.announcement.management.dto.AnnouncementDTO"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
-    public Result createAnnouncement(String announcerId) {
+    @WebAuth(permissions= {RoutePermissions.create_announcement }, roles = {RouteRole.admin})
+    public Result createAnnouncement() {
+        Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
+        if (employeeOptional.isEmpty())
+            return unauthorized();
+
+        Employee employee = employeeOptional.get();
+
         final var announcementDtoForm = validate(request().body().asJson(), AnnouncementDTO.class);
 
         if (announcementDtoForm.hasError)
             return badRequest(announcementDtoForm.error);
 
         Response<Announcement> response = iAnnouncementManagementApi.createAnnouncement(
-                announcerId, announcementDtoForm.value, getEmployee()
+                employee.getEmployeeId(), announcementDtoForm.value, employee
         );
         if (response.requestHasErrors())
             return badRequest(response.getErrorsAsJsonString());
@@ -59,7 +81,18 @@ public class AnnouncementController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Announcement", response = Announcement.class)
     })
-    public Result getAnnouncementRecordById(String announcementId) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_announcement }, roles = {RouteRole.admin})
+    public Result getAnnouncementRecordById(@ApiParam(value = "ID of the announcement Record to fetch") String announcementId) {
         Optional<Announcement> result = iAnnouncementManagementApi.getAnnouncementRecordById(announcementId);
         return result.map(announcement -> ok(objectMapper.toJsonString(announcement))).orElseGet(() -> notFound("Announcement record not found"));
     }
@@ -68,6 +101,17 @@ public class AnnouncementController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Announcements", response = Announcement.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_announcement }, roles = {RouteRole.admin})
     public Result getAllAnnouncementRecords() {
         return ok(objectMapper.toJsonString(iAnnouncementManagementApi.getAllAnnouncementRecords()));
     }
@@ -83,15 +127,30 @@ public class AnnouncementController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.announcement.management.dto.AnnouncementDTO"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
-    public Result updateAnnouncementRecord(String announcementId) {
+    @WebAuth(permissions= {RoutePermissions.update_announcement }, roles = {RouteRole.admin})
+    public Result updateAnnouncementRecord(@ApiParam(value = "ID of the announcement Record to Update")String announcementId) {
+        Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
+        if (employeeOptional.isEmpty())
+            return unauthorized();
+
+        Employee employee = employeeOptional.get();
+
         final var announcementDtoForm = validate(request().body().asJson(), AnnouncementDTO.class);
 
         if (announcementDtoForm.hasError)
             return badRequest(announcementDtoForm.error);
         return ok(objectMapper.toJsonString(iAnnouncementManagementApi.updateAnAnnouncement(
-                announcementId, announcementDtoForm.value, getEmployee()
+                announcementId, announcementDtoForm.value, employee
         )));
     }
 
@@ -99,7 +158,18 @@ public class AnnouncementController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Announcement Deleted", response = boolean.class)
     })
-    public Result deleteAnnouncementRecord(String announcementId) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.delete_announcement }, roles = {RouteRole.admin})
+    public Result deleteAnnouncementRecord(@ApiParam(value = "ID of the announcement Record to delete") String announcementId) {
         return ok(objectMapper.toJsonString(iAnnouncementManagementApi.deleteAnAnnouncementRecord(announcementId)));
     }
 
@@ -107,35 +177,91 @@ public class AnnouncementController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "EmployeeAnnouncement", response = EmployeeAnnouncement.class)
     })
-    public Result getAllEmployeeAnnouncements(String employeeId) {
-        return ok(objectMapper.toJsonString(iAnnouncementManagementApi.getAllEmployeeAnnouncementsOrderedByDate(employeeId)));
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_announcement }, roles = {RouteRole.admin, RouteRole.user})
+    public Result getAllEmployeeAnnouncements() {
+        Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
+        if (employeeOptional.isEmpty())
+            return unauthorized();
+
+        Employee employee = employeeOptional.get();
+
+        return ok(objectMapper.toJsonString(iAnnouncementManagementApi.getAllEmployeeAnnouncementsOrderedByDate(employee.getEmployeeId())));
     }
 
     @ApiOperation(value = "Get all Posted Unread announcements for Employee")
     @ApiResponses({
             @ApiResponse(code = 200, message = "EmployeeAnnouncement", response = EmployeeAnnouncement.class)
     })
-    public Result getAllUnreadEmployeeAnnouncements(String employeeId) {
-        return ok(objectMapper.toJsonString(iAnnouncementManagementApi.getAllUnreadEmployeeAnnouncementsOrderedByDate(employeeId)));
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_announcement }, roles = {RouteRole.admin, RouteRole.user})
+    public Result getAllUnreadEmployeeAnnouncements() {
+        Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
+        if (employeeOptional.isEmpty())
+            return unauthorized();
+
+        Employee employee = employeeOptional.get();
+        return ok(objectMapper.toJsonString(iAnnouncementManagementApi.getAllUnreadEmployeeAnnouncementsOrderedByDate(employee.getEmployeeId())));
     }
 
-    @ApiOperation(value = "Mark Posted announcements for Employee as read")
+    @ApiOperation(value = "Mark a posted announcement for Employee as read")
     @ApiResponses({
             @ApiResponse(code = 200, message = "EmployeeAnnouncement", response = boolean.class)
     })
-    public Result markEmployeeAnnouncementAsRead(String announcementRecipientId) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_announcement}, roles = {RouteRole.admin, RouteRole.user})
+    public Result markEmployeeAnnouncementAsRead(@ApiParam(value = "ID of the announcementRecipient to mark read")String announcementRecipientId) {
         return ok(objectMapper.toJsonString(iAnnouncementManagementApi.markAnnouncementAsRead(announcementRecipientId)));
     }
 
-    /**
-     * @author WARITH
-     * @dateCreated 09/08/23
-     * @description To return the authenticated and authorized Employee
-     *
-     * @return Employee
-     */
-    Employee getEmployee() {
-        return new Employee("Test-001-EMP", "Test Employee");
-    }
+    @ApiOperation(value = "Mark Posted all announcements for Employee as read")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "EmployeeAnnouncement", response = boolean.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_announcement}, roles = {RouteRole.admin, RouteRole.user})
+    public Result markAllEmployeeAnnouncementsAsRead() {
+        Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
+        if (employeeOptional.isEmpty())
+            return unauthorized();
+        Employee employee = employeeOptional.get();
 
+        return ok(objectMapper.toJsonString(iAnnouncementManagementApi.markAllAnnouncementsForEmployeeAsRead(employee.getEmployeeId())));
+    }
 }

@@ -4,6 +4,8 @@ import com.esl.internship.staffsync.announcement.management.model.EmployeeAnnoun
 import com.esl.internship.staffsync.entities.JpaAnnouncement;
 import com.esl.internship.staffsync.entities.JpaAnnouncementRecipient;
 
+import static com.esl.internship.staffsync.entities.stringify.Stringifier.stringifyJpaEmployee;
+
 public class AnnouncementProjection {
     private JpaAnnouncement announcement;
     private JpaAnnouncementRecipient announcementRecipient;
@@ -33,7 +35,7 @@ public class AnnouncementProjection {
         employeeAnnouncement.setDeliveryDate(this.announcement.getDeliveryDate());
         employeeAnnouncement.setAnnouncementRecipientId(this.announcementRecipient.getAnnouncementRecipientId());
         employeeAnnouncement.setDateRead(this.announcementRecipient.getDateRead());
-        employeeAnnouncement.setAnnouncer(this.announcement.getSender().getFirstName());
+        employeeAnnouncement.setAnnouncer(stringifyJpaEmployee(this.announcement.getSender()));
 
         return employeeAnnouncement;
     }

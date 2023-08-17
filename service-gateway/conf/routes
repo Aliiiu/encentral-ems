@@ -195,12 +195,13 @@ DELETE         /attendance/employee/:attendanceId/                             c
 GET            /attendance/open/:employeeId/                                   controllers.attendance_management.AttendanceController.employeeHasOpenAttendance(employeeId: String)
 
 ##### Announcement Management #####
-POST           /announcement/:announcerId/                                     controllers.announcement_management.AnnouncementController.createAnnouncement(announcerId: String)
+POST           /announcement/                                                  controllers.announcement_management.AnnouncementController.createAnnouncement()
 GET            /announcement/                                                  controllers.announcement_management.AnnouncementController.getAllAnnouncementRecords()
 GET            /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.getAnnouncementRecordById(announcementId: String)
 PATCH          /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.updateAnnouncementRecord(announcementId: String)
 DELETE         /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.deleteAnnouncementRecord(announcementId: String)
 
-GET            /announcement/all/:employeeId/                                  controllers.announcement_management.AnnouncementController.getAllEmployeeAnnouncements(employeeId: String)
-GET            /announcement/unread/:employeeId/                               controllers.announcement_management.AnnouncementController.getAllUnreadEmployeeAnnouncements(employeeId: String)
+GET            /announcement/all/                                              controllers.announcement_management.AnnouncementController.getAllEmployeeAnnouncements()
+GET            /announcement/unread/                                           controllers.announcement_management.AnnouncementController.getAllUnreadEmployeeAnnouncements()
 GET            /announcement/received/:announcementRecipientId/                controllers.announcement_management.AnnouncementController.markEmployeeAnnouncementAsRead(announcementRecipientId: String)
+GET            /announcement/received/                                         controllers.announcement_management.AnnouncementController.markAllEmployeeAnnouncementsAsRead()

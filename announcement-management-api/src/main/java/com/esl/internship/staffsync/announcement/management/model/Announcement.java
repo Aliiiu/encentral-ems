@@ -1,9 +1,7 @@
 package com.esl.internship.staffsync.announcement.management.model;
 
 
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class Announcement {
 
@@ -25,7 +23,7 @@ public class Announcement {
 
     private String modifiedBy;
 
-    private String senderEmployeeId;
+    private String announcer;
 
     public String getAnnouncementId() {
         return announcementId;
@@ -99,11 +97,11 @@ public class Announcement {
         this.modifiedBy = modifiedBy;
     }
 
-    public String getSenderEmployeeId() {
-        return senderEmployeeId;
+    public String getAnnouncer() {
+        return announcer;
     }
 
-    public void setSenderEmployeeId(String senderEmployeeId) {
-        this.senderEmployeeId = senderEmployeeId;
+    public void setAnnouncer(String announcer) {
+        this.announcer = announcer;
     }
 }

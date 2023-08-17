@@ -27,6 +27,8 @@ public interface IAnnouncementManagementApi {
 
     boolean markAnnouncementAsRead(String announcementId);
 
+    public boolean markAllAnnouncementsForEmployeeAsRead(String employeeId);
+
     boolean markAnnouncementAsUnRead(String announcementId);
 
 
