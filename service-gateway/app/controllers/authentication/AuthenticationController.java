@@ -5,10 +5,9 @@ import com.esl.internship.staffsync.authentication.api.IAuthentication;
 import com.esl.internship.staffsync.authentication.dto.LoginDTO;
 import com.esl.internship.staffsync.authentication.model.AuthEmployeeSlice;
 import com.esl.internship.staffsync.authentication.model.AuthToken;
-import com.esl.internship.staffsync.commons.exceptions.LoginAttemptExceededException;
 import com.esl.internship.staffsync.commons.exceptions.InvalidCredentialsException;
+import com.esl.internship.staffsync.commons.exceptions.LoginAttemptExceededException;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
-import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -66,15 +65,16 @@ public class AuthenticationController extends Controller {
         if (!employeeSlice.getEmployeeActive()) {
             return Results.status(423, "Account has been restricted");
         }
-
         try {
-            iAuthentication.verifyEmployeeLogin(employeeSlice, loginDTO);
+            if (iAuthentication.verifyEmployeeLogin(employeeSlice, loginDTO)) {
+                return iAuthentication.signInEmployee(employeeSlice)
+                        .map(e -> ok(myObjectMapper.toJsonString(new AuthToken(e)))).orElseGet(Results::internalServerError);
+            }
         } catch (LoginAttemptExceededException e) {
             Results.status(423, e.getMessage());
         } catch (InvalidCredentialsException e) {
             return Results.badRequest(e.getMessage());
         }
-        return iAuthentication.signInEmployee(employeeSlice)
-                .map(e -> ok(myObjectMapper.toJsonString(new AuthToken(e)))).orElseGet(Results::internalServerError);
+        return Results.status(423, "Account has been restricted");
     }
 }

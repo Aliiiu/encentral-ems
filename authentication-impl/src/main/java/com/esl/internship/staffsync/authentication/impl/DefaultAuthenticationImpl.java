@@ -100,7 +100,7 @@ public class DefaultAuthenticationImpl implements IAuthentication {
      * @throws LoginAttemptExceededException Exception to be thrown when user exceeds allowed login attempts
      */
     @Override
-    public void verifyEmployeeLogin(AuthEmployeeSlice employeeSlice, LoginDTO loginDTO) throws InvalidCredentialsException, LoginAttemptExceededException {
+    public boolean verifyEmployeeLogin(AuthEmployeeSlice employeeSlice, LoginDTO loginDTO) throws InvalidCredentialsException, LoginAttemptExceededException {
         if (!iPasswordManagementApi.verifyPassword(employeeSlice.getPassword(),loginDTO.getPassword())) {
             int loginAttempts = employeeSlice.getLoginAttempts();
             if (loginAttempts >= 5) {
@@ -111,6 +111,7 @@ public class DefaultAuthenticationImpl implements IAuthentication {
             String response = generateInvalidPasswordMessage(loginAttempts);
             throw new InvalidCredentialsException(response);
         }
+        return true;
     }
 
     /**
@@ -203,7 +204,9 @@ public class DefaultAuthenticationImpl implements IAuthentication {
     public boolean resetLogInAttempts() {
         return new JPAQueryFactory(jpaApi.em()).update(qJpaEmployee)
                 .set(qJpaEmployee.loginAttempts, 0)
-                .where(qJpaEmployee.loginAttempts.gt(0))
+                .set(qJpaEmployee.employeeActive, true)
+                .where(qJpaEmployee.loginAttempts.gt(0)
+                        .or(qJpaEmployee.employeeActive.eq(false)))
                 .execute() >= 1;
     }
 
@@ -268,6 +271,7 @@ public class DefaultAuthenticationImpl implements IAuthentication {
      */
     private String generateInvalidPasswordMessage(int attempts) {
         int attemptsLeft = 5 - (attempts + 1);
+        if (attemptsLeft == 0 ) return "Invalid details. Your account has been restricted due to multiple failed attempts";
         return String.format("Invalid details. You have %d attempt(s) left", attemptsLeft);
     }
 

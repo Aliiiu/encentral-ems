@@ -40,8 +40,6 @@ public class AuthAction extends Action<WebAuth> {
     IAuthentication iAuthentication;
 
 
-
-
     /**
      * @param ctx Http Context object
      * @return Async Result
@@ -74,11 +72,13 @@ public class AuthAction extends Action<WebAuth> {
                 }
 
                 List<RoutePermissions> employeePermissions = iAuthentication.getCurrentEmployeePermissions(employeeId);
+                RouteRole employeeRole = RouteRole.valueOf(employee.getRoleId());
                 List<RoutePermissions> requiredPermissions = new ArrayList<>(Arrays.asList(configuration.permissions()));
                 List<RouteRole> requiredRoles = new ArrayList<>(Arrays.asList(configuration.roles()));
+
                 boolean hasRequiredPermissions = employeePermissions.containsAll(requiredPermissions);
 
-                if ( !hasRequiredPermissions || !requiredRoles.contains(employee.getRoleId()) ) {
+                if ( !hasRequiredPermissions || !requiredRoles.contains(employeeRole) ) {
                     return CompletableFuture.completedFuture(unauthorized("Unauthorized access"));
                 }
                 ctx.args.put("currentEmployee", employee);
