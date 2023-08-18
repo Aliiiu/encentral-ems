@@ -181,6 +181,8 @@
         <module>document-management-impl</module>
         <module>attendance-tracking-api</module>
         <module>attendance-tracking-impl</module>
+        <module>performance-evaluation-api</module>
+        <module>performance-evaluation-impl</module>
     </modules>
 </project>
 
