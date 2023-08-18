@@ -277,6 +277,19 @@ public class DefaultNotificationImpl implements INotification {
     }
 
 
+    /**
+     * @author DEMILADE
+     * @dateCreated 17/08/2023
+     * @description Method to send a notification to a user
+     *
+     * @param receiverId Receiver's employee id
+     * @param senderId Sender's employee id
+     * @param subject Employee performing the action
+     * @param object Object action is performed on
+     * @param templateId Notification template id
+     *
+     * @return Boolean indicating success
+     */
     @Override
     public boolean sendNotification(String receiverId, String senderId, String subject, String object, String templateId) {
         JpaNotificationTemplate jpaNotificationTemplate = new JPAQueryFactory(jpaApi.em())
