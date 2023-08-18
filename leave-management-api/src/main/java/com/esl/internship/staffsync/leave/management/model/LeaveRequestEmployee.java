@@ -43,4 +43,8 @@ public class LeaveRequestEmployee {
         this.lastName = lastName;
     }
 
+    public String getName() {
+        return this.getFirstName() + " " + this.getLastName();
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.esl.internship.staffsync.system.configuration.api;
 
 import com.esl.internship.staffsync.commons.model.Employee;
+import com.esl.internship.staffsync.entities.enums.NotificationPriority;
 import com.esl.internship.staffsync.system.configuration.model.Notification;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
 import java.util.List;
@@ -19,7 +20,9 @@ public interface INotification {
 
     boolean markNotificationAsRead(String notificationId, Employee employee);
 
-    Notification createNotification(CreateNotificationDTO createNotificationDTO, Employee employee);
+    Notification createNotification(CreateNotificationDTO createNotificationDTO, String employeeId);
+
+    boolean sendNotification(String receiverId, String senderId, String subject, String object, String templateId);
 
     boolean markNotificationAsDeleted(String notificationId, Employee employee);
 

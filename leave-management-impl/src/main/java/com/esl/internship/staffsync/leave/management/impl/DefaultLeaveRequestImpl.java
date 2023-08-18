@@ -2,6 +2,7 @@ package com.esl.internship.staffsync.leave.management.impl;
 
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.DateUtility;
+import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import com.esl.internship.staffsync.entities.JpaEmployee;
 import com.esl.internship.staffsync.entities.JpaLeaveRequest;
 import com.esl.internship.staffsync.entities.QJpaEmployee;
@@ -12,8 +13,6 @@ import com.esl.internship.staffsync.leave.management.api.ILeaveRequest;
 import com.esl.internship.staffsync.leave.management.dto.CreateLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.dto.EditLeaveRequestDTO;
 import com.esl.internship.staffsync.leave.management.model.LeaveRequest;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import play.db.jpa.JPAApi;
@@ -22,9 +21,9 @@ import javax.inject.Inject;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -44,6 +43,9 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
 
     @Inject
     JPAApi jpaApi;
+
+    @Inject
+    IEmployeeApi iEmployeeApi;
 
     //TODO: Check if leave type option is of option type leave type
 
@@ -507,15 +509,23 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
     @Override
     public boolean closeCompletedLeave() {
         Date endDate = DateUtility.convertToDate(LocalDate.now());
-        Map<String, Integer> employeeList = getEmployeesOnLeave(endDate);
-        updateEmployees(employeeList);
-        return new JPAQueryFactory(jpaApi.em()).update(qJpaLeaveRequest)
-                .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.COMPLETED)
-                .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
-                .set(qJpaLeaveRequest.duration, qJpaLeaveRequest.endDate.dayOfMonth().subtract(qJpaLeaveRequest.startDate.dayOfMonth()).intValue())
-                .where(qJpaLeaveRequest.endDate.eq(endDate)
-                        .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS)))
-                .execute() >= 0;
+        Map<String, Integer> employeeIdMap = getEmployeesOnLeave(endDate);
+        updateEmployees(employeeIdMap);
+
+        JPAUpdateClause updateClause = new JPAUpdateClause(jpaApi.em(), qJpaLeaveRequest);
+        for (Map.Entry<String, Integer> entry : employeeIdMap.entrySet()) {
+            String employeeId = entry.getKey();
+            Integer leaveDuration = entry.getValue();
+
+            updateClause.where(qJpaLeaveRequest.employee.employeeId.eq(employeeId)
+                            .and(qJpaLeaveRequest.endDate.eq(endDate))
+                            .and(qJpaLeaveRequest.approvalStatus.eq(LeaveRequestStatus.IN_PROGRESS)))
+                    .set(qJpaLeaveRequest.approvalStatus, LeaveRequestStatus.COMPLETED)
+                    .set(qJpaLeaveRequest.dateModified, Timestamp.from(Instant.now()))
+                    .set(qJpaLeaveRequest.duration, leaveDuration);
+        }
+        return updateClause.execute() >= 0;
+
     }
 
     /**
@@ -550,6 +560,7 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
      */
     private boolean updateEmployees(Map<String, Integer> employeeMap) {
         if (employeeMap.size() == 0) return false;
+        Employee employee = iEmployeeApi.getEmployeeById("system_employee").orElseThrow();
 
         JPAUpdateClause updateClause = new JPAUpdateClause(jpaApi.em(), qJpaEmployee);
         for (Map.Entry<String, Integer> entry : employeeMap.entrySet()) {
@@ -558,7 +569,9 @@ public class DefaultLeaveRequestImpl implements ILeaveRequest {
 
             updateClause.where(qJpaEmployee.employeeId.eq(employeeId))
                     .set(qJpaEmployee.currentStatus, EmployeeStatus.ACTIVE)
-                    .set(qJpaEmployee.leaveDays, qJpaEmployee.leaveDays.add(leaveDuration));
+                    .set(qJpaEmployee.leaveDays, qJpaEmployee.leaveDays.add(leaveDuration))
+                    .set(qJpaEmployee.modifiedBy, stringifyEmployee(employee))
+                    .set(qJpaEmployee.dateModified, Timestamp.from(Instant.now()));
         }
         return updateClause.execute() > 0;
     }

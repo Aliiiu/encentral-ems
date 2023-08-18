@@ -1,5 +1,8 @@
 package controllers.employee_management;
 
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
@@ -7,13 +10,14 @@ import com.esl.internship.staffsync.employee.management.api.IEmployeeUpdateReque
 import com.esl.internship.staffsync.employee.management.dto.EmployeeUpdateApprovalDTO;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeUpdateRequestDTO;
 import com.esl.internship.staffsync.employee.management.model.EmployeeUpdateRequest;
+import com.esl.internship.staffsync.system.configuration.api.INotification;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import security.WebAuth;
 
 import javax.inject.Inject;
-
 import java.util.Optional;
 
 import static com.esl.internship.staffsync.commons.util.ImmutableValidator.validate;
@@ -28,6 +32,12 @@ public class EmployeeUpdateRequestController extends Controller {
     @Inject
     MyObjectMapper objectMapper;
 
+    @Inject
+    INotification iNotification;
+
+    @Inject
+    IAuthentication iAuthentication;
+
     @ApiOperation(value = "Submit an Update Request")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Request Received", response = EmployeeUpdateRequest.class)
@@ -39,15 +49,33 @@ public class EmployeeUpdateRequestController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.employee.management.dto.EmployeeUpdateRequestDTO"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions = {RoutePermissions.create_employee_update}, roles = {RouteRole.user, RouteRole.admin})
     public Result submitUpdateRequest(String employeeId) {
         final var updateRequestForm = validate(request().body().asJson(), EmployeeUpdateRequestDTO.class);
         if (updateRequestForm.hasError) {
             return badRequest(updateRequestForm.error);
         }
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        Response<EmployeeUpdateRequest> response = iEmployeeUpdateRequestApi.createEmployeeUpdateRequest(employeeId, updateRequestForm.value, employee);
 
-        Response<EmployeeUpdateRequest> response = iEmployeeUpdateRequestApi.createEmployeeUpdateRequest(employeeId, updateRequestForm.value, getEmployee());
+        boolean result = response.getValue() != null;
+
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), response.getValue().getEmployeeUpdateRequestId(), "update_request_creation_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "update_request_creation_failure");
+        }
+
         if (response.requestHasErrors())
             return badRequest(response.getErrorsAsJsonString());
         return ok(objectMapper.toJsonString(response.getValue()));
@@ -58,12 +86,28 @@ public class EmployeeUpdateRequestController extends Controller {
             @ApiResponse(code = 200, message = "Request Received", response = boolean.class),
             @ApiResponse(code = 400, message = "Cannot cancel request not created by employee", response = String.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.delete_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result cancelUpdateRequest(String employeeUpdateRequestId, String employeeId) {
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
         Response<Boolean> response = iEmployeeUpdateRequestApi.cancelEmployeeUpdateRequest(employeeUpdateRequestId, employeeId);
-        if (response.requestHasErrors())
+
+        if (response.requestHasErrors()) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "update_request_deletion_failure");
             return badRequest(response.getErrorsAsJsonString());
-        else
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "update_request_deletion_successful");
             return ok(objectMapper.toJsonString(response.getValue()));
+        }
     }
 
     @ApiOperation(value = "Get an Update Request by Id")
@@ -71,6 +115,17 @@ public class EmployeeUpdateRequestController extends Controller {
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class),
             @ApiResponse(code = 400, message = "Not Found", response = String.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result getUpdateRequest(String employeeUpdateRequestId) {
         Optional<EmployeeUpdateRequest> response = iEmployeeUpdateRequestApi.getEmployeeUpdateRequest(employeeUpdateRequestId);
         return response.map(employeeUpdateRequest -> ok(objectMapper.toJsonString(employeeUpdateRequest))).orElseGet(() -> notFound("Update Request not found"));
@@ -80,6 +135,17 @@ public class EmployeeUpdateRequestController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result getUpdateRequestsOfEmployee(String employeeId) {
         return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.getUpdateRequestsOfEmployee(employeeId)));
     }
@@ -88,6 +154,17 @@ public class EmployeeUpdateRequestController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result getPendingUpdateRequestsOfEmployee(String employeeId) {
         return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.getPendingUpdateRequestsOfEmployee(employeeId)));
     }
@@ -96,6 +173,17 @@ public class EmployeeUpdateRequestController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result getCompletedUpdateRequestsOfEmployee(String employeeId) {
         return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.getCompletedUpdateRequestsOfEmployee(employeeId)));
     }
@@ -104,6 +192,17 @@ public class EmployeeUpdateRequestController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin})
     public Result getAllEmployeeUpdateRequest() {
         return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.getAllEmployeeUpdateRequests()));
     }
@@ -112,6 +211,17 @@ public class EmployeeUpdateRequestController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin})
     public Result getAllPendingUpdateRequest() {
         return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.getAllPendingUpdateRequests()));
     }
@@ -120,6 +230,17 @@ public class EmployeeUpdateRequestController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllApprovedUpdateRequest() {
         return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.getAllApprovedUpdateRequests()));
     }
@@ -128,6 +249,17 @@ public class EmployeeUpdateRequestController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllCompletedUpdateRequest() {
         return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.getAllCompletedUpdateRequests()));
     }
@@ -136,6 +268,17 @@ public class EmployeeUpdateRequestController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request", response = EmployeeUpdateRequest.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllApprovedUpdateRequestByEmployee(@ApiParam(value = "Employee ID of the approver") String approverEmployeeId) {
         return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.getAllApprovedUpdateRequestsByEmployee(approverEmployeeId)));
     }
@@ -152,34 +295,61 @@ public class EmployeeUpdateRequestController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.employee.management.dto.EmployeeUpdateApprovalDTO"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions = {RoutePermissions.update_employee_update}, roles = {RouteRole.admin})
     public Result reviewUpdateRequest(String employeeUpdateRequestId, String approverEmployeeId) {
         final var reviewUpdateForm = validate(request().body().asJson(), EmployeeUpdateApprovalDTO.class);
+
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        Response<Boolean> response = iEmployeeUpdateRequestApi.reviewEmployeeUpdateRequest(employeeUpdateRequestId, approverEmployeeId, reviewUpdateForm.value);
+
         if (reviewUpdateForm.hasError)
             return badRequest(reviewUpdateForm.error);
-        Response<Boolean> response = iEmployeeUpdateRequestApi.reviewEmployeeUpdateRequest(employeeUpdateRequestId, approverEmployeeId, reviewUpdateForm.value);
-        if (response.requestHasErrors())
+        if (response.requestHasErrors()) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "update_request_update_failure");
             return badRequest(response.getErrorsAsJsonString());
-        return ok(objectMapper.toJsonString(response.getValue()));
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "update_request_update_successful");
+            return ok(objectMapper.toJsonString(response.getValue()));
+        }
     }
 
     @ApiOperation(value = "Delete an Update Request by ID")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Employee Update request Deleted", response = Boolean.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.delete_employee_update}, roles = {RouteRole.admin, RouteRole.user})
     public Result deleteUpdateRequest(String employeeUpdateRequestId) {
-        return ok(objectMapper.toJsonString(iEmployeeUpdateRequestApi.deleteEmployeeUpdateRequest(employeeUpdateRequestId)));
+
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean result = iEmployeeUpdateRequestApi.deleteEmployeeUpdateRequest(employeeUpdateRequestId);
+
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "update_request_deletion_success");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "update_request_deletion_failure");
+        }
+        return ok(objectMapper.toJsonString(result));
     }
 
-    /**
-     * @author WARITH
-     * @dateCreated 14/08/23
-     * @description To return the authenticated and authorized Employee
-     *
-     * @return Employee
-     */
-    Employee getEmployee() {
-        return new Employee();
-    }
+
 }
