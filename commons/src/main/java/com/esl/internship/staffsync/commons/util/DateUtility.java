@@ -93,4 +93,8 @@ public class DateUtility {
         return getDurationBetweenTwoTimePeriod(start.toInstant(), end.toInstant());
     }
 
+    public static boolean dateEquals(Date date, LocalDate localDate) {
+        return convertToLocalDate(date).isEqual(localDate);
+    }
+
 }

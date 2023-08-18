@@ -3,24 +3,30 @@ package com.esl.internship.staffsync.performance.evaluation.impl;
 import com.esl.internship.staffsync.attendance.tracking.api.IAttendanceTracking;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.commons.util.DateUtility;
-import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
 import com.esl.internship.staffsync.entities.*;
 import com.esl.internship.staffsync.performance.evaluation.api.IPerformanceEvaluationApi;
 import com.esl.internship.staffsync.commons.util.AuxDateRangeDTO;
+import com.esl.internship.staffsync.performance.evaluation.dto.EvaluationFeedbackDTO;
 import com.esl.internship.staffsync.performance.evaluation.model.AttendanceOverview;
 import com.esl.internship.staffsync.performance.evaluation.model.DailyPerformanceOverview;
+import com.esl.internship.staffsync.performance.evaluation.model.PerformanceEvaluation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
 import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.DayOfWeek;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.esl.internship.staffsync.performance.evaluation.model.PerformanceEvaluationMapper.INSTANCE;
 
 public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluationApi {
 
@@ -28,13 +34,13 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
     IAttendanceTracking iAttendanceTrackingApi;
 
     @Inject
-    IEmployeeApi iEmployeeApi;
-
-    @Inject
     JPAApi jpaApi;
 
     private static final QJpaEmployee qJpaEmployee = QJpaEmployee.jpaEmployee;
+
     private static final QJpaAttendance qJpaAttendance = QJpaAttendance.jpaAttendance;
+
+    private static final QJpaPerformanceEvaluation qJpaPerformanceEvaluation = QJpaPerformanceEvaluation.jpaPerformanceEvaluation;
 
     @Override
     public AttendanceOverview getAttendanceSummaryOfEmployee(String employeeId, AuxDateRangeDTO auxDateRangeDTO) {
@@ -72,7 +78,7 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
         int expectedWorkingHours = department.getWorkingHours();
 
         DailyPerformanceOverview performanceOverview = calculateDailyPerformanceMetrics(
-                new Date(), expectedWorkingHours
+                employeeId, new Date(), expectedWorkingHours
         );
 
         return response.setValue(performanceOverview);
@@ -81,7 +87,6 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
     @Override
     public List<DailyPerformanceOverview> getPerformanceOverviewBetweenTimePeriod(String employeeId, AuxDateRangeDTO auxDateRangeDTO) {
         JpaEmployee employee = getJpaEmployee(employeeId);
-        Response<DailyPerformanceOverview> response = new Response<>();
 
         if (employee == null)
             return new ArrayList<>();
@@ -92,7 +97,56 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
 
         int expectedWorkingHours = department.getWorkingHours();
 
-        return calculateDailyPerformanceMetricBetweenDays(auxDateRangeDTO, expectedWorkingHours);
+        return calculateDailyPerformanceMetricBetweenDays(
+                employeeId, auxDateRangeDTO, expectedWorkingHours
+        );
+    }
+
+    @Override
+    public PerformanceEvaluation getEmployeePerformanceBetweenDatePeriod(String employeeId, AuxDateRangeDTO auxDateRangeDTO) {
+
+        JpaPerformanceEvaluation jpaPerformanceEvaluation = getJpaPerformanceEvaluationByDateRange(employeeId, auxDateRangeDTO.getStartDate(), auxDateRangeDTO.getEndDate());
+
+        if (jpaPerformanceEvaluation != null)
+            return INSTANCE.mapPerformanceEvaluation(jpaPerformanceEvaluation);
+
+
+        JpaPerformanceEvaluation evaluation = new JpaPerformanceEvaluation();
+        JpaEmployee employee = getJpaEmployee(employeeId);
+
+        int workingHours = employee.getDepartment().getWorkingHours();
+
+        evaluation.setEmployee(employee);
+        evaluation.setLeavePerformance(calculateLeavePerformance(employee));
+        evaluation.setAttendanceAccuracy(calculateAttendancePerformance(employeeId, auxDateRangeDTO, workingHours));
+        evaluation.setDateCreated(Timestamp.from(Instant.now()));
+        evaluation.setPerformanceEvaluationId(UUID.randomUUID().toString());
+        evaluation.setEvaluationStartDate(DateUtility.convertToDate(auxDateRangeDTO.getStartDate()));
+        evaluation.setEvaluationEndDate(DateUtility.convertToDate(auxDateRangeDTO.getEndDate()));
+
+        jpaApi.em().persist(evaluation);
+
+        return INSTANCE.mapPerformanceEvaluation(evaluation);
+    }
+
+    @Override
+    public PerformanceEvaluation getEmployeeEvaluationById(String performanceEvaluationId) {
+        return null;
+    }
+
+    @Override
+    public List<PerformanceEvaluation> getAllEmployeeEvaluations(String employeeId) {
+        return null;
+    }
+
+    @Override
+    public boolean updateEmployeeEvaluationFeedback(String performanceEvaluationId, EvaluationFeedbackDTO feedbackDTO) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteEmployeeEvaluation(String performanceEvaluationId) {
+        return false;
     }
 
     private int getTotalEmployeeWorkingDaysBetweenDateRange(String employeeId, Date startDate, Date endDate) {
@@ -141,12 +195,13 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
 
     }
 
-    private List<JpaAttendance> getAllAttendancesForTheDay(Date date) {
+    private List<JpaAttendance> getAllEmployeeAttendancesForTheDay(String employeeId, Date date) {
         Date startOfTheDay = DateUtility.getTheStartOfTheDay(date);
         Date endOfTheDay = DateUtility.getTheEndOfTheDay(date);
 
         return new JPAQueryFactory(jpaApi.em())
                 .selectFrom(qJpaAttendance)
+                .where(qJpaAttendance.employee.employeeId.eq(employeeId))
                 .where(qJpaAttendance.attendanceDate.goe(startOfTheDay))
                 .where(qJpaAttendance.attendanceDate.loe(endOfTheDay))
                 .orderBy(qJpaAttendance.checkInTime.asc())
@@ -164,14 +219,14 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
                 .sum();
     }
 
-    private DailyPerformanceOverview calculateDailyPerformanceMetrics(Date date, int expectedDailyWorkingHours) {
+    private DailyPerformanceOverview calculateDailyPerformanceMetrics(String employeeId, Date date, int expectedDailyWorkingHours) {
 
 
         int totalCheckIns = 0;
         int totalCheckOuts = 0;
         double totalWorkingHours = 0;
 
-        List<JpaAttendance> attendances = getAllAttendancesForTheDay(date);
+        List<JpaAttendance> attendances = getAllEmployeeAttendancesForTheDay(employeeId, date);
 
         Time lastCheckoutTime = null;
 
@@ -205,7 +260,7 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
 
     }
 
-    private List<DailyPerformanceOverview> calculateDailyPerformanceMetricBetweenDays(AuxDateRangeDTO auxDateRangeDTO, int expectedDailyWorkingHours) {
+    private List<DailyPerformanceOverview> calculateDailyPerformanceMetricBetweenDays(String employeeId, AuxDateRangeDTO auxDateRangeDTO, int expectedDailyWorkingHours) {
         LocalDate startDate, endDate;
         startDate = auxDateRangeDTO.getStartDate();
         endDate = auxDateRangeDTO.getEndDate();
@@ -218,7 +273,9 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
             for (LocalDate date : workingDays) {
                 DailyPerformanceOverview performanceOverview =
                         calculateDailyPerformanceMetrics(
-                                DateUtility.convertToDate(date), expectedDailyWorkingHours
+                                employeeId,
+                                DateUtility.convertToDate(date),
+                                expectedDailyWorkingHours
                         );
                 overviews.add(performanceOverview);
             }
@@ -226,13 +283,70 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
             for (int i = workingDays.size() - 1; i > -1; i--) {
                 DailyPerformanceOverview performanceOverview =
                         calculateDailyPerformanceMetrics(
-                                DateUtility.convertToDate(workingDays.get(i)), expectedDailyWorkingHours
+                                employeeId,
+                                DateUtility.convertToDate(workingDays.get(i)),
+                                expectedDailyWorkingHours
                         );
                 overviews.add(performanceOverview);
             }
         }
 
         return overviews;
+    }
+
+    private double calculateLeavePerformance(JpaEmployee employee) {
+        return 100 - (((double) employee.getLeaveDays() / employee.getEntitledYearlyLeaveDays()) * 100);
+    }
+
+    private double calculateAttendancePerformance(String employeeId, AuxDateRangeDTO auxDateRangeDTO, int expectedWorkingHours) {
+        List<DailyPerformanceOverview> overviews = calculateDailyPerformanceMetricBetweenDays(employeeId, auxDateRangeDTO, expectedWorkingHours);
+        int totalHoursWorked = 0;
+        for (DailyPerformanceOverview overview: overviews) {
+            totalHoursWorked += overview.getTotalHoursWorked();
+        }
+
+        return ((double) totalHoursWorked / (expectedWorkingHours * overviews.size())) * 100;
+    }
+
+    /**
+     * @author ALIU
+     * @dateCreated 18/08/2023
+     * @description Get JpaPerformanceEvaluation by ID
+     *
+     * @param performanceEvaluationId ID of the evaluation record to fetch
+     *
+     * @return JpaPerformanceEvaluation An evaluation record or null if not found
+     */
+    private JpaPerformanceEvaluation getJpaPerformanceEvaluationById(String performanceEvaluationId) {
+        return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaPerformanceEvaluation)
+                .where(qJpaPerformanceEvaluation.performanceEvaluationId.eq(performanceEvaluationId))
+                .fetchOne();
+    }
+
+    /**
+     * @author ALIU
+     * @dateCreated 18/08/2023
+     * @description Get JpaPerformanceEvaluation by Date range
+     *
+     * @param employeeId Id of employee
+     * @param startDate Evaluation starting Date
+     * @param endDate Evaluation End Date
+     *
+     * @return JpaPerformanceEvaluation An evaluation record or null if not found
+     */
+    private JpaPerformanceEvaluation getJpaPerformanceEvaluationByDateRange(String employeeId, LocalDate startDate, LocalDate endDate) {
+        List<JpaPerformanceEvaluation> pe = new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaPerformanceEvaluation)
+                .where(qJpaPerformanceEvaluation.employee.employeeId.eq(employeeId))
+                .where(qJpaPerformanceEvaluation.evaluationStartDate.goe(DateUtility.convertToDate(startDate)))
+                .where(qJpaPerformanceEvaluation.evaluationEndDate.loe(DateUtility.convertToDate(endDate)))
+                .fetch();
+
+        for (JpaPerformanceEvaluation evaluation : pe) {
+            if (DateUtility.dateEquals(evaluation.getEvaluationEndDate(), startDate) &&
+                            DateUtility.dateEquals(evaluation.getEvaluationEndDate(), endDate))
+                return evaluation;
+        }
+        return null;
     }
 
     /**
