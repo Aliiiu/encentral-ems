@@ -165,9 +165,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.esl.internship.3.0</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>announcement-management-api</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 

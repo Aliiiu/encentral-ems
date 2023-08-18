@@ -18,15 +18,15 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.esl.internship.3.0</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>entities</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.esl.internship.3.0</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>commons</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
