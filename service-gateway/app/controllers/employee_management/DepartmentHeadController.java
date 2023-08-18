@@ -1,16 +1,18 @@
 package controllers.employee_management;
 
 
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.employee.management.api.IDepartmentHeadApi;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import com.esl.internship.staffsync.system.configuration.api.INotification;
+import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import security.WebAuth;
 
 import javax.inject.Inject;
 
@@ -25,13 +27,38 @@ public class DepartmentHeadController extends Controller {
     @Inject
     MyObjectMapper objectMapper;
 
+    @Inject
+    INotification iNotification;
+
+    @Inject
+    IAuthentication iAuthentication;
+
     @ApiOperation(value = "Set employee as Department Head")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Successful", response = boolean.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.update_department_head }, roles = {RouteRole.admin})
     public Result setEmployeeAsDepartmentHead(String employeeId, String departmentId) {
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean result = iDepartmentHeadApi.setEmployeeAsDepartmentHead(employeeId, departmentId, employee);
+
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee",employee.getFullName(), "", "department_head_creation_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "department_head_creation_failure");
+        }
         return ok(objectMapper.toJsonString(
-            iDepartmentHeadApi.setEmployeeAsDepartmentHead(employeeId, departmentId, getEmployee())
+            result
         ));
     }
 
@@ -39,9 +66,27 @@ public class DepartmentHeadController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Successful", response = boolean.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.update_department_head }, roles = {RouteRole.admin})
     public Result removeEmployeeAsDepartmentHead(String employeeId, String departmentId) {
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean result =  iDepartmentHeadApi.removeEmployeeAsDepartmentHead(employeeId, departmentId);
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee",employee.getFullName(), "", "department_head_update_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "department_head_update_failure");
+        }
         return ok(objectMapper.toJsonString(
-                iDepartmentHeadApi.removeEmployeeAsDepartmentHead(employeeId, departmentId)
+                result
         ));
     }
 
@@ -54,6 +99,17 @@ public class DepartmentHeadController extends Controller {
                     responseContainer = "List"
             )
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_department_head }, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllDepartmentHeads() {
         return ok(objectMapper.toJsonString(
                 iDepartmentHeadApi.getAllDepartmentHeads()
@@ -68,6 +124,17 @@ public class DepartmentHeadController extends Controller {
                     response = com.esl.internship.staffsync.employee.management.model.DepartmentHead.class
             )
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_department_head }, roles = {RouteRole.admin, RouteRole.user})
     public Result getDepartmentHeadById(String departmentHeadId) {
         return ok(objectMapper.toJsonString(
                 iDepartmentHeadApi.getDepartmentHeadById(departmentHeadId)
@@ -82,6 +149,18 @@ public class DepartmentHeadController extends Controller {
                     response = Employee.class
             )
     })
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_department_head }, roles = {RouteRole.admin, RouteRole.user})
     public Result getDepartmentHeadByDepartmentId(String departmentId) {
         return ok(objectMapper.toJsonString(
                 iDepartmentHeadApi.getDepartmentHeadByDepartmentId(departmentId)
@@ -97,21 +176,21 @@ public class DepartmentHeadController extends Controller {
                     responseContainer = "List"
             )
     })
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_department_head }, roles = {RouteRole.admin, RouteRole.user})
     public Result getDepartmentsHeadByEmployee(String employeeId) {
         return ok(objectMapper.toJsonString(
                 iDepartmentHeadApi.getDepartmentsHeadByEmployee(employeeId)
         ));
     }
-
-    /**
-     * @author WARITH
-     * @dateCreated 09/08/23
-     * @description To return the authenticated and authorized Employee
-     *
-     * @return Employee
-     */
-    Employee getEmployee() {
-        return new Employee();
-    }
-
 }

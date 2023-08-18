@@ -1,5 +1,8 @@
 package controllers.employee_management;
 
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
@@ -7,12 +10,14 @@ import com.esl.internship.staffsync.document.management.dto.SaveInfo;
 import com.esl.internship.staffsync.employee.management.api.IEmployeeDocumentUploadApi;
 import com.esl.internship.staffsync.employee.management.dto.EmployeeDocumentDTO;
 import com.esl.internship.staffsync.employee.management.model.EmployeeDocument;
+import com.esl.internship.staffsync.system.configuration.api.INotification;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import security.WebAuth;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -29,6 +34,12 @@ public class EmployeeDocumentUploadController extends Controller {
 
     @Inject
     MyObjectMapper objectMapper;
+
+    @Inject
+    INotification iNotification;
+
+    @Inject
+    IAuthentication iAuthentication;
 
     @ApiOperation(value = "Upload a Document")
     @ApiResponses({
@@ -48,8 +59,17 @@ public class EmployeeDocumentUploadController extends Controller {
                     required = true,
                     dataType = "java.io.File",
                     paramType = "formData"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions= {RoutePermissions.create_document }, roles = {RouteRole.admin, RouteRole.user})
     public Result uploadDocument(String employeeId) {
         Http.MultipartFormData<File> formData = request().body().asMultipartFormData();
 
@@ -65,9 +85,17 @@ public class EmployeeDocumentUploadController extends Controller {
         documentForm.value.setFile(filePart.getFile());
         SaveInfo saveInfo = new SaveInfo(filePart.getFilename());
 
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
         Response<EmployeeDocument> serviceResponse = iEmployeeDocumentUploadApi
-                .addEmployeeDocument(employeeId, documentForm.value, saveInfo, getEmployee());
+                .addEmployeeDocument(employeeId, documentForm.value, saveInfo, employee);
 
+        boolean result = serviceResponse.getValue() != null;
+
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), serviceResponse.getValue().getDocumentName(), "document_creation_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "document_creation_failure");
+        }
         if (serviceResponse.requestHasErrors())
             return badRequest(serviceResponse.getErrorsAsJsonString());
 
@@ -78,6 +106,17 @@ public class EmployeeDocumentUploadController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Documents", response = EmployeeDocument.class, responseContainer = "List")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_document}, roles = {RouteRole.admin})
     public Result retrieveAllEmployeeDocuments(String employeeId) {
         return ok(objectMapper.toJsonString(iEmployeeDocumentUploadApi.getDocumentsOwnedByEmployee(employeeId)));
     }
@@ -91,6 +130,17 @@ public class EmployeeDocumentUploadController extends Controller {
             @ApiResponse(code = 200, message = "Document"),
             @ApiResponse(code = 404, message = "Document not found")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_document }, roles = {RouteRole.admin, RouteRole.user})
     public Result getDocumentFile(String employeeDocumentId) {
         Optional<File> document = iEmployeeDocumentUploadApi.getEmployeeActualDocument(employeeDocumentId);
 
@@ -103,20 +153,28 @@ public class EmployeeDocumentUploadController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Deleted", response = boolean.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.delete_document }, roles = {RouteRole.admin})
     public Result deleteADocument(String employeeDocumentId) {
-        return ok(
-                objectMapper.toJsonString(iEmployeeDocumentUploadApi.deleteEmployeeDocument(employeeDocumentId))
-        );
-    }
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean result = iEmployeeDocumentUploadApi.deleteEmployeeDocument(employeeDocumentId);
 
-    /**
-     * @author WARITH
-     * @dateCreated 11/08/23
-     * @description To return the authenticated and authorized Employee
-     *
-     * @return Employee
-     */
-    Employee getEmployee() {
-        return new Employee();
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "document_creation_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "document_creation_failure");
+        }
+        return ok(
+                objectMapper.toJsonString(result)
+        );
     }
 }
