@@ -9,11 +9,15 @@ public class DailyPerformanceOverview {
 
     private LocalDate day;
 
-    private LocalTime checkInTime;
+    private LocalTime firstCheckInTime;
 
-    private boolean checkedOut;
+    private LocalTime lastCheckOutTime;
 
-    private int performanceRating;
+    private int totalCheckIns;
+
+    private int totalCheckOuts;
+
+    private double performanceRating;
 
     public double getTotalHoursWorked() {
         return totalHoursWorked;
@@ -31,27 +35,43 @@ public class DailyPerformanceOverview {
         this.day = day;
     }
 
-    public LocalTime getCheckInTime() {
-        return checkInTime;
+    public LocalTime getFirstCheckInTime() {
+        return firstCheckInTime;
     }
 
-    public void setCheckInTime(LocalTime checkInTime) {
-        this.checkInTime = checkInTime;
+    public void setFirstCheckInTime(LocalTime firstCheckInTime) {
+        this.firstCheckInTime = firstCheckInTime;
     }
 
-    public boolean isCheckedOut() {
-        return checkedOut;
+    public LocalTime getLastCheckOutTime() {
+        return lastCheckOutTime;
     }
 
-    public void setCheckedOut(boolean checkedOut) {
-        this.checkedOut = checkedOut;
+    public void setLastCheckOutTime(LocalTime lastCheckOutTime) {
+        this.lastCheckOutTime = lastCheckOutTime;
     }
 
-    public int getPerformanceRating() {
+    public int getTotalCheckIns() {
+        return totalCheckIns;
+    }
+
+    public void setTotalCheckIns(int totalCheckIns) {
+        this.totalCheckIns = totalCheckIns;
+    }
+
+    public int getTotalCheckOuts() {
+        return totalCheckOuts;
+    }
+
+    public void setTotalCheckOuts(int totalCheckOuts) {
+        this.totalCheckOuts = totalCheckOuts;
+    }
+
+    public double getPerformanceRating() {
         return performanceRating;
     }
 
-    public void setPerformanceRating(int performanceRating) {
+    public void setPerformanceRating(double performanceRating) {
         this.performanceRating = performanceRating;
     }
 }
