@@ -1,14 +1,17 @@
-
+-- author: ALIU
+-- description: Performance Evaluation Table to keep store employee evaluation
+-- date: 17/08/2013
 
 CREATE TABLE public.performance_evaluation
 (
     performance_evaluation_id       varchar(64)                     NOT NULL,
-    attendance_accuracy             double                          NOT NULL,
-    leave_performance               double                          NOT NULL,
+    attendance_accuracy             real                            NOT NULL,
+    leave_performance               real                            NOT NULL,
     evaluation_start_date           date                            NOT NULL,
     evaluation_end_date             date                            NOT NULL,
     employee_id                     varchar(64)                     NOT NULL,
-    evaluator_id                    varchar(64)                     NOT NULL,
+    feedback                        text,
+    evaluator_id                    varchar(64),
     date_created                    timestamp with time zone        NOT NULL DEFAULT now(),
 
     CONSTRAINT performance_evaluation_pk PRIMARY KEY (performance_evaluation_id),
