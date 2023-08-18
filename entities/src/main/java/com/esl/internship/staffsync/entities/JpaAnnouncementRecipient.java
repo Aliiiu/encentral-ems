@@ -37,12 +37,12 @@ public class JpaAnnouncementRecipient implements Serializable {
 	private NotificationStatus status;
 
 	//bidirectional many-to-one association to JpaAnnouncement
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="announcement_id", nullable=false)
 	private JpaAnnouncement announcement;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="employee_id", nullable=false)
 	private JpaEmployee employee;
 
