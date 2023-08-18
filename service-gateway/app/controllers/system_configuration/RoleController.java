@@ -1,16 +1,22 @@
 package controllers.system_configuration;
 
 
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.system.configuration.api.INotification;
 import com.esl.internship.staffsync.system.configuration.api.IRoleApi;
 import com.esl.internship.staffsync.system.configuration.dto.RoleDTO;
+import com.esl.internship.staffsync.system.configuration.model.Permission;
 import com.esl.internship.staffsync.system.configuration.model.Role;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import security.WebAuth;
 
 import javax.inject.Inject;
 
@@ -27,6 +33,12 @@ public class RoleController extends Controller {
     @Inject
     MyObjectMapper myObjectMapper;
 
+    @Inject
+    IAuthentication iAuthentication;
+
+    @Inject
+    INotification iNotification;
+
     @ApiOperation(value = "Create a role")
     @ApiResponses(
             value = {
@@ -41,14 +53,30 @@ public class RoleController extends Controller {
                             paramType = "body",
                             required = true,
                             dataType = "com.esl.internship.staffsync.system.configuration.dto.RoleDTO"
-                    )
-            })
+                    ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.create_role}, roles = {RouteRole.admin})
     public Result addRole() {
         final var roleDtoForm = validate(request().body().asJson(), RoleDTO.class);
         if (roleDtoForm.hasError) {
             return badRequest(roleDtoForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iRoleApi.addRole(roleDtoForm.value, getEmployee())));
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        Role role = iRoleApi.addRole(roleDtoForm.value, employee);
+        if (role != null) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), role.getRoleName(), "Role_creation_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Role_creation_failure");
+        }
+        return ok(myObjectMapper.toJsonString(role));
     }
 
     @ApiOperation(value = "Get role by id")
@@ -56,6 +84,17 @@ public class RoleController extends Controller {
             value = {
                     @ApiResponse(code = 200, message = "Role", response = Role.class)}
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_role}, roles = {RouteRole.admin, RouteRole.user})
     public Result getRole(String roleId) {
         return iRoleApi.getRole(roleId)
                 .map(e -> ok(myObjectMapper.toJsonString(e))).orElseGet(Results::notFound);
@@ -74,14 +113,30 @@ public class RoleController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.system.configuration.dto.RoleDTO"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions = {RoutePermissions.update_role}, roles = {RouteRole.admin})
     public Result updateRole(String roleId) {
         final var roleDtoForm = validate(request().body().asJson(), RoleDTO.class);
         if (roleDtoForm.hasError) {
             return badRequest(roleDtoForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iRoleApi.updateRole(roleId, roleDtoForm.value, getEmployee())));
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean resp = iRoleApi.updateRole(roleId, roleDtoForm.value, employee);
+        if (resp) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Role_update_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Role_update_failure");
+        }
+        return ok(myObjectMapper.toJsonString(resp));
     }
 
     @ApiOperation(value = "Get all roles")
@@ -90,6 +145,17 @@ public class RoleController extends Controller {
                     @ApiResponse(code = 200, message = "roles", response = Role.class, responseContainer = "List")
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.read_role}, roles = {RouteRole.admin})
     public Result getAllRole() {
         return ok(myObjectMapper.toJsonString(iRoleApi.getRoles()));
     }
@@ -100,19 +166,27 @@ public class RoleController extends Controller {
                     @ApiResponse(code = 200, message = "Deleted", response = boolean.class)
             }
     )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions = {RoutePermissions.delete_role}, roles = {RouteRole.admin})
     public Result deleteRole(String roleId) {
-        return ok(myObjectMapper.toJsonString(iRoleApi.deleteRole(roleId)));
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean resp = iRoleApi.deleteRole(roleId);
+        if (resp) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Role_deletion_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Role_deletion_failure");
+        }
+        return ok(myObjectMapper.toJsonString(resp));
     }
 
-    /**
-     * @author WARITH
-     * @dateCreated 04/08/23
-     * @description To return the authenticated and authorized Employee
-     *
-     * @return Employee
-     */
-    Employee getEmployee() {
-        return new Employee("Test-001-EMP", "Test Employee");
-    }
 
 }

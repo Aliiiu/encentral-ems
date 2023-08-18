@@ -1,10 +1,9 @@
 package com.esl.internship.staffsync.system.configuration.impl;
 
 import com.esl.internship.staffsync.commons.model.Employee;
-import com.esl.internship.staffsync.entities.JpaNotification;
-import com.esl.internship.staffsync.entities.JpaNotificationTemplate;
-import com.esl.internship.staffsync.entities.QJpaNotification;
-import com.esl.internship.staffsync.entities.QJpaNotificationTemplate;
+import com.esl.internship.staffsync.employee.management.api.IEmployeeApi;
+import com.esl.internship.staffsync.entities.*;
+import com.esl.internship.staffsync.entities.enums.NotificationPriority;
 import com.esl.internship.staffsync.entities.enums.NotificationStatus;
 import com.esl.internship.staffsync.system.configuration.api.INotification;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationDTO;
@@ -33,6 +32,9 @@ public class DefaultNotificationImpl implements INotification {
     private static final QJpaNotificationTemplate qJpaNotificationTemplate = QJpaNotificationTemplate.jpaNotificationTemplate;
     @Inject
     JPAApi jpaApi;
+
+    @Inject
+    IEmployeeApi iEmployee;
 
     /**
      * @param notificationId Id of the notification
@@ -195,14 +197,14 @@ public class DefaultNotificationImpl implements INotification {
 
     /**
      * @param createNotificationDTO DTO for creating notifications
-     * @param employee              Employee object
+     * @param employeeId            Id of employee creating notification
      * @return notification object
      * @author DEMILADE
      * @dateCreated 04/08/2023
      * @description Method to create a new notification
      */
     @Override
-    public Notification createNotification(CreateNotificationDTO createNotificationDTO, Employee employee) {
+    public Notification createNotification(CreateNotificationDTO createNotificationDTO, String employeeId) {
         JpaNotificationTemplate jpaNotificationTemplate = new JPAQueryFactory(jpaApi.em())
                 .selectFrom(qJpaNotificationTemplate)
                 .where(qJpaNotificationTemplate.notificationTemplateId.eq(
@@ -210,14 +212,22 @@ public class DefaultNotificationImpl implements INotification {
                 )
                 .fetchOne();
 
+        Employee employee = iEmployee.getEmployeeById(employeeId).orElseThrow();
+
         Notification n = INSTANCE.createNotificationToNotification(createNotificationDTO);
         JpaNotification jpaNotification = INSTANCE.notificationToJpaNotification(n);
-        jpaNotification.setNotificationMessage(jpaNotificationTemplate.getNotificationTemplateContent());
         jpaNotification.setNotificationTitle(jpaNotificationTemplate.getNotificationTemplateName());
         jpaNotification.setDeliveryStatus(NotificationStatus.UNREAD);
         jpaNotification.setNotificationId(UUID.randomUUID().toString());
         jpaNotification.setCreatedBy(stringifyEmployee(employee));
         jpaNotification.setDateCreated(Timestamp.from(Instant.now()));
+
+        String formattedMessage = formatNotificationMessage(
+                createNotificationDTO.getSubject(),
+                createNotificationDTO.getObject(),
+                jpaNotificationTemplate.getNotificationTemplateContent()
+        );
+        jpaNotification.setNotificationMessage(formattedMessage);
         jpaApi.em().persist(jpaNotification);
 
         return INSTANCE.jpaNotificationToNotification(jpaNotification);
@@ -267,6 +277,45 @@ public class DefaultNotificationImpl implements INotification {
     }
 
 
+    @Override
+    public boolean sendNotification(String receiverId, String senderId, String subject, String object, String templateId) {
+        JpaNotificationTemplate jpaNotificationTemplate = new JPAQueryFactory(jpaApi.em())
+                .selectFrom(qJpaNotificationTemplate)
+                .where(qJpaNotificationTemplate.notificationTemplateId.eq(templateId))
+                .fetchOne();
+        JpaNotification jpaNotification = new JpaNotification();
+        jpaNotification.setNotificationId(UUID.randomUUID().toString());
+        jpaNotification.setNotificationTitle(jpaNotificationTemplate.getNotificationTemplateName());
+        jpaNotification.setDeliveryStatus(NotificationStatus.UNREAD);
+        jpaNotification.setPriority(NotificationPriority.NORMAL);
+
+        String formattedMessage = formatNotificationMessage(
+                subject,
+                object,
+                jpaNotificationTemplate.getNotificationTemplateContent()
+        );
+
+        jpaNotification.setNotificationMessage(formattedMessage);
+
+        JpaEmployee receiver = new JpaEmployee();
+        receiver.setEmployeeId(receiverId);
+
+        JpaEmployee sender = new JpaEmployee();
+        sender.setEmployeeId(senderId);
+
+
+        jpaNotification.setReceiver(receiver);
+        jpaNotification.setSender(sender);
+        jpaNotification.setNotificationTemplateBean(jpaNotificationTemplate);
+
+        Employee employee = iEmployee.getEmployeeById("system_employee").orElseThrow();
+        jpaNotification.setCreatedBy(stringifyEmployee(employee));
+        jpaNotification.setDateCreated(Timestamp.from(Instant.now()));
+        jpaApi.em().persist(jpaNotification);
+
+        return true;
+    }
+
     /**
      * @param notificationId JpaNotification id
      * @return JpaNotification object
@@ -278,5 +327,18 @@ public class DefaultNotificationImpl implements INotification {
         return new JPAQueryFactory(jpaApi.em()).selectFrom(qJpaNotification)
                 .where(qJpaNotification.notificationId.eq(notificationId))
                 .fetchOne();
+    }
+
+    /**
+     * @param subject         Subject of notification message
+     * @param object          Object of notification message
+     * @param templateMessage Message from notification template
+     * @return Formatted String
+     * @author DEMILADE
+     * @description Method to format notification message
+     * @dateCreated 17/08/2023
+     */
+    private String formatNotificationMessage(String subject, String object, String templateMessage) {
+        return String.format(templateMessage, subject, object);
     }
 }

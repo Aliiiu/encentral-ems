@@ -13,7 +13,6 @@ public class CreateLeaveRequestDTO extends DateRangeDTO {
     @NotNull(message = "Leave type id field cannot be null ")
     private String leaveTypeId;
 
-
     private String reason = "";
 
     public CreateLeaveRequestDTO() {

@@ -9,6 +9,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Mapper
 public interface LeaveManagementMapper {
@@ -46,6 +47,9 @@ public interface LeaveManagementMapper {
         leaveRequest.setStartDate( createLeaveRequestDTO.getStartDate() );
         createLeaveRequestDTO.getEndDate().ifPresent((endDate)->{
             leaveRequest.setEndDate(endDate);
+            long durationInMilliseconds = endDate.getTime() - leaveRequest.getStartDate().getTime();
+            long durationInDays = TimeUnit.MILLISECONDS.toDays(durationInMilliseconds);
+            leaveRequest.setDuration((int) durationInDays);
         });
 
         return leaveRequest;
