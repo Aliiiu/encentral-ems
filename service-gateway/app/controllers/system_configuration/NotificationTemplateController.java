@@ -5,6 +5,7 @@ import com.esl.internship.staffsync.authentication.model.RoutePermissions;
 import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.system.configuration.api.INotification;
 import com.esl.internship.staffsync.system.configuration.api.INotificationTemplate;
 import com.esl.internship.staffsync.system.configuration.dto.CreateNotificationTemplateDTO;
 import com.esl.internship.staffsync.system.configuration.dto.EditNotificationTemplateDTO;
@@ -30,6 +31,9 @@ public class NotificationTemplateController extends Controller {
     INotificationTemplate iNotificationTemplate;
 
     @Inject
+    INotification iNotification;
+
+    @Inject
     IAuthentication iAuthentication;
 
     @Inject
@@ -53,7 +57,7 @@ public class NotificationTemplateController extends Controller {
                     dataTypeClass = String.class
             )
     })
-    @WebAuth(permissions= {RoutePermissions.read_notification_template }, roles ={RouteRole.admin, RouteRole.user})
+    @WebAuth(permissions = {RoutePermissions.read_notification_template}, roles = {RouteRole.admin, RouteRole.user})
     public Result getNotificationTemplate(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId) {
 
         if (notificationTemplateId.length() == 0) {
@@ -80,7 +84,7 @@ public class NotificationTemplateController extends Controller {
                     dataTypeClass = String.class
             )
     })
-    @WebAuth(permissions= {RoutePermissions.read_notification_template }, roles ={RouteRole.admin, RouteRole.user})
+    @WebAuth(permissions = {RoutePermissions.read_notification_template}, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllNotificationTemplates() {
         return Results.ok(myObjectMapper.toJsonString(
                 iNotificationTemplate.getAllNotificationTemplates()
@@ -104,7 +108,7 @@ public class NotificationTemplateController extends Controller {
                     dataTypeClass = String.class
             )
     })
-    @WebAuth(permissions= {RoutePermissions.read_notification_template }, roles ={RouteRole.admin, RouteRole.user})
+    @WebAuth(permissions = {RoutePermissions.read_notification_template}, roles = {RouteRole.admin, RouteRole.user})
     public Result getTemplateNotifications(@ApiParam(value = "Notification template Id", required = true) String notificationTemplateId) {
 
         if (notificationTemplateId.length() == 0) {
@@ -141,7 +145,7 @@ public class NotificationTemplateController extends Controller {
                     dataTypeClass = String.class
             )
     })
-    @WebAuth(permissions= {RoutePermissions.create_notification_template }, roles ={RouteRole.admin})
+    @WebAuth(permissions = {RoutePermissions.create_notification_template}, roles = {RouteRole.admin})
     public Result createNotificationTemplate() {
 
         final var notificationTemplateCreationForm = validate(request().body().asJson(), CreateNotificationTemplateDTO.class);
@@ -155,10 +159,17 @@ public class NotificationTemplateController extends Controller {
         }
 
         try {
-            return ok(myObjectMapper.toJsonString(iNotificationTemplate.createNotificationTemplate(
+            Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+            NotificationTemplate template = iNotificationTemplate.createNotificationTemplate(
                     notificationTemplateDTO,
                     iAuthentication.getContextCurrentEmployee().orElseThrow()
-            )));
+            );
+            if (template != null) {
+                iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), template.getNotificationTemplateName(), "notification_template_creation_successful");
+            } else {
+                iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "anotification_template_creation_failure");
+            }
+            return ok(myObjectMapper.toJsonString(template));
         } catch (Exception e) {
             return Results.badRequest("Invalid data");
         }
@@ -206,18 +217,23 @@ public class NotificationTemplateController extends Controller {
 
         if (nt.isPresent()) {
             String templateName = nt.get().getNotificationTemplateName();
-            String templateId = nt.get(). getNotificationTemplateId();
+            String templateId = nt.get().getNotificationTemplateId();
             String dtoId = notificationTemplateDTO.getNotificationTemplateId();
 
             if (!dtoId.equals(templateId) && iNotificationTemplate.checkIfNotificationTemplateNameInUse(templateName)) {
                 return Results.status(409, "Notification template name already in use");
             }
-            return Results.ok(myObjectMapper.toJsonString(
-                    iNotificationTemplate.editNotificationTemplate(
-                            notificationTemplateDTO,
-                            iAuthentication.getContextCurrentEmployee().orElseThrow()
-                    ))
+            Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+            boolean resp = iNotificationTemplate.editNotificationTemplate(
+                    notificationTemplateDTO,
+                    employee
             );
+            if (resp) {
+                iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "notification_template_update_successful");
+            } else {
+                iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "notification_template_update_failure");
+            }
+            return Results.ok(myObjectMapper.toJsonString(resp));
         }
         return Results.notFound("Notification template not found");
     }

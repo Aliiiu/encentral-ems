@@ -20,10 +20,23 @@ public class CreateNotificationDTO {
     @NotNull(message = "Sender id field cannot be null")
     private String senderId;
 
+    private String subject="";
+
+    private String object = "";
+
     @NotNull(message = "Notification template id field cannot be null")
     private String notificationTemplateBeanId;
 
     public CreateNotificationDTO() {
+    }
+
+    public CreateNotificationDTO(NotificationPriority priority, String receiverId, String senderId, String subject, String object, String notificationTemplateBeanId) {
+        this.priority = priority;
+        this.receiverId = receiverId;
+        this.senderId = senderId;
+        this.subject = subject;
+        this.object = object;
+        this.notificationTemplateBeanId = notificationTemplateBeanId;
     }
 
     public NotificationPriority getPriority() {
@@ -48,6 +61,22 @@ public class CreateNotificationDTO {
 
     public void setSenderId(String senderId) {
         this.senderId = senderId;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getObject() {
+        return object;
+    }
+
+    public void setObject(String object) {
+        this.object = object;
     }
 
     public String getNotificationTemplateBeanId() {

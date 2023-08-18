@@ -191,6 +191,7 @@ public class NotificationController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Boolean.class, message = "Notification marked as read"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid notification id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource")
             }
     )
     @ApiImplicitParams({
@@ -208,6 +209,12 @@ public class NotificationController extends Controller {
         if (notificationId.length() == 0) {
             return Results.badRequest("Invalid notification id");
         }
+
+        String employeeId = iAuthentication.getContextCurrentEmployee().orElseThrow().getEmployeeId();
+        if (iNotification.verifyEmployee(employeeId, notificationId)|| iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
+
         return ok(myObjectMapper.toJsonString(
                 iNotification.markNotificationAsRead(notificationId, iAuthentication.getContextCurrentEmployee().orElseThrow())
         ));
@@ -218,6 +225,7 @@ public class NotificationController extends Controller {
             value = {
                     @ApiResponse(code = 200, response = Boolean.class, message = "Notification marked as deleted"),
                     @ApiResponse(code = 400, response = String.class, message = "Invalid notification id"),
+                    @ApiResponse(code = 401, response = String.class, message = "Employee is not authorized to access this resource")
             }
     )
     @ApiImplicitParams({
@@ -235,6 +243,11 @@ public class NotificationController extends Controller {
         if (notificationId.length() == 0) {
             return Results.badRequest("Invalid notification id");
         }
+        String employeeId = iAuthentication.getContextCurrentEmployee().orElseThrow().getEmployeeId();
+        if (iNotification.verifyEmployee(employeeId, notificationId) || iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
+
         return ok(myObjectMapper.toJsonString(
                 iNotification.markNotificationAsDeleted(notificationId, iAuthentication.getContextCurrentEmployee().orElseThrow())
         ));
@@ -263,6 +276,11 @@ public class NotificationController extends Controller {
         if (notificationId.length() == 0) {
             return Results.badRequest("Invalid notification id");
         }
+        String employeeId = iAuthentication.getContextCurrentEmployee().orElseThrow().getEmployeeId();
+        if (iNotification.verifyEmployee(employeeId, notificationId) || iAuthentication.checkIfUserIsCurrentEmployeeOrAdmin(employeeId)) {
+            return Results.unauthorized("Employee is not authorized to access this resource");
+        }
+
         return ok(myObjectMapper.toJsonString(
                 iNotification.deleteNotification(notificationId)
         ));
@@ -388,7 +406,7 @@ public class NotificationController extends Controller {
         if (!res) return Results.notFound("Notification template not found");
         return ok(myObjectMapper.toJsonString(iNotification.createNotification(
                 notificationDTO,
-                iAuthentication.getContextCurrentEmployee().orElseThrow()
+                iAuthentication.getContextCurrentEmployee().orElseThrow().getEmployeeId()
         )));
     }
 

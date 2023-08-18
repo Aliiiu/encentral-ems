@@ -1,6 +1,9 @@
 package controllers.employee_management;
 
 
+import com.esl.internship.staffsync.authentication.api.IAuthentication;
+import com.esl.internship.staffsync.authentication.model.RoutePermissions;
+import com.esl.internship.staffsync.authentication.model.RouteRole;
 import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
 import com.esl.internship.staffsync.employee.management.api.IDepartmentApi;
@@ -8,11 +11,13 @@ import com.esl.internship.staffsync.employee.management.dto.DepartmentDTO;
 import com.esl.internship.staffsync.employee.management.dto.UpdateDepartmentDTO;
 import com.esl.internship.staffsync.employee.management.model.Department;
 import com.esl.internship.staffsync.commons.service.response.Response;
+import com.esl.internship.staffsync.system.configuration.api.INotification;
 import io.swagger.annotations.*;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import security.WebAuth;
 
 import javax.inject.Inject;
 
@@ -25,6 +30,12 @@ public class DepartmentController extends Controller {
 
     @Inject
     IDepartmentApi iDepartmentApi;
+
+    @Inject
+    IAuthentication iAuthentication;
+
+    @Inject
+    INotification iNotification;
 
     @Inject
     MyObjectMapper myObjectMapper;
@@ -44,18 +55,35 @@ public class DepartmentController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.employee.management.dto.DepartmentDTO"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions= {RoutePermissions.create_department }, roles = {RouteRole.admin})
     public Result addDepartment() {
         final var departmentDtoForm = validate(request().body().asJson(), DepartmentDTO.class);
         if (departmentDtoForm.hasError) {
             return badRequest(departmentDtoForm.error);
         }
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        Response<Department> serviceResponse = iDepartmentApi.addDepartment(departmentDtoForm.value, employee);
 
-        Response<Department> serviceResponse = iDepartmentApi.addDepartment(departmentDtoForm.value, getEmployee());
+        boolean result = serviceResponse.getValue() != null;
 
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee",employee.getFullName(), serviceResponse.getValue().getDepartmentName(), "document_deletion_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "document_deletion_failure");
+        }
         if (serviceResponse.requestHasErrors())
             return badRequest(serviceResponse.getErrorsAsJsonString());
+
         return ok(myObjectMapper.toJsonString(serviceResponse.getValue()));
     }
 
@@ -83,14 +111,31 @@ public class DepartmentController extends Controller {
                     paramType = "body",
                     required = true,
                     dataType = "com.esl.internship.staffsync.employee.management.dto.UpdateDepartmentDTO"
+            ),
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
             )
     })
+    @WebAuth(permissions= {RoutePermissions.update_department }, roles = {RouteRole.admin})
     public Result updateDepartment(String departmentId) {
         final var departmentDtoForm = validate(request().body().asJson(), UpdateDepartmentDTO.class);
         if (departmentDtoForm.hasError) {
             return badRequest(departmentDtoForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iDepartmentApi.updateDepartment(departmentId, departmentDtoForm.value, getEmployee())));
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean result = iDepartmentApi.updateDepartment(departmentId, departmentDtoForm.value, employee);
+
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee",employee.getFullName(), "", "department_update_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "department_update_failure");
+        }
+        return ok(myObjectMapper.toJsonString(result));
     }
 
     @ApiOperation(value = "Get all Departments")
@@ -102,6 +147,17 @@ public class DepartmentController extends Controller {
                     responseContainer = "List"
             )
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.read_department }, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllDepartments() {
         return ok(myObjectMapper.toJsonString(iDepartmentApi.getAllDepartments()));
     }
@@ -110,19 +166,26 @@ public class DepartmentController extends Controller {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Deleted", response = boolean.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Authorization",
+                    paramType = "header",
+                    required = true,
+                    dataType = "string",
+                    dataTypeClass = String.class
+            )
+    })
+    @WebAuth(permissions= {RoutePermissions.delete_department }, roles = {RouteRole.admin})
     public Result deleteDepartment(String departmentId) {
-        return ok(myObjectMapper.toJsonString(iDepartmentApi.deleteDepartment(departmentId)));
-    }
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean result = iDepartmentApi.deleteDepartment(departmentId);
 
-    /**
-     * @author WARITH
-     * @dateCreated 09/08/23
-     * @description To return the authenticated and authorized Employee
-     *
-     * @return Employee
-     */
-    Employee getEmployee() {
-        return new Employee("Test-001-EMP", "Test Employee");
+        if (result) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee",employee.getFullName(), "", "department_deletion_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "department_deletion_failure");
+        }
+        return ok(myObjectMapper.toJsonString(result));
     }
-
 }

@@ -3,7 +3,9 @@ package controllers.system_configuration;
 import com.esl.internship.staffsync.authentication.api.IAuthentication;
 import com.esl.internship.staffsync.authentication.model.RoutePermissions;
 import com.esl.internship.staffsync.authentication.model.RouteRole;
+import com.esl.internship.staffsync.commons.model.Employee;
 import com.esl.internship.staffsync.commons.util.MyObjectMapper;
+import com.esl.internship.staffsync.system.configuration.api.INotification;
 import com.esl.internship.staffsync.system.configuration.api.IOption;
 import com.esl.internship.staffsync.system.configuration.api.IOptionType;
 import com.esl.internship.staffsync.system.configuration.model.Option;
@@ -29,6 +31,9 @@ public class OptionsAndTypesController extends Controller {
 
     @Inject
     IOption iOption;
+
+    @Inject
+    INotification iNotification;
 
     @Inject
     IAuthentication iAuthentication;
@@ -64,7 +69,14 @@ public class OptionsAndTypesController extends Controller {
         if (optionForm.hasError) {
             return badRequest(optionForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iOption.addOption(optionForm.value, iAuthentication.getContextCurrentEmployee().orElseThrow())));
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        Option option = iOption.addOption(optionForm.value, employee);
+        if (option != null) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), option.getOptionValue(), "Option_creation_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Option_creation_failure");
+        }
+        return ok(myObjectMapper.toJsonString(option));
     }
 
     @ApiOperation(value = "Update option type")
@@ -95,7 +107,14 @@ public class OptionsAndTypesController extends Controller {
         if (optionTypeForm.hasError) {
             return badRequest(optionTypeForm.error);
         }
-        return ok(myObjectMapper.toJsonString(iOptionType.editOptionType(optionTypeId, optionTypeForm.value, iAuthentication.getContextCurrentEmployee().orElseThrow())));
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean resp = iOptionType.editOptionType(optionTypeId, optionTypeForm.value, employee);
+        if (resp) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Option_type_update_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Option_type_update_failure");
+        }
+        return ok(myObjectMapper.toJsonString(resp));
     }
 
     @ApiOperation(value = "Update option value")
@@ -115,7 +134,14 @@ public class OptionsAndTypesController extends Controller {
     })
     @WebAuth(permissions = {RoutePermissions.update_option}, roles = {RouteRole.admin})
     public Result editOption(String optionId, String value) {
-        return ok(myObjectMapper.toJsonString(iOption.editOption(optionId, value, iAuthentication.getContextCurrentEmployee().orElseThrow())));
+        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        boolean resp = iOption.editOption(optionId, value, employee);
+        if (resp) {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Option_update_successful");
+        } else {
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "Option_update_failure");
+        }
+        return ok(myObjectMapper.toJsonString(resp));
     }
 
     @ApiOperation(value = "Get option type by id")
