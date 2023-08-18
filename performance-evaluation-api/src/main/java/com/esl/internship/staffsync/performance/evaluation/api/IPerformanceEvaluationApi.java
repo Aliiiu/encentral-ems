@@ -8,6 +8,7 @@ import com.esl.internship.staffsync.performance.evaluation.model.DailyPerformanc
 import com.esl.internship.staffsync.performance.evaluation.model.PerformanceEvaluation;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IPerformanceEvaluationApi {
 
@@ -19,11 +20,13 @@ public interface IPerformanceEvaluationApi {
 
     PerformanceEvaluation getEmployeePerformanceBetweenDatePeriod(String employeeId, AuxDateRangeDTO auxDateRangeDTO);
 
-    PerformanceEvaluation getEmployeeEvaluationById(String performanceEvaluationId);
+    Optional<PerformanceEvaluation> getEmployeeEvaluationById(String performanceEvaluationId);
+
+    Optional<PerformanceEvaluation> getLastEmployeeEvaluationBy(String employeeId);
 
     List<PerformanceEvaluation> getAllEmployeeEvaluations(String employeeId);
 
-    boolean updateEmployeeEvaluationFeedback(String performanceEvaluationId, EvaluationFeedbackDTO feedbackDTO);
+    boolean postFeedbackOnEvaluation(String performanceEvaluationId, String evaluatorId, EvaluationFeedbackDTO evaluationFeedbackDTO);
 
     boolean deleteEmployeeEvaluation(String performanceEvaluationId);
 

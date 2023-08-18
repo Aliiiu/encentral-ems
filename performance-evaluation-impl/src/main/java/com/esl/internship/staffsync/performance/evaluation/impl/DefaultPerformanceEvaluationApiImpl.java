@@ -1,6 +1,5 @@
 package com.esl.internship.staffsync.performance.evaluation.impl;
 
-import com.esl.internship.staffsync.attendance.tracking.api.IAttendanceTracking;
 import com.esl.internship.staffsync.commons.service.response.Response;
 import com.esl.internship.staffsync.commons.util.DateUtility;
 import com.esl.internship.staffsync.entities.*;
@@ -20,18 +19,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.DayOfWeek;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.esl.internship.staffsync.performance.evaluation.model.PerformanceEvaluationMapper.INSTANCE;
 
 public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluationApi {
-
-    @Inject
-    IAttendanceTracking iAttendanceTrackingApi;
 
     @Inject
     JPAApi jpaApi;
@@ -130,23 +123,68 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
     }
 
     @Override
-    public PerformanceEvaluation getEmployeeEvaluationById(String performanceEvaluationId) {
-        return null;
+    public Optional<PerformanceEvaluation> getEmployeeEvaluationById(String performanceEvaluationId) {
+        return Optional.ofNullable(INSTANCE.mapPerformanceEvaluation(getJpaPerformanceEvaluationById(performanceEvaluationId)));
+    }
+
+    @Override
+    public Optional<PerformanceEvaluation> getLastEmployeeEvaluationBy(String employeeId) {
+        return Optional.ofNullable(INSTANCE.mapPerformanceEvaluation(new JPAQueryFactory(jpaApi.em())
+                .selectFrom(qJpaPerformanceEvaluation)
+                .where(qJpaPerformanceEvaluation.employee.employeeId.eq(employeeId))
+                .orderBy(qJpaPerformanceEvaluation.dateCreated.desc())
+                .fetchFirst()));
     }
 
     @Override
     public List<PerformanceEvaluation> getAllEmployeeEvaluations(String employeeId) {
-        return null;
+        return new JPAQueryFactory(jpaApi.em())
+                .selectFrom(qJpaPerformanceEvaluation)
+                .where(qJpaPerformanceEvaluation.employee.employeeId.eq(employeeId))
+                .orderBy(qJpaPerformanceEvaluation.dateCreated.desc())
+                .fetch()
+                .stream()
+                .map(INSTANCE::mapPerformanceEvaluation)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public boolean updateEmployeeEvaluationFeedback(String performanceEvaluationId, EvaluationFeedbackDTO feedbackDTO) {
-        return false;
+    public boolean postFeedbackOnEvaluation(String performanceEvaluationId, String evaluatorId, EvaluationFeedbackDTO evaluationFeedbackDTO) {
+        JpaPerformanceEvaluation performanceEvaluation = getJpaPerformanceEvaluationById(performanceEvaluationId);
+
+        if (performanceEvaluation == null)
+            return false;
+        JpaEmployee evaluator = getJpaEmployee(evaluatorId);
+
+        if (evaluator == null)
+            return false;
+
+
+        if (performanceEvaluation.getEvaluator().getEmployeeId().equals(evaluator.getEmployeeId())) {
+            performanceEvaluation.setFeedback(evaluationFeedbackDTO.getFeedback());
+        } else {
+            JpaPerformanceEvaluation newEvaluation = new JpaPerformanceEvaluation();
+            newEvaluation.setPerformanceEvaluationId(UUID.randomUUID().toString());
+            newEvaluation.setFeedback(evaluationFeedbackDTO.getFeedback());
+            newEvaluation.setEvaluator(evaluator);
+            newEvaluation.setEvaluationStartDate(performanceEvaluation.getEvaluationStartDate());
+            newEvaluation.setEvaluationEndDate(performanceEvaluation.getEvaluationEndDate());
+            newEvaluation.setLeavePerformance(performanceEvaluation.getLeavePerformance());
+            newEvaluation.setAttendanceAccuracy(performanceEvaluation.getAttendanceAccuracy());
+            newEvaluation.setEmployee(performanceEvaluation.getEmployee());
+            newEvaluation.setDateCreated(Timestamp.from(Instant.now()));
+
+            jpaApi.em().persist(newEvaluation);
+        }
+        return true;
     }
 
     @Override
     public boolean deleteEmployeeEvaluation(String performanceEvaluationId) {
-        return false;
+        return new JPAQueryFactory(jpaApi.em())
+                .delete(qJpaPerformanceEvaluation)
+                .where(qJpaPerformanceEvaluation.performanceEvaluationId.eq(performanceEvaluationId))
+                .execute() == 1;
     }
 
     private int getTotalEmployeeWorkingDaysBetweenDateRange(String employeeId, Date startDate, Date endDate) {

@@ -21,7 +21,7 @@ public interface PerformanceEvaluationMapper {
             @Mapping(target = "firstName", source = "employee.firstName"),
             @Mapping(target = "lastName", source = "employee.lastName"),
             @Mapping(target = "email", source = "employee.employeeEmail"),
-            @Mapping(target = "evaluator", source = "evaluator")
+            @Mapping(target = "evaluator", source = "evaluator.employeeId")
     })
     PerformanceEvaluation mapPerformanceEvaluation(JpaPerformanceEvaluation entity);
 }
