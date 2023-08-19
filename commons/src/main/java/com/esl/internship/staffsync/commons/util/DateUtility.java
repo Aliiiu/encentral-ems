@@ -90,8 +90,19 @@ public class DateUtility {
     }
 
     public static double getDurationBetweenTwoTimePeriod(Time start, Time end) {
-        return getDurationBetweenTwoTimePeriod(start.toInstant(), end.toInstant());
+        if (start == null || end == null)
+            return 0;
+
+        long startTimeMillis = start.toLocalTime().toNanoOfDay() / 1_000_000;
+        long endTimeMillis = end.toLocalTime().toNanoOfDay() / 1_000_000;
+
+        long durationMillis = endTimeMillis - startTimeMillis;
+
+        double totalHours = (double) durationMillis / (60 * 60 * 1000); // Convert milliseconds to hours
+
+        return totalHours;
     }
+
 
     public static boolean dateEquals(Date date, LocalDate localDate) {
         return convertToLocalDate(date).isEqual(localDate);

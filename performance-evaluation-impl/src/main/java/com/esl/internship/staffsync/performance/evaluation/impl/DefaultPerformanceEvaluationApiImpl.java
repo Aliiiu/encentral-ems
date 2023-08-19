@@ -283,6 +283,7 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
 
         DailyPerformanceOverview performanceOverview = new DailyPerformanceOverview();
 
+        System.out.println("\n" + expectedDailyWorkingHours + " " + "expected working hours \n");
         performanceOverview.setTotalCheckIns(totalCheckIns);
         performanceOverview.setTotalCheckOuts(totalCheckOuts);
         performanceOverview.setTotalHoursWorked(totalWorkingHours);

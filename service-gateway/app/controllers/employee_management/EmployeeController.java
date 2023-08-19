@@ -59,16 +59,16 @@ public class EmployeeController extends Controller {
                     required = true,
                     dataType = "com.esl.internship.staffsync.employee.management.dto.EmployeeDTO"
             ),
-            @ApiImplicitParam(
-                    name = "Authorization",
-                    value = "Authorization",
-                    paramType = "header",
-                    required = true,
-                    dataType = "string",
-                    dataTypeClass = String.class
-            )
+//            @ApiImplicitParam(
+//                    name = "Authorization",
+//                    value = "Authorization",
+//                    paramType = "header",
+//                    required = true,
+//                    dataType = "string",
+//                    dataTypeClass = String.class
+//            )
     })
-    @WebAuth(permissions = {RoutePermissions.create_employee}, roles = {RouteRole.admin})
+//    @WebAuth(permissions = {RoutePermissions.create_employee}, roles = {RouteRole.admin})
     public Result addEmployee() {
         final var employeeForm = validate(request().body().asJson(), EmployeeDTO.class);
 
@@ -76,17 +76,18 @@ public class EmployeeController extends Controller {
             return badRequest(employeeForm.error);
         }
 
-        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+//        Employee employee = iAuthentication.getContextCurrentEmployee().orElseThrow();
+        Employee employee = new Employee();
         Response<Employee> serviceResponse = iEmployeeApi
                 .addEmployee(employeeForm.value, employee);
 
         boolean result = serviceResponse.getValue() != null;
 
-        if (result) {
-            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), serviceResponse.getValue().getFullName(), "employee_creation_successful");
-        } else {
-            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "employee_creation_failure");
-        }
+//        if (result) {
+//            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), serviceResponse.getValue().getFullName(), "employee_creation_successful");
+//        } else {
+//            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "employee_creation_failure");
+//        }
         if (serviceResponse.requestHasErrors())
             return badRequest(serviceResponse.getErrorsAsJsonString());
         return ok(objectMapper.toJsonString(serviceResponse.getValue()));
