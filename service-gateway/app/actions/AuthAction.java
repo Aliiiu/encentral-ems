@@ -84,6 +84,7 @@ public class AuthAction extends Action<WebAuth> {
                 ctx.args.put("currentEmployee", employee);
                 return delegate.call(ctx);
             } catch (Exception e) {
+                e.printStackTrace();
                 return CompletableFuture.completedFuture(unauthorized("Invalid token"));
             }
         }).toCompletableFuture();
