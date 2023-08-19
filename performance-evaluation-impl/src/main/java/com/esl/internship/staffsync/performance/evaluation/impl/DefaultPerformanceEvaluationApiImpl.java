@@ -39,8 +39,8 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
     public AttendanceOverview getAttendanceSummaryOfEmployee(String employeeId, AuxDateRangeDTO auxDateRangeDTO) {
 
         LocalDate startDate, endDate;
-        startDate = auxDateRangeDTO.getStartDate();
-        endDate = auxDateRangeDTO.getEndDate();
+        startDate = auxDateRangeDTO.startDate();
+        endDate = auxDateRangeDTO.endDate();
 
         int totalWorkingDays = getTotalWorkingDaysBetweenDateRange(startDate, endDate);
         int totalEmployingWorkingDays = getTotalEmployeeWorkingDaysBetweenDateRange(
@@ -98,7 +98,7 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
     @Override
     public PerformanceEvaluation getEmployeePerformanceBetweenDatePeriod(String employeeId, AuxDateRangeDTO auxDateRangeDTO) {
 
-        JpaPerformanceEvaluation jpaPerformanceEvaluation = getJpaPerformanceEvaluationByDateRange(employeeId, auxDateRangeDTO.getStartDate(), auxDateRangeDTO.getEndDate());
+        JpaPerformanceEvaluation jpaPerformanceEvaluation = getJpaPerformanceEvaluationByDateRange(employeeId, auxDateRangeDTO.startDate(), auxDateRangeDTO.endDate());
 
         if (jpaPerformanceEvaluation != null)
             return INSTANCE.mapPerformanceEvaluation(jpaPerformanceEvaluation);
@@ -114,8 +114,8 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
         evaluation.setAttendanceAccuracy(calculateAttendancePerformance(employeeId, auxDateRangeDTO, workingHours));
         evaluation.setDateCreated(Timestamp.from(Instant.now()));
         evaluation.setPerformanceEvaluationId(UUID.randomUUID().toString());
-        evaluation.setEvaluationStartDate(DateUtility.convertToDate(auxDateRangeDTO.getStartDate()));
-        evaluation.setEvaluationEndDate(DateUtility.convertToDate(auxDateRangeDTO.getEndDate()));
+        evaluation.setEvaluationStartDate(DateUtility.convertToDate(auxDateRangeDTO.startDate()));
+        evaluation.setEvaluationEndDate(DateUtility.convertToDate(auxDateRangeDTO.endDate()));
 
         jpaApi.em().persist(evaluation);
 
@@ -300,13 +300,13 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
 
     private List<DailyPerformanceOverview> calculateDailyPerformanceMetricBetweenDays(String employeeId, AuxDateRangeDTO auxDateRangeDTO, int expectedDailyWorkingHours) {
         LocalDate startDate, endDate;
-        startDate = auxDateRangeDTO.getStartDate();
-        endDate = auxDateRangeDTO.getEndDate();
+        startDate = auxDateRangeDTO.startDate();
+        endDate = auxDateRangeDTO.endDate();
 
         List<DailyPerformanceOverview> overviews = new ArrayList<>();
         List<LocalDate> workingDays = getAllWorkingDaysBetweenDateRange(startDate, endDate);
 
-        if (auxDateRangeDTO.isAscending()) {
+        if (auxDateRangeDTO.dateIsAscending()) {
 
             for (LocalDate date : workingDays) {
                 DailyPerformanceOverview performanceOverview =

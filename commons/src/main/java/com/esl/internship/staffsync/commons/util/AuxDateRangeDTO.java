@@ -3,7 +3,6 @@ package com.esl.internship.staffsync.commons.util;
 import javax.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * @author ALIU
@@ -19,23 +18,23 @@ public class AuxDateRangeDTO {
 
     private LocalDate datePointB;
 
-    public LocalDate getStartDate() {
+    public LocalDate startDate() {
         if (datePointA.isBefore(datePointB))
             return datePointA;
         return datePointB;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDate endDate() {
         if (datePointA.isAfter(datePointB))
             return datePointA;
         return datePointB;
     }
 
-    public boolean isAscending() {
+    public boolean dateIsAscending() {
         return datePointA.isBefore(datePointB);
     }
 
-    public boolean isDescending() {
+    public boolean dateIsDescending() {
         return datePointA.isAfter(datePointB);
     }
 
