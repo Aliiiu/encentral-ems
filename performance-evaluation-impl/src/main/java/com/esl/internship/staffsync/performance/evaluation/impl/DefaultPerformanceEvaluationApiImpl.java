@@ -47,8 +47,10 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
                 employeeId, DateUtility.convertToDate(startDate), DateUtility.convertToDate(endDate)
         );
 
+        int absentDays = totalWorkingDays - totalEmployingWorkingDays;
+
         AttendanceOverview overview = new AttendanceOverview();
-        overview.setDaysAbsent(totalWorkingDays - totalEmployingWorkingDays);
+        overview.setDaysAbsent(Math.max(absentDays, 0));
         overview.setDaysPresent(totalEmployingWorkingDays);
         overview.setStartDate(startDate);
         overview.setEndDate(endDate);
@@ -111,13 +113,19 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
 
         evaluation.setEmployee(employee);
         evaluation.setLeavePerformance(calculateLeavePerformance(employee));
-        evaluation.setAttendanceAccuracy(calculateAttendancePerformance(employeeId, auxDateRangeDTO, workingHours));
+        double attendanceAccuracy = calculateAttendancePerformance(employeeId, auxDateRangeDTO, workingHours);
+        if (attendanceAccuracy < 0)
+            evaluation.setAttendanceAccuracy(null);
+        else
+            evaluation.setAttendanceAccuracy(attendanceAccuracy);
         evaluation.setDateCreated(Timestamp.from(Instant.now()));
-        evaluation.setPerformanceEvaluationId(UUID.randomUUID().toString());
         evaluation.setEvaluationStartDate(DateUtility.convertToDate(auxDateRangeDTO.startDate()));
         evaluation.setEvaluationEndDate(DateUtility.convertToDate(auxDateRangeDTO.endDate()));
 
-        jpaApi.em().persist(evaluation);
+        if (evaluation.getAttendanceAccuracy() != null) {
+            evaluation.setPerformanceEvaluationId(UUID.randomUUID().toString());
+            jpaApi.em().persist(evaluation);
+        }
 
         return INSTANCE.mapPerformanceEvaluation(evaluation);
     }
@@ -160,7 +168,7 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
             return false;
 
 
-        if (performanceEvaluation.getEvaluator().getEmployeeId().equals(evaluator.getEmployeeId())) {
+        if (performanceEvaluation.getEvaluator() != null && performanceEvaluation.getEvaluator().getEmployeeId().equals(evaluator.getEmployeeId())) {
             performanceEvaluation.setFeedback(evaluationFeedbackDTO.getFeedback());
         } else {
             JpaPerformanceEvaluation newEvaluation = new JpaPerformanceEvaluation();
@@ -283,7 +291,6 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
 
         DailyPerformanceOverview performanceOverview = new DailyPerformanceOverview();
 
-        System.out.println("\n" + expectedDailyWorkingHours + " " + "expected working hours \n");
         performanceOverview.setTotalCheckIns(totalCheckIns);
         performanceOverview.setTotalCheckOuts(totalCheckOuts);
         performanceOverview.setTotalHoursWorked(totalWorkingHours);
@@ -293,7 +300,7 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
         );
 
         performanceOverview.setLastCheckOutTime((lastCheckoutTime == null) ? null : lastCheckoutTime.toLocalTime());
-        performanceOverview.setFirstCheckInTime(attendances.get(0).getCheckInTime().toLocalTime());
+        performanceOverview.setFirstCheckInTime((attendances.size() == 0) ? null : attendances.get(0).getCheckInTime().toLocalTime());
 
         return performanceOverview;
 
@@ -339,12 +346,15 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
 
     private double calculateAttendancePerformance(String employeeId, AuxDateRangeDTO auxDateRangeDTO, int expectedWorkingHours) {
         List<DailyPerformanceOverview> overviews = calculateDailyPerformanceMetricBetweenDays(employeeId, auxDateRangeDTO, expectedWorkingHours);
-        int totalHoursWorked = 0;
+        double totalHoursWorked = 0;
         for (DailyPerformanceOverview overview: overviews) {
             totalHoursWorked += overview.getTotalHoursWorked();
         }
 
-        return ((double) totalHoursWorked / (expectedWorkingHours * overviews.size())) * 100;
+        if (overviews.size() == 0)
+            return -1;
+
+        return (totalHoursWorked / (expectedWorkingHours * overviews.size())) * 100;
     }
 
     /**
@@ -381,7 +391,7 @@ public class DefaultPerformanceEvaluationApiImpl implements IPerformanceEvaluati
                 .fetch();
 
         for (JpaPerformanceEvaluation evaluation : pe) {
-            if (DateUtility.dateEquals(evaluation.getEvaluationEndDate(), startDate) &&
+            if (DateUtility.dateEquals(evaluation.getEvaluationStartDate(), startDate) &&
                             DateUtility.dateEquals(evaluation.getEvaluationEndDate(), endDate))
                 return evaluation;
         }

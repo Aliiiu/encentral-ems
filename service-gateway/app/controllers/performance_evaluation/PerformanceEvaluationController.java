@@ -133,7 +133,7 @@ public class PerformanceEvaluationController extends Controller {
         if (dateRangeDTOForm.hasError) {
             return badRequest(dateRangeDTOForm.error);
         }
-        return ok(objectMapper.toJsonString(iPerformanceEvaluationApi.getEmployeePerformanceBetweenDatePeriod(employee.getEmployeeId(), dateRangeDTOForm.value)));
+        return ok(objectMapper.toJsonString(iPerformanceEvaluationApi.getPerformanceOverviewBetweenTimePeriod(employee.getEmployeeId(), dateRangeDTOForm.value)));
     }
 
     @ApiOperation("Get Performance Evaluation between date range")
