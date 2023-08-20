@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  * The persistent class for the employee database table.
- * 
+ *
  */
 @Entity
 @Table(name="employee")
@@ -73,6 +73,9 @@ public class JpaEmployee implements Serializable {
 
 	@Column(name="leave_days", nullable=false)
 	private Integer leaveDays;
+
+	@Column(name="entitled_yearly_leave_days", nullable=false)
+	private Integer entitledYearlyLeaveDays;
 
 	@Column(name="login_attempts", nullable=false)
 	private Integer loginAttempts;
@@ -298,6 +301,14 @@ public class JpaEmployee implements Serializable {
 
 	public void setLeaveDays(Integer leaveDays) {
 		this.leaveDays = leaveDays;
+	}
+
+	public Integer getEntitledYearlyLeaveDays() {
+		return entitledYearlyLeaveDays;
+	}
+
+	public void setEntitledYearlyLeaveDays(Integer entitledYearlyLeaveDays) {
+		this.entitledYearlyLeaveDays = entitledYearlyLeaveDays;
 	}
 
 	public Integer getLoginAttempts() {

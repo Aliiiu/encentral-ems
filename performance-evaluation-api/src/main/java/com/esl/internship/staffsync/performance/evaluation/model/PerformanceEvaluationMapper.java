@@ -1,0 +1,21 @@
+package com.esl.internship.staffsync.performance.evaluation.model;
+
+import com.esl.internship.staffsync.entities.JpaPerformanceEvaluation;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
+
+@Mapper
+public interface PerformanceEvaluationMapper {
+    PerformanceEvaluationMapper INSTANCE = Mappers.getMapper(PerformanceEvaluationMapper.class);
+
+    @Mappings({
+            @Mapping(target = "employeeId", source = "employee.employeeId"),
+            @Mapping(target = "firstName", source = "employee.firstName"),
+            @Mapping(target = "lastName", source = "employee.lastName"),
+            @Mapping(target = "email", source = "employee.employeeEmail"),
+            @Mapping(target = "evaluator", source = "evaluator.employeeId")
+    })
+    PerformanceEvaluation mapPerformanceEvaluation(JpaPerformanceEvaluation entity);
+}

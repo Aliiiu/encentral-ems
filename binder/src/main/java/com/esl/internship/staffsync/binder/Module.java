@@ -12,6 +12,7 @@ import com.esl.internship.staffsync.employee.management.impl.EmployeeManagementM
 import com.esl.internship.staffsync.leave.management.impl.LeaveManagementModule;
 import com.esl.internship.staffsync.authentication.impl.AuthenticationModule;
 import com.esl.internship.staffsync.event.management.impl.EventManagementModule;
+import com.esl.internship.staffsync.performance.evaluation.impl.PerformanceEvaluationModule;
 import com.esl.internship.staffsync.system.configuration.impl.SystemConfigurationModule;
 import com.google.inject.AbstractModule;
 import play.libs.akka.AkkaGuiceSupport;
@@ -43,6 +44,8 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
         install(new DocumentManagementModule());
 
         install(new AttendanceTrackingModule());
+
+        install(new PerformanceEvaluationModule());
 
     }
 }

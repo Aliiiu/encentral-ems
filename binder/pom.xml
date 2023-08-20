@@ -92,6 +92,12 @@
             <artifactId>attendance-tracking-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.esl.internship.staffsync.performance.evaluation.impl</groupId>
+            <artifactId>performance-evaluation-impl</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 
