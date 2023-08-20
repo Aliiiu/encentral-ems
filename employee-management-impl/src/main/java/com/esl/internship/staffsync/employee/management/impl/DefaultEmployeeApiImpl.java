@@ -129,7 +129,6 @@ public class DefaultEmployeeApiImpl implements IEmployeeApi {
         jpaEmployee.setDateCreated(Timestamp.from(Instant.now()));
         jpaEmployee.setLoginAttempts(0);
         jpaEmployee.setLeaveDays(0);
-        jpaEmployee.setEntitledYearlyLeaveDays(20);
         setPassword(jpaEmployee, employeeDto.getPassword());
 
         jpaApi.em().persist(jpaEmployee);

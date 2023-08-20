@@ -35,6 +35,8 @@ public class Employee {
 
     private Integer leaveDays;
 
+    private Integer entitledYearlyLeaveDays;
+
     private Timestamp lastLogin;
 
     private String phoneNumber;
@@ -175,6 +177,14 @@ public class Employee {
 
     public void setLeaveDays(Integer leaveDays) {
         this.leaveDays = leaveDays;
+    }
+
+    public Integer getEntitledYearlyLeaveDays() {
+        return entitledYearlyLeaveDays;
+    }
+
+    public void setEntitledYearlyLeaveDays(Integer entitledYearlyLeaveDays) {
+        this.entitledYearlyLeaveDays = entitledYearlyLeaveDays;
     }
 
     public Timestamp getLastLogin() {
