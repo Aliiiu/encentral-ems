@@ -101,7 +101,7 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
      */
     @Override
     public Optional<Announcement> getAnnouncementRecordById(String announcementId) {
-        return Optional.of(INSTANCE.mapAnnouncement(getJpaAnnouncement(announcementId)));
+        return Optional.ofNullable(INSTANCE.mapAnnouncement(getJpaAnnouncement(announcementId)));
     }
 
     /**
@@ -185,7 +185,7 @@ public class DefaultAnnouncementManagementApiImpl implements IAnnouncementManage
      * @dateCreated 16/08/2023
      * @description Get all announcements for an employee
      *
-     * @param employeeId ID of the employee to fetch announcments for
+     * @param employeeId ID of the employee to fetch announcements for
      *
      * @return List<EmployeeAnnouncement>
      */

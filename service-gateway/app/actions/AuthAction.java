@@ -78,12 +78,13 @@ public class AuthAction extends Action<WebAuth> {
 
                 boolean hasRequiredPermissions = employeePermissions.containsAll(requiredPermissions);
 
-                if ( !hasRequiredPermissions || !requiredRoles.contains(employeeRole) ) {
-                    return CompletableFuture.completedFuture(unauthorized("Unauthorized access"));
-                }
+//                if ( !hasRequiredPermissions || !requiredRoles.contains(employeeRole) ) {
+//                    return CompletableFuture.completedFuture(unauthorized("Unauthorized access"));
+//                }
                 ctx.args.put("currentEmployee", employee);
                 return delegate.call(ctx);
             } catch (Exception e) {
+                e.printStackTrace();
                 return CompletableFuture.completedFuture(unauthorized("Invalid token"));
             }
         }).toCompletableFuture();

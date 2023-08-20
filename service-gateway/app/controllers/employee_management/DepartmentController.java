@@ -77,9 +77,9 @@ public class DepartmentController extends Controller {
         boolean result = serviceResponse.getValue() != null;
 
         if (result) {
-            iNotification.sendNotification(employee.getEmployeeId(), "system_employee",employee.getFullName(), serviceResponse.getValue().getDepartmentName(), "document_deletion_successful");
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee",employee.getFullName(), serviceResponse.getValue().getDepartmentName(), "department_creation_successful");
         } else {
-            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "document_deletion_failure");
+            iNotification.sendNotification(employee.getEmployeeId(), "system_employee", employee.getFullName(), "", "department_creation_failure");
         }
         if (serviceResponse.requestHasErrors())
             return badRequest(serviceResponse.getErrorsAsJsonString());

@@ -59,10 +59,8 @@ public class AnnouncementController extends Controller {
     @WebAuth(permissions= {RoutePermissions.create_announcement }, roles = {RouteRole.admin})
     public Result createAnnouncement() {
         Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
-        if (employeeOptional.isEmpty())
-            return unauthorized();
 
-        Employee employee = employeeOptional.get();
+        Employee employee = employeeOptional.orElseThrow();
 
         final var announcementDtoForm = validate(request().body().asJson(), AnnouncementDTO.class);
 
@@ -140,10 +138,8 @@ public class AnnouncementController extends Controller {
     @WebAuth(permissions= {RoutePermissions.update_announcement }, roles = {RouteRole.admin})
     public Result updateAnnouncementRecord(@ApiParam(value = "ID of the announcement Record to Update")String announcementId) {
         Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
-        if (employeeOptional.isEmpty())
-            return unauthorized();
 
-        Employee employee = employeeOptional.get();
+        Employee employee = employeeOptional.orElseThrow();
 
         final var announcementDtoForm = validate(request().body().asJson(), AnnouncementDTO.class);
 
@@ -190,10 +186,8 @@ public class AnnouncementController extends Controller {
     @WebAuth(permissions= {RoutePermissions.read_announcement }, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllEmployeeAnnouncements() {
         Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
-        if (employeeOptional.isEmpty())
-            return unauthorized();
 
-        Employee employee = employeeOptional.get();
+        Employee employee = employeeOptional.orElseThrow();
 
         return ok(objectMapper.toJsonString(iAnnouncementManagementApi.getAllEmployeeAnnouncementsOrderedByDate(employee.getEmployeeId())));
     }
@@ -215,10 +209,8 @@ public class AnnouncementController extends Controller {
     @WebAuth(permissions= {RoutePermissions.read_announcement }, roles = {RouteRole.admin, RouteRole.user})
     public Result getAllUnreadEmployeeAnnouncements() {
         Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
-        if (employeeOptional.isEmpty())
-            return unauthorized();
 
-        Employee employee = employeeOptional.get();
+        Employee employee = employeeOptional.orElseThrow();
         return ok(objectMapper.toJsonString(iAnnouncementManagementApi.getAllUnreadEmployeeAnnouncementsOrderedByDate(employee.getEmployeeId())));
     }
 
@@ -258,9 +250,8 @@ public class AnnouncementController extends Controller {
     @WebAuth(permissions= {RoutePermissions.read_announcement}, roles = {RouteRole.admin, RouteRole.user})
     public Result markAllEmployeeAnnouncementsAsRead() {
         Optional<Employee> employeeOptional = iAuthentication.getContextCurrentEmployee();
-        if (employeeOptional.isEmpty())
-            return unauthorized();
-        Employee employee = employeeOptional.get();
+
+        Employee employee = employeeOptional.orElseThrow();
 
         return ok(objectMapper.toJsonString(iAnnouncementManagementApi.markAllAnnouncementsForEmployeeAsRead(employee.getEmployeeId())));
     }
