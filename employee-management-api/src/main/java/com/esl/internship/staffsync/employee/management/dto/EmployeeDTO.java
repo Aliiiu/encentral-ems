@@ -44,6 +44,8 @@ public class EmployeeDTO {
     @NotNull
     private String roleId;
 
+    private Integer entitledYearlyLeaveDays;
+
     @NotNull
     private String countryOfOriginOptionId;
 
@@ -158,6 +160,14 @@ public class EmployeeDTO {
 
     public void setRoleId(String roleId) {
         this.roleId = roleId;
+    }
+
+    public Integer getEntitledYearlyLeaveDays() {
+        return entitledYearlyLeaveDays;
+    }
+
+    public void setEntitledYearlyLeaveDays(Integer entitledYearlyLeaveDays) {
+        this.entitledYearlyLeaveDays = entitledYearlyLeaveDays;
     }
 
     public String getCountryOfOriginOptionId() {

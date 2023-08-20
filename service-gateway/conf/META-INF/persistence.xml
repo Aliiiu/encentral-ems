@@ -37,6 +37,7 @@
         <class>com.esl.internship.staffsync.entities.JpaPermission</class>
         <class>com.esl.internship.staffsync.entities.JpaRole</class>
         <class>com.esl.internship.staffsync.entities.JpaRoleHasPermission</class>
+        <class>com.esl.internship.staffsync.entities.JpaPerformanceEvaluation</class>
 
 
         <properties>
