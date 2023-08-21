@@ -92,9 +92,16 @@
             <artifactId>attendance-tracking-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>performance-evaluation-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>announcement-management-impl</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
