@@ -87,6 +87,12 @@
             <version>42.2.2</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play_2.12</artifactId>
+            <version>2.7.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
     <properties>

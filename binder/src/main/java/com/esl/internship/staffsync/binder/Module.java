@@ -6,6 +6,7 @@
 package com.esl.internship.staffsync.binder;
 
 
+import com.esl.internship.staffsync.announcement.management.impl.AnnouncementManagementModule;
 import com.esl.internship.staffsync.document.management.impl.DocumentManagementModule;
 import com.esl.internship.staffsync.attendance.tracking.impl.AttendanceTrackingModule;
 import com.esl.internship.staffsync.employee.management.impl.EmployeeManagementModule;
@@ -44,6 +45,8 @@ public class Module extends AbstractModule implements AkkaGuiceSupport {
         install(new DocumentManagementModule());
 
         install(new AttendanceTrackingModule());
+
+        install(new AnnouncementManagementModule());
 
         install(new PerformanceEvaluationModule());
 
