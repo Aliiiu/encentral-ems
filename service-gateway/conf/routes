@@ -193,3 +193,16 @@ DELETE         /attendance/:attendanceId/                                      c
 DELETE         /attendance/employee/:attendanceId/                             controllers.attendance_management.AttendanceController.deleteEmployeeAttendanceRecord(attendanceId: String)
 
 GET            /attendance/open/:employeeId/                                   controllers.attendance_management.AttendanceController.employeeHasOpenAttendance(employeeId: String)
+
+##### Announcement Management #####
+GET            /announcement/all/                                              controllers.announcement_management.AnnouncementController.getAllEmployeeAnnouncements()
+GET            /announcement/unread/                                           controllers.announcement_management.AnnouncementController.getAllUnreadEmployeeAnnouncements()
+GET            /announcement/received/:announcementRecipientId/                controllers.announcement_management.AnnouncementController.markEmployeeAnnouncementAsRead(announcementRecipientId: String)
+GET            /announcement/received/                                         controllers.announcement_management.AnnouncementController.markAllEmployeeAnnouncementsAsRead()
+
+POST           /announcement/                                                  controllers.announcement_management.AnnouncementController.createAnnouncement()
+GET            /announcement/                                                  controllers.announcement_management.AnnouncementController.getAllAnnouncementRecords()
+GET            /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.getAnnouncementRecordById(announcementId: String)
+PATCH          /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.updateAnnouncementRecord(announcementId: String)
+DELETE         /announcement/:announcementId/                                  controllers.announcement_management.AnnouncementController.deleteAnnouncementRecord(announcementId: String)
+

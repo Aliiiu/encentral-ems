@@ -9,6 +9,14 @@ public enum RoutePermissions {
 
             delete_announcement,
 
+            create_announcement_recipient,
+
+            read_announcement_recipient,
+
+            update_announcement_recipient,
+
+            delete_announcement_recipient,
+
             create_app_config,
 
             read_app_config,

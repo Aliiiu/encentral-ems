@@ -177,6 +177,8 @@
         <module>employee-management-impl</module>
         <module>authentication-api</module>
         <module>authentication-impl</module>
+        <module>announcement-management-api</module>
+        <module>announcement-management-impl</module>
         <module>document-management-api</module>
         <module>document-management-impl</module>
         <module>attendance-tracking-api</module>

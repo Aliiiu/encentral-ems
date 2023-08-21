@@ -1,5 +1,7 @@
 package com.esl.internship.staffsync.entities;
 
+import com.esl.internship.staffsync.entities.attribute.converter.JsonStringConverter;
+import com.esl.internship.staffsync.entities.attribute.converter.NotificationPriorityConverter;
 import com.esl.internship.staffsync.entities.enums.NotificationPriority;
 import com.google.common.base.MoreObjects;
 
@@ -30,6 +32,10 @@ public class JpaAnnouncement implements Serializable {
 	@Column(name="announcement_title", nullable=false, length=60)
 	private String announcementTitle;
 
+	@Column(name = "announcement_for", nullable = false, length = 60)
+	private String announcementFor;
+
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="created_by", nullable=false)
 	private String createdBy;
 
@@ -39,24 +45,24 @@ public class JpaAnnouncement implements Serializable {
 	@Column(name="date_modified", nullable=false)
 	private Timestamp dateModified;
 
-	@Temporal(TemporalType.DATE)
 	@Column(name="delivery_date")
-	private Date deliveryDate;
+	private Timestamp deliveryDate;
 
+	@Convert(converter = JsonStringConverter.class)
 	@Column(name="modified_by")
 	private String modifiedBy;
 
+	@Convert(converter = NotificationPriorityConverter.class)
 	@Column(nullable=false)
-	@Enumerated(EnumType.STRING)
 	private NotificationPriority priority;
 
 	//bidirectional many-to-one association to JpaEmployee
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="sender_id", nullable=false)
-	private JpaEmployee employee;
+	private JpaEmployee sender;
 
 	//bidirectional many-to-one association to JpaAnnouncementRecipient
-	@OneToMany(mappedBy="announcement")
+	@OneToMany(mappedBy="announcement", fetch = FetchType.LAZY)
 	private Set<JpaAnnouncementRecipient> announcementRecipients;
 
 	public JpaAnnouncement() {
@@ -110,12 +116,20 @@ public class JpaAnnouncement implements Serializable {
 		this.dateModified = dateModified;
 	}
 
-	public Date getDeliveryDate() {
+	public Timestamp getDeliveryDate() {
 		return this.deliveryDate;
 	}
 
-	public void setDeliveryDate(Date deliveryDate) {
+	public void setDeliveryDate(Timestamp deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+
+	public String getAnnouncementFor() {
+		return announcementFor;
+	}
+
+	public void setAnnouncementFor(String announcementFor) {
+		this.announcementFor = announcementFor;
 	}
 
 	public String getModifiedBy() {
@@ -134,12 +148,12 @@ public class JpaAnnouncement implements Serializable {
 		this.priority = priority;
 	}
 
-	public JpaEmployee getEmployee() {
-		return this.employee;
+	public JpaEmployee getSender() {
+		return this.sender;
 	}
 
-	public void setEmployee(JpaEmployee employee) {
-		this.employee = employee;
+	public void setSender(JpaEmployee employee) {
+		this.sender = employee;
 	}
 
 	public Set<JpaAnnouncementRecipient> getAnnouncementRecipients() {
